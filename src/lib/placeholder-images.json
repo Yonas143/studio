@@ -1,3 +1,112 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-banner",
+      "description": "Vibrant hero image showcasing Ethiopian culture with traditional dancers in colorful attire.",
+      "imageUrl": "https://images.unsplash.com/photo-1633980990916-74317cba1ea3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxldGhpb3BpYW4lMjBjdWx0dXJlfGVufDB8fHx8MTc2MzQ1NjQ3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ethiopian culture"
+    },
+    {
+      "id": "category-performing-arts",
+      "description": "A dynamic shot of a traditional Ethiopian dance performance.",
+      "imageUrl": "https://images.unsplash.com/photo-1676929254960-ce821a4df385?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxldGhpb3BpYW4lMjBkYW5jZXxlbnwwfHx8fDE3NjM0NTY0Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ethiopian dance"
+    },
+    {
+      "id": "category-traditional-music",
+      "description": "A musician playing a traditional Ethiopian krar.",
+      "imageUrl": "https://images.unsplash.com/photo-1681731030450-197c0ece5c3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxldGhpb3BpYW4lMjBtdXNpY3xlbnwwfHx8fDE3NjM0NTY0Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ethiopian music"
+    },
+    {
+      "id": "category-digital-arts",
+      "description": "Abstract digital art inspired by Ethiopian patterns.",
+      "imageUrl": "https://images.unsplash.com/photo-1656686628168-e534ae2c51d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGlnaXRhbCUyMGFydHxlbnwwfHx8fDE3NjMzOTI3Nzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "digital art"
+    },
+    {
+      "id": "category-poetry",
+      "description": "An open book of poems with an Ethiopian coffee ceremony in the background.",
+      "imageUrl": "https://images.unsplash.com/photo-1662894312546-667d7698a1f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxldGhpb3BpYW4lMjBwb2V0cnl8ZW58MHx8fHwxNzYzNDU2NDc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ethiopian poetry"
+    },
+    {
+      "id": "nominee-1",
+      "description": "Profile picture of nominee Abebe Bikila.",
+      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjMzNzc5Mjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "nominee-2",
+      "description": "Profile picture of nominee Aster Aweke.",
+      "imageUrl": "https://images.unsplash.com/photo-1557053908-4793c484d06f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MzQ0NDY2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "nominee-3",
+      "description": "Profile picture of nominee Haile Gebrselassie.",
+      "imageUrl": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBzbWlsaW5nfGVufDB8fHx8MTc2MzM3ODkzMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "nominee-4",
+      "description": "Profile picture of nominee Liya Kebede.",
+      "imageUrl": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzYzMzk3NDM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "nominee-5",
+      "description": "Profile picture of nominee Mahlet Zeleke.",
+      "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3b21hbiUyMGZhY2V8ZW58MHx8fHwxNzYzMzczNjYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman face"
+    },
+    {
+      "id": "nominee-6",
+      "description": "Profile picture of nominee Dawit Getahun.",
+      "imageUrl": "https://images.unsplash.com/photo-1599834562135-b6fc90e642ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBmYWNlfGVufDB8fHx8MTc2MzQ0MDU3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man face"
+    },
+    {
+      "id": "nominee-7",
+      "description": "Profile picture of nominee Sara Abera.",
+      "imageUrl": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMG1vZGVsfGVufDB8fHx8MTc2MzQxODQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman model"
+    },
+    {
+      "id": "nominee-8",
+      "description": "Profile picture of nominee Henok Abebe.",
+      "imageUrl": "https://images.unsplash.com/photo-1604138946535-91d37353d052?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW4lMjBhcnRpc3R8ZW58MHx8fHwxNzYzNDU2NDc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man artist"
+    },
+    {
+      "id": "sponsor-logo-1",
+      "description": "Logo for Sponsor 1",
+      "imageUrl": "https://images.unsplash.com/photo-1496200186974-4293800e2c20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb21wYW55JTIwbG9nb3xlbnwwfHx8fDE3NjMzNTU2NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "company logo"
+    },
+    {
+      "id": "sponsor-logo-2",
+      "description": "Logo for Sponsor 2",
+      "imageUrl": "https://images.unsplash.com/photo-1570882280426-df8ac5ccd672?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxicmFuZCUyMGxvZ298ZW58MHx8fHwxNzYzNDEzNTQ1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "brand logo"
+    },
+    {
+      "id": "sponsor-logo-3",
+      "description": "Logo for Sponsor 3",
+      "imageUrl": "https://images.unsplash.com/photo-1662057168152-d5dc088deb25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx0ZWNoJTIwbG9nb3xlbnwwfHx8fDE3NjM0NTU0NTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tech logo"
+    },
+    {
+      "id": "sponsor-logo-4",
+      "description": "Logo for Sponsor 4",
+      "imageUrl": "https://images.unsplash.com/photo-1744390166851-82056c6552d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YWJzdHJhY3QlMjBsb2dvfGVufDB8fHx8MTc2MzM3MDgwNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract logo"
+    },
+    {
+      "id": "sponsor-logo-5",
+      "description": "Logo for Sponsor 5",
+      "imageUrl": "https://images.unsplash.com/photo-1628841220664-fbc764500e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtaW5pbWFsaXN0JTIwbG9nb3xlbnwwfHx8fDE3NjM0NTU0NTZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist logo"
+    }
+  ]
 }
