@@ -63,7 +63,7 @@
             "description": "Timestamp when the submission was created."
         }
       },
-      "required": ["title", "categoryId", "submitterId", "culturalRelevance", "status", "createdAt"]
+      "required": ["title", "categoryId", "culturalRelevance", "status", "createdAt"]
     },
     "vote": {
         "title": "Vote",

@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { useDoc, useUser, useFirestore } from '@/firebase';
 import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
@@ -27,11 +27,12 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
   const handleVote = async () => {
     if (!user) {
       toast({
-        variant: "destructive",
-        title: "Authentication Required",
-        description: "You must be logged in to vote.",
+        title: "Please log in",
+        description: "You need to be logged in to cast a vote.",
+        action: (
+          <Button onClick={() => router.push('/login')}>Login</Button>
+        )
       });
-      router.push('/login');
       return;
     }
     
@@ -40,6 +41,18 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
     setIsVoting(true);
     try {
       const voteRef = doc(firestore, 'votes', `${user.uid}_${nominee.id}`);
+      const voteSnap = await getDoc(voteRef);
+
+      if (voteSnap.exists()) {
+        toast({
+            variant: "destructive",
+            title: "Already Voted",
+            description: "You have already cast your vote for this nominee.",
+        });
+        setIsVoting(false);
+        return;
+      }
+
       await setDoc(voteRef, {
         userId: user.uid,
         nomineeId: nominee.id,
@@ -53,7 +66,7 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
       toast({
         variant: "destructive",
         title: "Error Casting Vote",
-        description: "You may have already voted for this nominee.",
+        description: error.message,
       });
     } finally {
       setIsVoting(false);

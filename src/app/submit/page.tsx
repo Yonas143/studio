@@ -30,7 +30,7 @@ type SubmissionFormData = z.infer<typeof submissionSchema>;
 
 export default function SubmitPage() {
   const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
-  const { user, loading: userLoading } = useUser();
+  const { user } = useUser();
   const firestore = useFirestore();
   const storage = getStorage();
   const router = useRouter();
@@ -43,30 +43,31 @@ export default function SubmitPage() {
   });
 
   const onSubmit = async (data: SubmissionFormData) => {
-    if (!user) {
-      toast({ variant: 'destructive', title: 'Not Authenticated', description: 'Please log in to make a submission.' });
-      return router.push('/login');
-    }
-    
     setIsSubmitting(true);
     let mediaUrl = '';
     
     try {
       if (data.submissionFile) {
-        const fileRef = ref(storage, `submissions/${user.uid}/${data.submissionFile.name}`);
+        const uniqueFileName = `${Date.now()}-${data.submissionFile.name}`;
+        const fileRef = ref(storage, `submissions/${user ? user.uid : 'anonymous'}/${uniqueFileName}`);
         const snapshot = await uploadBytes(fileRef, data.submissionFile);
         mediaUrl = await getDownloadURL(snapshot.ref);
       }
       
-      await addDoc(collection(firestore, 'submissions'), {
+      const submissionData: any = {
         title: data.title,
         categoryId: data.categoryId,
         culturalRelevance: data.culturalRelevance,
         mediaUrl: mediaUrl,
-        submitterId: user.uid,
         status: 'Pending',
         createdAt: serverTimestamp(),
-      });
+      };
+
+      if (user) {
+        submissionData.submitterId = user.uid;
+      }
+      
+      await addDoc(collection(firestore, 'submissions'), submissionData);
       
       toast({ title: 'Submission Successful', description: 'Your work has been submitted for review.' });
       router.push('/dashboard');
@@ -77,15 +78,6 @@ export default function SubmitPage() {
       setIsSubmitting(false);
     }
   };
-
-  if (userLoading) {
-      return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>
-  }
-
-  if (!user) {
-    router.push('/login');
-    return null;
-  }
 
   return (
     <div className="bg-secondary">

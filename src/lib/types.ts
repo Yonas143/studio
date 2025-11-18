@@ -42,7 +42,7 @@ export type Submission = {
   id?: string; // Firestore document ID
   title: string;
   categoryId: string;
-  submitterId: string;
+  submitterId?: string;
   culturalRelevance: string;
   mediaUrl?: string;
   status: 'Pending' | 'Approved' | 'Rejected';
