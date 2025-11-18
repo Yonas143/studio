@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -54,11 +55,11 @@ export default function RegisterPage() {
         uid: user.uid,
         email: user.email!,
         name: name,
-        role: 'participant',
+        role: 'admin',
       };
       await setDoc(doc(firestore, 'users', user.uid), userProfile);
 
-      toast({ title: 'Account Created', description: 'Welcome to the awards!' });
+      toast({ title: 'Admin Account Created', description: 'Welcome to the admin dashboard!' });
       handleRedirect(userProfile);
     } catch (error: any) {
       toast({
@@ -91,12 +92,12 @@ export default function RegisterPage() {
             uid: user.uid,
             email: user.email!,
             name: user.displayName || 'Google User',
-            role: 'participant',
+            role: 'admin',
           };
           await setDoc(userDocRef, userProfile);
       }
 
-      toast({ title: 'Account Created', description: 'Welcome!' });
+      toast({ title: 'Admin Account Created', description: 'Welcome!' });
       handleRedirect(userProfile);
     } catch (error: any) {
       toast({
@@ -113,8 +114,8 @@ export default function RegisterPage() {
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-secondary p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="font-headline text-2xl">Create an Account</CardTitle>
-          <CardDescription>Join to celebrate Ethiopian culture and heritage.</CardDescription>
+          <CardTitle className="font-headline text-2xl">Create an Admin Account</CardTitle>
+          <CardDescription>This will create an account with admin privileges.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-4">
@@ -132,7 +133,7 @@ export default function RegisterPage() {
             </div>
             <Button type="submit" className="w-full font-bold" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              Create Admin Account
             </Button>
           </form>
           <Separator className="my-6" />
