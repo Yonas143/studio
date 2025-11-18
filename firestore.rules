@@ -1,0 +1,41 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Rules for collections
+    match /users/{userId} {
+      allow read;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId);
+    }
+    
+    match /submissions/{submissionId} {
+      allow read;
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    match /votes/{voteId} {
+      // Allow reads for analytics, but writes should be more controlled
+      allow read; 
+      // Only signed-in users can create a vote.
+      // Additional rules might be needed to prevent multiple votes.
+      allow create: if isSignedIn();
+    }
+  }
+}
