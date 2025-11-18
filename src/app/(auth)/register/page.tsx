@@ -15,6 +15,8 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import type { UserProfile } from '@/lib/types';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 
 export default function RegisterPage() {
@@ -42,6 +44,31 @@ export default function RegisterPage() {
         break;
     }
   };
+  
+  const createUserProfile = (user: User, customName?: string, customRole?: 'admin' | 'participant' | 'judge') => {
+      const userProfile: UserProfile = {
+        uid: user.uid,
+        email: user.email!,
+        name: customName || user.displayName || 'New User',
+        role: customRole || 'admin',
+      };
+      
+      const userDocRef = doc(firestore, 'users', user.uid);
+
+      setDoc(userDocRef, userProfile)
+        .then(() => {
+            toast({ title: 'Account Created', description: 'Welcome!' });
+            handleRedirect(userProfile);
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: userDocRef.path,
+                operation: 'create',
+                requestResourceData: userProfile,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        });
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,17 +77,7 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await updateProfile(user, { displayName: name });
-
-      const userProfile: UserProfile = {
-        uid: user.uid,
-        email: user.email!,
-        name: name,
-        role: 'admin',
-      };
-      await setDoc(doc(firestore, 'users', user.uid), userProfile);
-
-      toast({ title: 'Admin Account Created', description: 'Welcome to the admin dashboard!' });
-      handleRedirect(userProfile);
+      createUserProfile(user, name);
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -79,26 +96,16 @@ export default function RegisterPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       
-      // Check if user profile already exists
       const userDocRef = doc(firestore, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      let userProfile: UserProfile;
-
       if (userDoc.exists()) {
-          userProfile = userDoc.data() as UserProfile;
+          const userProfile = userDoc.data() as UserProfile;
+          toast({ title: 'Sign In Successful', description: 'Welcome back!' });
+          handleRedirect(userProfile);
       } else {
-          userProfile = {
-            uid: user.uid,
-            email: user.email!,
-            name: user.displayName || 'Google User',
-            role: 'admin',
-          };
-          await setDoc(userDocRef, userProfile);
+          createUserProfile(user);
       }
-
-      toast({ title: 'Admin Account Created', description: 'Welcome!' });
-      handleRedirect(userProfile);
     } catch (error: any) {
       toast({
         variant: 'destructive',
