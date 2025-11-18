@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCollection, useFirestore } from '@/firebase';
@@ -127,10 +127,22 @@ export default function AdminNomineesPage() {
               </div>
                <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
-                <select {...register('category')} className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                    <option value="">Select a category</option>
-                    {categories?.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                </select>
+                <Controller
+                  name="category"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={categoriesLoading}>
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select a category..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map(c => (
+                          <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
                 {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
               </div>
               <div className="space-y-2">
