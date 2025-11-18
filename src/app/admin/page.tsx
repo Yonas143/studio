@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+'use client';
+
 import {
   Card,
   CardContent,
@@ -19,42 +20,40 @@ import {
   Gavel,
   FileText,
   Vote,
-  PlayCircle,
-  Megaphone,
 } from 'lucide-react';
+import { useCollection } from '@/firebase';
+import type { Submission, UserProfile } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
-const stats = [
-  { title: 'Total Participants', value: '1,284', icon: Users, change: '+12.5%' },
-  { title: 'Total Submissions', value: '3,402', icon: FileText, change: '+8.2%' },
-  { title: 'Registered Judges', value: '48', icon: Gavel, change: '+4' },
-  { title: 'Total Votes Cast', value: '1.2M', icon: Vote, change: '+21.7%' },
-];
-
-const recentActivity = [
-    { description: 'New submission in "Poetry" by Sara Abera.', time: '5m ago'},
-    { description: 'Judge Kafu scored "Gondar Awakening".', time: '1h ago'},
-    { description: 'Vote fraud detection system flagged 120 votes.', time: '3h ago'},
-    { description: 'New user "Dawit G." registered.', time: '5h ago'},
-]
 
 export default function AdminDashboardPage() {
+    const { data: users, loading: usersLoading } = useCollection<UserProfile>('users');
+    const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions');
+    const { data: votes, loading: votesLoading } = useCollection('votes');
+
+    const loading = usersLoading || submissionsLoading || votesLoading;
+
+    const stats = [
+        { title: 'Total Participants', value: users?.filter(u => u.role === 'participant').length ?? 0, icon: Users, loading },
+        { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
+        { title: 'Registered Judges', value: users?.filter(u => u.role === 'judge').length ?? 0, icon: Gavel, loading },
+        { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
+    ];
+
+    const recentSubmissions = submissions?.slice(0, 5) || [];
+
+
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor the ABN Cultural Awards.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <PlayCircle className="mr-2 h-4 w-4" /> Launch New Round
-          </Button>
-          <Button>
-            <Megaphone className="mr-2 h-4 w-4" /> Publish Winners
-          </Button>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
+        <p className="text-muted-foreground">
+          A real-time overview of the ABN Cultural Awards.
+        </p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -67,46 +66,64 @@ export default function AdminDashboardPage() {
               <stat.icon className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.change} from last round</p>
+                {stat.loading ? <Skeleton className="h-8 w-20" /> : (
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                )}
             </CardContent>
           </Card>
         ))}
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>An overview of the latest events.</CardDescription>
+            <div className="flex items-center justify-between">
+                <div>
+                    <CardTitle>Recent Submissions</CardTitle>
+                    <CardDescription>The latest five entries from participants.</CardDescription>
+                </div>
+                <Button asChild variant="outline">
+                    <Link href="/admin/submissions">View all submissions <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Status</TableHead>
+                    </TableRow>
+                </TableHeader>
                 <TableBody>
-                    {recentActivity.map((activity, index) => (
-                        <TableRow key={index}>
+                    {loading ? (
+                        [...Array(5)].map((_, i) => (
+                            <TableRow key={i}>
+                                <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                                <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                                <TableCell><Skeleton className="h-6 w-20" /></TableCell>
+                            </TableRow>
+                        ))
+                    ): recentSubmissions.length > 0 ? (
+                        recentSubmissions.map((submission) => (
+                        <TableRow key={submission.id}>
+                            <TableCell className="font-medium">{submission.title}</TableCell>
+                            <TableCell>{submission.categoryId}</TableCell>
                             <TableCell>
-                                <div className="font-medium">{activity.description}</div>
+                               <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
+                                {submission.status}
+                               </Badge>
                             </TableCell>
-                            <TableCell className="text-right text-muted-foreground text-sm">{activity.time}</TableCell>
                         </TableRow>
-                    ))}
+                    ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={3} className="text-center h-24">No submissions yet.</TableCell>
+                        </TableRow>
+                    )}
                 </TableBody>
             </Table>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col space-y-2">
-            <Button variant="secondary">Manage Participants</Button>
-            <Button variant="secondary">Manage Judges</Button>
-            <Button variant="secondary">View Vote Analytics</Button>
-            <Button variant="secondary">Detect Vote Fraud</Button>
-            <Button variant="destructive">Emergency Stop</Button>
           </CardContent>
         </Card>
       </div>
