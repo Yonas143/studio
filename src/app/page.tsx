@@ -1,19 +1,27 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { featuredNominees, timelineEvents } from '@/lib/data';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { useCollection } from '@/firebase';
+import type { Nominee, TimelineEvent } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
+  const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true]});
+  const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
+
   const heroImage = placeholderImages.find(p => p.id === 'hero-banner');
   const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
+  
+  const loading = nomineesLoading || timelineLoading;
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -39,7 +47,7 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button asChild size="lg" className="font-bold">
-                <Link href="/vote">Vote Now <Trophy className="ml-2" /></Link>
+                <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
               </Button>
               <Button asChild size="lg" variant="secondary" className="font-bold">
                 <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
@@ -57,7 +65,17 @@ export default function Home() {
               Featured Nominees
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredNominees.map((nominee) => {
+              {loading && [...Array(4)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                    <Skeleton className="h-48 w-full" />
+                    <CardContent className="p-4 space-y-2">
+                        <Skeleton className="h-5 w-3/4" />
+                        <Skeleton className="h-4 w-1/2" />
+                        <Skeleton className="h-5 w-1/3 mt-2" />
+                    </CardContent>
+                </Card>
+              ))}
+              {featuredNominees?.map((nominee) => {
                 const nomineeImage = placeholderImages.find(p => p.id === nominee.imageId);
                 return (
                   <Card key={nominee.id} className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
@@ -102,7 +120,20 @@ export default function Home() {
             </h2>
             <div className="relative mx-auto max-w-2xl">
               <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-border"></div>
-              {timelineEvents.map((event, index) => (
+              {loading && [...Array(4)].map((_, index) => (
+                 <div key={index} className="relative mb-8 flex items-center justify-between w-full">
+                    <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                      <Skeleton className="h-5 w-24 ml-auto" />
+                    </div>
+                    <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-lg">
+                    </div>
+                    <div className={`order-1 w-5/12 px-4 py-3 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
+                      <Skeleton className="h-6 w-32" />
+                      <Skeleton className="h-4 w-48 mt-1" />
+                    </div>
+                  </div>
+              ))}
+              {timelineEvents?.sort((a,b) => a.order - b.order).map((event, index) => (
                 <div key={index} className="relative mb-8 flex items-center justify-between w-full">
                   <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                     <p className="font-bold text-primary">{event.date}</p>

@@ -6,6 +6,9 @@ import {firebaseConfig} from './config';
 
 import {FirebaseProvider, useFirebaseApp, useFirestore, useAuth} from './provider';
 import {FirebaseClientProvider} from './client-provider';
+import { useUser } from './auth/use-user';
+import { useCollection } from './firestore/use-collection';
+import { useDoc } from './firestore/use-doc';
 
 
 function initializeFirebase(): {
@@ -29,4 +32,7 @@ export {
   useFirebaseApp,
   useFirestore,
   useAuth,
+  useUser,
+  useCollection,
+  useDoc
 };

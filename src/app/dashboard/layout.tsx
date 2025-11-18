@@ -4,12 +4,10 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, FileText, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-
-const mockUser = {
-  name: 'Jane Doe',
-  email: 'jane.doe@example.com',
-  avatarUrl: 'https://picsum.photos/seed/janedoe/100/100'
-};
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -23,6 +21,31 @@ export default function UserDashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, userProfile, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user || !userProfile) {
+    return (
+      <div className="flex min-h-screen">
+        <div className="hidden md:block w-64 border-r p-4 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+        </div>
+        <div className="flex-1 p-8 space-y-4">
+            <Skeleton className="h-12 w-1/3" />
+            <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
 
   const sidebarContent = (
     <SidebarMenu>
@@ -37,5 +60,11 @@ export default function UserDashboardLayout({
     </SidebarMenu>
   );
 
-  return <DashboardLayout user={mockUser} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
+  const dashboardUser = {
+    name: userProfile.name,
+    email: userProfile.email,
+    avatarUrl: user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`,
+  };
+
+  return <DashboardLayout user={dashboardUser} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
 }

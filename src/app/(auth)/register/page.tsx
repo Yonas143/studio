@@ -1,11 +1,90 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
+import type { UserProfile } from '@/lib/types';
+
 
 export default function RegisterPage() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: name });
+
+      const userProfile: UserProfile = {
+        uid: user.uid,
+        email: user.email!,
+        name: name,
+        role: 'participant',
+      };
+      await setDoc(doc(firestore, 'users', user.uid), userProfile);
+
+      toast({ title: 'Account Created', description: 'Welcome to the awards!' });
+      router.push('/dashboard');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Registration Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      const userProfile: UserProfile = {
+        uid: user.uid,
+        email: user.email!,
+        name: user.displayName || 'Google User',
+        role: 'participant',
+      };
+      await setDoc(doc(firestore, 'users', user.uid), userProfile, { merge: true });
+
+      toast({ title: 'Account Created', description: 'Welcome!' });
+      router.push('/dashboard');
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Google Sign-In Failed',
+        description: error.message,
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-secondary p-4">
       <Card className="w-full max-w-md">
@@ -14,25 +93,30 @@ export default function RegisterPage() {
           <CardDescription>Join to celebrate Ethiopian culture and heritage.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
-             <div className="space-y-2">
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="Your Name" required />
+              <Input id="name" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="your.email@example.com" required />
+              <Input id="email" type="email" placeholder="your.email@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-             <Button type="submit" className="w-full font-bold">Create Account</Button>
+            <Button type="submit" className="w-full font-bold" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Account
+            </Button>
           </form>
-           <Separator className="my-6" />
+          <Separator className="my-6" />
           <div className="space-y-4">
-            <Button variant="outline" className="w-full">Sign up with Google</Button>
-            <Button variant="outline" className="w-full">Sign up with Facebook</Button>
+             <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isGoogleLoading}>
+              {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Sign up with Google
+            </Button>
           </div>
         </CardContent>
         <CardFooter className="justify-center">

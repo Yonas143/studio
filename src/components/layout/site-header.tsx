@@ -1,14 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, Trophy } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, Trophy, LogOut } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+
 
 const mainNav: NavItem[] = [
   { title: 'Categories', href: '/categories' },
@@ -16,16 +29,33 @@ const mainNav: NavItem[] = [
   { title: 'Submit', href: '/submit' },
 ];
 
-const authenticatedNav: NavItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Admin', href: '/admin' },
-  { title: 'Judge', href: '/judge' },
-]
 
 export function SiteHeader() {
   const pathname = usePathname();
-  // Mock authentication state
-  const isAuthenticated = false;
+  const router = useRouter();
+  const { user, userProfile, loading } = useUser();
+  const auth = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    toast({ title: 'Signed Out', description: 'You have been successfully signed out.'});
+    router.push('/');
+  };
+
+  const getDashboardUrl = () => {
+    if (!userProfile) return '/login';
+    switch (userProfile.role) {
+      case 'admin':
+        return '/admin';
+      case 'judge':
+        return '/judge';
+      case 'participant':
+        return '/dashboard';
+      default:
+        return '/dashboard';
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -56,11 +86,40 @@ export function SiteHeader() {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="hidden items-center space-x-2 md:flex">
-             {isAuthenticated ? (
-                <Button asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-            ) : (
+             {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                       <Avatar className="h-9 w-9">
+                          <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt={userProfile?.name || 'User'} />
+                          <AvatarFallback>{userProfile?.name.charAt(0) || 'U'}</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{userProfile?.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {userProfile?.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href={getDashboardUrl()}>Dashboard</Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuItem asChild>
+                      <Link href="/dashboard/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+            ) : !loading && (
               <>
                 <Button asChild variant="ghost">
                   <Link href="/login">Log In</Link>
@@ -71,7 +130,7 @@ export function SiteHeader() {
               </>
             )}
              <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary">
-                <Link href="/vote"><Trophy className="mr-2 h-4 w-4"/> Vote</Link>
+                <Link href="/nominees"><Trophy className="mr-2 h-4 w-4"/> Vote</Link>
              </Button>
           </nav>
           <Sheet>
@@ -90,7 +149,7 @@ export function SiteHeader() {
                   </Link>
                 </div>
                 <div className="flex flex-col gap-4 mt-4">
-                  {[...mainNav, ...authenticatedNav].map((item) => (
+                  {mainNav.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
@@ -104,14 +163,33 @@ export function SiteHeader() {
                       {item.title}
                     </Link>
                   ))}
+                   {user && (
+                      <Link
+                        href={getDashboardUrl()}
+                        className={cn(
+                          'text-lg font-medium transition-colors hover:text-primary',
+                          pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/judge')
+                            ? 'text-primary'
+                            : 'text-foreground/80'
+                        )}
+                      >
+                        Dashboard
+                      </Link>
+                   )}
                 </div>
                 <div className="mt-auto flex flex-col gap-2">
-                    <Button asChild className="w-full">
-                      <Link href="/register">Sign Up</Link>
-                    </Button>
-                    <Button asChild variant="outline" className="w-full">
-                      <Link href="/login">Log In</Link>
-                    </Button>
+                    {user ? (
+                      <Button onClick={handleSignOut} variant="outline" className="w-full">Log Out</Button>
+                    ) : (
+                      <>
+                        <Button asChild className="w-full">
+                          <Link href="/register">Sign Up</Link>                        
+                        </Button>
+                        <Button asChild variant="outline" className="w-full">
+                          <Link href="/login">Log In</Link>
+                        </Button>
+                      </>
+                    )}
                 </div>
               </div>
             </SheetContent>

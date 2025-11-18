@@ -1,16 +1,104 @@
+'use client';
+
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { nominees } from '@/lib/data';
+import { notFound, useRouter } from 'next/navigation';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Share2, MapPin, PlayCircle, Music, Image as ImageIcon } from 'lucide-react';
+import { Heart, Share2, MapPin, PlayCircle, Music, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useDoc, useUser, useFirestore } from '@/firebase';
+import type { Nominee } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function NomineeProfilePage({ params }: { params: { id: string } }) {
-  const nominee = nominees.find(n => n.id === params.id);
+  const { data: nominee, loading } = useDoc<Nominee>(`nominees/${params.id}`);
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isVoting, setIsVoting] = useState(false);
+
+  const handleVote = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Required",
+        description: "You must be logged in to vote.",
+      });
+      router.push('/login');
+      return;
+    }
+    
+    if (!nominee) return;
+
+    setIsVoting(true);
+    try {
+      const voteRef = doc(firestore, 'votes', `${user.uid}_${nominee.id}`);
+      await setDoc(voteRef, {
+        userId: user.uid,
+        nomineeId: nominee.id,
+        createdAt: serverTimestamp(),
+      });
+      toast({
+        title: "Vote Cast!",
+        description: `Your vote for ${nominee.name} has been recorded.`,
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error Casting Vote",
+        description: "You may have already voted for this nominee.",
+      });
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+
+  if (loading) {
+    return (
+        <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="md:col-span-1">
+                    <Card className="overflow-hidden sticky top-24">
+                        <Skeleton className="aspect-square w-full" />
+                        <CardContent className="p-4 text-center space-y-2">
+                           <Skeleton className="h-8 w-3/4 mx-auto" />
+                           <Skeleton className="h-5 w-1/2 mx-auto" />
+                           <Skeleton className="h-5 w-1/3 mx-auto" />
+                        </CardContent>
+                    </Card>
+                    <div className="mt-4 flex flex-col gap-2">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                    </div>
+                </div>
+                <div className="md:col-span-2 space-y-8">
+                    <Card>
+                        <CardHeader><Skeleton className="h-8 w-1/3" /></CardHeader>
+                        <CardContent className="space-y-2">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-5/6" />
+                        </CardContent>
+                    </Card>
+                     <Separator className="my-8" />
+                     <Skeleton className="h-8 w-1/2 mb-4" />
+                     <div className="grid grid-cols-1 gap-6">
+                        <Skeleton className="h-32 w-full" />
+                        <Skeleton className="h-32 w-full" />
+                     </div>
+                </div>
+            </div>
+        </div>
+    )
+  }
 
   if (!nominee) {
     notFound();
@@ -44,8 +132,13 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
             </CardContent>
           </Card>
            <div className="mt-4 flex flex-col gap-2">
-            <Button size="lg" className="w-full font-bold">
-              <Heart className="mr-2 h-5 w-5" /> Vote for {nominee.name.split(' ')[0]}
+            <Button size="lg" className="w-full font-bold" onClick={handleVote} disabled={isVoting}>
+              {isVoting ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <Heart className="mr-2 h-5 w-5" />
+              )}
+              Vote for {nominee.name.split(' ')[0]}
             </Button>
             <Button size="lg" variant="outline" className="w-full">
               <Share2 className="mr-2 h-5 w-5" /> Share Profile
@@ -67,7 +160,7 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
           
           <h2 className="font-headline text-2xl font-bold mb-4">Media Gallery</h2>
 
-          {nominee.media.length > 0 ? (
+          {nominee.media && nominee.media.length > 0 ? (
             <div className="grid grid-cols-1 gap-6">
             {nominee.media.map((item, index) => (
               <Card key={index} className="group overflow-hidden">

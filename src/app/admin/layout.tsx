@@ -4,12 +4,10 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, Users, Gavel, List, BarChart2, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-
-const mockUser = {
-  name: 'Admin User',
-  email: 'admin@abn.studio',
-  avatarUrl: 'https://picsum.photos/seed/adminuser/100/100'
-};
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -26,6 +24,31 @@ export default function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, userProfile, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && (!user || userProfile?.role !== 'admin')) {
+      router.push('/login');
+    }
+  }, [user, userProfile, loading, router]);
+
+  if (loading || !userProfile) {
+    return (
+      <div className="flex min-h-screen">
+        <div className="hidden md:block w-64 border-r p-4 space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-full" />
+        </div>
+        <div className="flex-1 p-8 space-y-4">
+            <Skeleton className="h-12 w-1/3" />
+            <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    );
+  }
   
   const sidebarContent = (
     <SidebarMenu>
@@ -40,5 +63,5 @@ export default function AdminDashboardLayout({
     </SidebarMenu>
   );
 
-  return <DashboardLayout user={mockUser} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
+  return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || 'https://picsum.photos/seed/adminuser/100/100'}} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
 }

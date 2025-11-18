@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -14,11 +16,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { userSubmissions } from '@/lib/data';
 import type { Submission } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useCollection, useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
 
 const statusVariant: { [key in Submission['status']]: 'default' | 'secondary' | 'destructive' } = {
   Approved: 'default',
@@ -27,11 +31,49 @@ const statusVariant: { [key in Submission['status']]: 'default' | 'secondary' | 
 };
 
 export default function DashboardPage() {
+  const { user, userProfile } = useUser();
+  const { data: submissions, loading } = useCollection<Submission>(
+    'submissions', 
+    user ? { where: ['submitterId', '==', user.uid] } : undefined
+  );
+
+  if (loading || !userProfile) {
+    return (
+        <div className="space-y-8">
+            <div className="flex items-center justify-between">
+                <div>
+                    <Skeleton className="h-10 w-64" />
+                    <Skeleton className="h-5 w-80 mt-2" />
+                </div>
+                <Skeleton className="h-10 w-40" />
+            </div>
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-5 w-64 mt-2" />
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="flex justify-between items-center p-2">
+                                <Skeleton className="h-5 w-1/4" />
+                                <Skeleton className="h-5 w-1/4" />
+                                <Skeleton className="h-5 w-1/4" />
+                                <Skeleton className="h-5 w-1/4" />
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold font-headline">Welcome, Jane!</h1>
+          <h1 className="text-3xl font-bold font-headline">Welcome, {userProfile.name}!</h1>
           <p className="text-muted-foreground">Here's an overview of your submissions.</p>
         </div>
         <Button asChild>
@@ -58,21 +100,31 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {userSubmissions.map((submission) => (
-                <TableRow key={submission.id}>
-                  <TableCell className="font-medium">{submission.title}</TableCell>
-                  <TableCell>{submission.category}</TableCell>
-                  <TableCell>{submission.submissionDate}</TableCell>
-                  <TableCell>
-                    <Badge variant={statusVariant[submission.status]}>{submission.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                        View Details <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+              {submissions && submissions.length > 0 ? (
+                submissions.map((submission) => (
+                  <TableRow key={submission.id}>
+                    <TableCell className="font-medium">{submission.title}</TableCell>
+                    <TableCell>{submission.categoryId}</TableCell>
+                    <TableCell>
+                      {submission.createdAt ? format(new Date(submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariant[submission.status]}>{submission.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">
+                          View Details <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center h-24">
+                    You haven't made any submissions yet.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </CardContent>
