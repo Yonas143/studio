@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Gavel, List, BarChart2, Settings, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, Gavel, List, BarChart2, Settings, FileText, UserPlus } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -16,6 +16,7 @@ const navItems = [
     { href: '/admin/participants', label: 'Participants', icon: Users },
     { href: '/admin/judges', label: 'Judges', icon: Gavel },
     { href: '/admin/categories', label: 'Categories', icon: List },
+    { href: '/admin/nominees', label: 'Nominees', icon: UserPlus },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 

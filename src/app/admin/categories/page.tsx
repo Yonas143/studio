@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,19 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, PlusCircle } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -62,6 +73,23 @@ export default function AdminCategoriesPage() {
       setIsSubmitting(false);
     }
   };
+
+  const handleDelete = async (categoryId: string) => {
+    try {
+      await deleteDoc(doc(firestore, 'categories', categoryId));
+      toast({
+        title: 'Category Deleted',
+        description: 'The category has been successfully deleted.',
+      });
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Error Deleting Category',
+        description: error.message,
+      });
+    }
+  };
+
 
   return (
     <div className="space-y-8">
@@ -144,8 +172,28 @@ export default function AdminCategoriesPage() {
                   <TableRow key={category.id}>
                     <TableCell className="font-medium">{category.name}</TableCell>
                     <TableCell>{category.description}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">Edit</Button>
+                    <TableCell className="text-right space-x-2">
+                       <Button variant="ghost" size="sm" disabled>Edit</Button>
+                       <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="icon">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the
+                              "{category.name}" category.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(category.id)}>Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))
