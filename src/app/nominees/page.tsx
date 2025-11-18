@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { nominees, categories } from '@/lib/data';
-import placeholderImages from '@/lib/placeholder-images.json';
+import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import {
@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 
+const { placeholderImages } = placeholderImagesData;
 
 export default function NomineesPage({ searchParams }: { searchParams: { category?: string }}) {
   const allRegions = [...new Set(nominees.map(n => n.region))];

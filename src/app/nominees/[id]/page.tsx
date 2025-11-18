@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { nominees } from '@/lib/data';
-import placeholderImages from '@/lib/placeholder-images.json';
+import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Share2, MapPin, PlayCircle, Music, Image as ImageIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+
+const { placeholderImages } = placeholderImagesData;
 
 export default function NomineeProfilePage({ params }: { params: { id: string } }) {
   const nominee = nominees.find(n => n.id === params.id);

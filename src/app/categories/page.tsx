@@ -2,9 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { categories } from '@/lib/data';
-import placeholderImages from '@/lib/placeholder-images.json';
+import placeholderImagesData from '@/lib/placeholder-images.json';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+const { placeholderImages } = placeholderImagesData;
 
 export default function CategoriesPage() {
   return (
