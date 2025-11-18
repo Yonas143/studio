@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, type User } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import type { UserProfile } from '@/lib/types';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -20,16 +22,40 @@ export default function LoginPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  
+  const handleRedirect = async (user: User) => {
+    const userDocRef = doc(firestore, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const userProfile = userDoc.data() as UserProfile;
+      switch (userProfile.role) {
+        case 'admin':
+          router.push('/admin');
+          break;
+        case 'judge':
+          router.push('/judge');
+          break;
+        default:
+          router.push('/dashboard');
+          break;
+      }
+    } else {
+       // Default redirect if profile doesn't exist for some reason
+      router.push('/dashboard');
+    }
+  };
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       toast({ title: 'Login Successful', description: 'Welcome back!' });
-      router.push('/dashboard');
+      await handleRedirect(userCredential.user);
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -45,9 +71,9 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
       toast({ title: 'Login Successful', description: 'Welcome!' });
-      router.push('/dashboard');
+      await handleRedirect(result.user);
     } catch (error: any) {
       toast({
         variant: 'destructive',

@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, type User } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +28,20 @@ export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const handleRedirect = (userProfile: UserProfile) => {
+    switch (userProfile.role) {
+      case 'admin':
+        router.push('/admin');
+        break;
+      case 'judge':
+        router.push('/judge');
+        break;
+      default:
+        router.push('/dashboard');
+        break;
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -45,7 +59,7 @@ export default function RegisterPage() {
       await setDoc(doc(firestore, 'users', user.uid), userProfile);
 
       toast({ title: 'Account Created', description: 'Welcome to the awards!' });
-      router.push('/dashboard');
+      handleRedirect(userProfile);
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -64,16 +78,26 @@ export default function RegisterPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       
-      const userProfile: UserProfile = {
-        uid: user.uid,
-        email: user.email!,
-        name: user.displayName || 'Google User',
-        role: 'participant',
-      };
-      await setDoc(doc(firestore, 'users', user.uid), userProfile, { merge: true });
+      // Check if user profile already exists
+      const userDocRef = doc(firestore, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      let userProfile: UserProfile;
+
+      if (userDoc.exists()) {
+          userProfile = userDoc.data() as UserProfile;
+      } else {
+          userProfile = {
+            uid: user.uid,
+            email: user.email!,
+            name: user.displayName || 'Google User',
+            role: 'participant',
+          };
+          await setDoc(userDocRef, userProfile);
+      }
 
       toast({ title: 'Account Created', description: 'Welcome!' });
-      router.push('/dashboard');
+      handleRedirect(userProfile);
     } catch (error: any) {
       toast({
         variant: 'destructive',
