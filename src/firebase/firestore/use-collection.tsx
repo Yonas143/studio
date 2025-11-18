@@ -10,10 +10,14 @@ export function useCollection<T = DocumentData>(path: string, options?: { where?
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const whereString = options?.where ? JSON.stringify(options.where) : '';
+
   useEffect(() => {
+    const whereClause = whereString ? JSON.parse(whereString) : undefined;
     let q: Query | CollectionReference = collection(firestore, path);
-    if (options?.where) {
-      q = query(q, where(...options.where));
+    
+    if (whereClause) {
+      q = query(q, where(...whereClause));
     }
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -30,7 +34,8 @@ export function useCollection<T = DocumentData>(path: string, options?: { where?
     });
 
     return () => unsubscribe();
-  }, [firestore, path, options?.where]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firestore, path, whereString]);
 
   return { data, loading, error };
 }
