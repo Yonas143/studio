@@ -31,6 +31,8 @@ export default function LoginPage() {
     const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const userProfile = userDoc.data() as UserProfile;
+      // Store user role in cookie for middleware access
+      document.cookie = `user-role=${userProfile.role}; path=/; max-age=86400; SameSite=Strict`;
       switch (userProfile.role) {
         case 'admin':
           router.push('/admin');

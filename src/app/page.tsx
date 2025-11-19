@@ -11,16 +11,17 @@ import { Separator } from '@/components/ui/separator';
 import { useCollection } from '@/firebase';
 import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Leaderboard } from '@/components/voting/leaderboard';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
-  const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true]});
+  const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
   const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
 
   const heroImage = placeholderImages.find(p => p.id === 'hero-banner');
   const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
-  
+
   const loading = nomineesLoading || timelineLoading;
 
   return (
@@ -67,12 +68,12 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {loading && [...Array(4)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
-                    <Skeleton className="h-48 w-full" />
-                    <CardContent className="p-4 space-y-2">
-                        <Skeleton className="h-5 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                        <Skeleton className="h-5 w-1/3 mt-2" />
-                    </CardContent>
+                  <Skeleton className="h-48 w-full" />
+                  <CardContent className="p-4 space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-5 w-1/3 mt-2" />
+                  </CardContent>
                 </Card>
               ))}
               {featuredNominees?.map((nominee) => {
@@ -110,7 +111,15 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
+
+        <Separator />
+
+        <section id="leaderboard" className="py-12 md:py-20">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <Leaderboard maxEntries={5} />
+          </div>
+        </section>
+
         <Separator />
 
         <section id="timeline" className="py-12 md:py-20 bg-secondary">
@@ -121,19 +130,19 @@ export default function Home() {
             <div className="relative mx-auto max-w-2xl">
               <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-border"></div>
               {loading && [...Array(4)].map((_, index) => (
-                 <div key={index} className="relative mb-8 flex items-center justify-between w-full">
-                    <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
-                      <Skeleton className="h-5 w-24 ml-auto" />
-                    </div>
-                    <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-lg">
-                    </div>
-                    <div className={`order-1 w-5/12 px-4 py-3 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
-                      <Skeleton className="h-6 w-32" />
-                      <Skeleton className="h-4 w-48 mt-1" />
-                    </div>
+                <div key={index} className="relative mb-8 flex items-center justify-between w-full">
+                  <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                    <Skeleton className="h-5 w-24 ml-auto" />
                   </div>
+                  <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-lg">
+                  </div>
+                  <div className={`order-1 w-5/12 px-4 py-3 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-4 w-48 mt-1" />
+                  </div>
+                </div>
               ))}
-              {timelineEvents?.sort((a,b) => a.order - b.order).map((event, index) => (
+              {timelineEvents?.sort((a, b) => a.order - b.order).map((event, index) => (
                 <div key={index} className="relative mb-8 flex items-center justify-between w-full">
                   <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
                     <p className="font-bold text-primary">{event.date}</p>

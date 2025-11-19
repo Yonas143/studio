@@ -32,6 +32,10 @@ export default function RegisterPage() {
   const { toast } = useToast();
 
   const handleRedirect = (userProfile: UserProfile) => {
+    // Store user role in cookie for middleware access
+    document.cookie = `user-role=${userProfile.role}; path=/; max-age=86400; SameSite=Strict`;
+    document.cookie = "is-logged-in=true; path=/; max-age=86400";
+
     switch (userProfile.role) {
       case 'admin':
         router.push('/admin');
@@ -44,30 +48,30 @@ export default function RegisterPage() {
         break;
     }
   };
-  
-  const createUserProfile = (user: User, customName?: string, customRole?: 'admin' | 'participant' | 'judge') => {
-      const userProfile: UserProfile = {
-        uid: user.uid,
-        email: user.email!,
-        name: customName || user.displayName || 'New User',
-        role: customRole || 'admin',
-      };
-      
-      const userDocRef = doc(firestore, 'users', user.uid);
 
-      setDoc(userDocRef, userProfile)
-        .then(() => {
-            toast({ title: 'Account Created', description: 'Welcome!' });
-            handleRedirect(userProfile);
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: userDocRef.path,
-                operation: 'create',
-                requestResourceData: userProfile,
-            });
-            errorEmitter.emit('permission-error', permissionError);
+  const createUserProfile = (user: User, customName?: string, customRole?: 'admin' | 'participant' | 'judge') => {
+    const userProfile: UserProfile = {
+      uid: user.uid,
+      email: user.email!,
+      name: customName || user.displayName || 'New User',
+      role: customRole || 'admin',
+    };
+
+    const userDocRef = doc(firestore, 'users', user.uid);
+
+    setDoc(userDocRef, userProfile)
+      .then(() => {
+        toast({ title: 'Account Created', description: 'Welcome!' });
+        handleRedirect(userProfile);
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: userDocRef.path,
+          operation: 'create',
+          requestResourceData: userProfile,
         });
+        errorEmitter.emit('permission-error', permissionError);
+      });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -95,16 +99,16 @@ export default function RegisterPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      
+
       const userDocRef = doc(firestore, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
-          const userProfile = userDoc.data() as UserProfile;
-          toast({ title: 'Sign In Successful', description: 'Welcome back!' });
-          handleRedirect(userProfile);
+        const userProfile = userDoc.data() as UserProfile;
+        toast({ title: 'Sign In Successful', description: 'Welcome back!' });
+        handleRedirect(userProfile);
       } else {
-          createUserProfile(user);
+        createUserProfile(user);
       }
     } catch (error: any) {
       toast({
@@ -145,7 +149,7 @@ export default function RegisterPage() {
           </form>
           <Separator className="my-6" />
           <div className="space-y-4">
-             <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isGoogleLoading}>
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isGoogleLoading}>
               {isGoogleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign up with Google
             </Button>

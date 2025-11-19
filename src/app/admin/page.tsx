@@ -29,28 +29,29 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useMemo } from 'react';
+import { SeedDataButton } from '@/components/admin/seed-data-button';
 
 
 export default function AdminDashboardPage() {
-    const { data: participants, loading: participantsLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
-    const { data: judges, loading: judgesLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'judge'] });
-    const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions', { orderBy: ['createdAt', 'desc'], limit: 5 });
-    const { data: votes, loading: votesLoading } = useCollection('votes');
-    const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
+  const { data: participants, loading: participantsLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
+  const { data: judges, loading: judgesLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'judge'] });
+  const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions', { orderBy: ['createdAt', 'desc'], limit: 5 });
+  const { data: votes, loading: votesLoading } = useCollection('votes');
+  const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
 
-    const loading = participantsLoading || judgesLoading || submissionsLoading || votesLoading || categoriesLoading;
+  const loading = participantsLoading || judgesLoading || submissionsLoading || votesLoading || categoriesLoading;
 
-    const stats = [
-        { title: 'Total Participants', value: participants?.length ?? 0, icon: Users, loading },
-        { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
-        { title: 'Registered Judges', value: judges?.length ?? 0, icon: Gavel, loading },
-        { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
-    ];
+  const stats = [
+    { title: 'Total Participants', value: participants?.length ?? 0, icon: Users, loading },
+    { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
+    { title: 'Registered Judges', value: judges?.length ?? 0, icon: Gavel, loading },
+    { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
+  ];
 
-    const categoryMap = useMemo(() => {
-        if (!categories) return new Map();
-        return new Map(categories.map(c => [c.id, c.name]));
-    }, [categories]);
+  const categoryMap = useMemo(() => {
+    if (!categories) return new Map();
+    return new Map(categories.map(c => [c.id, c.name]));
+  }, [categories]);
 
 
   return (
@@ -62,77 +63,84 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-5 w-5 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                {stat.loading ? <Skeleton className="h-8 w-20" /> : (
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <div className="grid gap-6 sm:grid-cols-2">
+            {stats.map((stat) => (
+              <Card key={stat.title}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className="h-5 w-5 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  {stat.loading ? <Skeleton className="h-8 w-20" /> : (
                     <div className="text-2xl font-bold">{stat.value}</div>
-                )}
-            </CardContent>
-          </Card>
-        ))}
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        <div>
+          <SeedDataButton />
+        </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         <Card className="lg:col-span-3">
           <CardHeader>
             <div className="flex items-center justify-between">
-                <div>
-                    <CardTitle>Recent Submissions</CardTitle>
-                    <CardDescription>The latest five entries from participants.</CardDescription>
-                </div>
-                <Button asChild variant="outline">
-                    <Link href="/admin/submissions">View all submissions <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                </Button>
+              <div>
+                <CardTitle>Recent Submissions</CardTitle>
+                <CardDescription>The latest five entries from participants.</CardDescription>
+              </div>
+              <Button asChild variant="outline">
+                <Link href="/admin/submissions">View all submissions <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
             <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Status</TableHead>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  [...Array(5)].map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                      <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                     </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {loading ? (
-                        [...Array(5)].map((_, i) => (
-                            <TableRow key={i}>
-                                <TableCell><Skeleton className="h-5 w-32" /></TableCell>
-                                <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                                <TableCell><Skeleton className="h-6 w-20" /></TableCell>
-                            </TableRow>
-                        ))
-                    ): submissions && submissions.length > 0 ? (
-                        submissions.map((submission) => (
-                        <TableRow key={submission.id}>
-                            <TableCell className="font-medium">{submission.title}</TableCell>
-                            <TableCell>{categoryMap.get(submission.categoryId) || submission.categoryId}</TableCell>
-                            <TableCell>
-                               <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
-                                {submission.status}
-                               </Badge>
-                            </TableCell>
-                        </TableRow>
-                    ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={3} className="text-center h-24">No submissions yet.</TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                  ))
+                ) : submissions && submissions.length > 0 ? (
+                  submissions.map((submission) => (
+                    <TableRow key={submission.id}>
+                      <TableCell className="font-medium">{submission.title}</TableCell>
+                      <TableCell>{categoryMap.get(submission.categoryId) || submission.categoryId}</TableCell>
+                      <TableCell>
+                        <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
+                          {submission.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center h-24">No submissions yet.</TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
             </Table>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </div >
   );
 }
