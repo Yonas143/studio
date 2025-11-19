@@ -35,14 +35,16 @@ export default function AdminDashboardLayout({
     }
   }, [user, userProfile, loading, router]);
 
-  if (loading || !userProfile) {
+  if (loading || !user || !userProfile) {
     return (
       <div className="flex min-h-screen">
-        <div className="hidden md:block w-64 border-r p-4 space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
+        <div className="hidden md:block w-64 border-r p-4 space-y-4 bg-sidebar">
+            <Skeleton className="h-10 w-full bg-sidebar-accent" />
+            <div className="p-2 space-y-2">
+              <Skeleton className="h-8 w-full bg-sidebar-accent" />
+              <Skeleton className="h-8 w-full bg-sidebar-accent" />
+              <Skeleton className="h-8 w-full bg-sidebar-accent" />
+            </div>
         </div>
         <div className="flex-1 p-8 space-y-4">
             <Skeleton className="h-12 w-1/3" />
@@ -65,5 +67,5 @@ export default function AdminDashboardLayout({
     </SidebarMenu>
   );
 
-  return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || 'https://picsum.photos/seed/adminuser/100/100'}} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
+  return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`}} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
 }

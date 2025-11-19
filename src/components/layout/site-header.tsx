@@ -86,22 +86,22 @@ export function SiteHeader() {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="hidden items-center space-x-2 md:flex">
-             {user ? (
+             {user && userProfile ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                        <Avatar className="h-9 w-9">
-                          <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt={userProfile?.name || 'User'} />
-                          <AvatarFallback>{userProfile?.name.charAt(0) || 'U'}</AvatarFallback>
+                          <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt={userProfile.name} />
+                          <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{userProfile?.name}</p>
+                        <p className="text-sm font-medium leading-none">{userProfile.name}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                          {userProfile?.email}
+                          {userProfile.email}
                         </p>
                       </div>
                     </DropdownMenuLabel>
