@@ -11,6 +11,7 @@ import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 export default function AdminSubmissionsPage() {
     const { data: submissions, loading } = useCollection<Submission>('submissions');
@@ -73,7 +74,7 @@ export default function AdminSubmissionsPage() {
                                     <TableRow key={submission.id}>
                                         <TableCell className="font-medium">{submission.title}</TableCell>
                                         <TableCell>{submission.categoryId}</TableCell>
-                                        <TableCell className="font-mono text-xs">{submission.submitterId}</TableCell>
+                                        <TableCell className="font-mono text-xs">{submission.submitterId || 'Anonymous'}</TableCell>
                                         <TableCell>
                                             <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
                                                 {submission.status}
@@ -90,8 +91,10 @@ export default function AdminSubmissionsPage() {
                                                     </Button>
                                                 </>
                                             )}
-                                             <Button variant="outline" size="sm">
-                                                View <ArrowRight className="ml-2 h-4 w-4" />
+                                             <Button asChild variant="outline" size="sm">
+                                                <Link href={`/admin/submissions/${submission.id}`}>
+                                                  View <ArrowRight className="ml-2 h-4 w-4" />
+                                                </Link>
                                             </Button>
                                         </TableCell>
                                     </TableRow>

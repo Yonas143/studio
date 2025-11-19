@@ -7,6 +7,7 @@ export type NavItem = {
 };
 
 export interface UserProfile {
+  id?: string;
   uid: string;
   email: string;
   name: string;
@@ -60,4 +61,11 @@ export type TimelineEvent = {
     title: string;
     description: string;
     order: number;
+}
+
+export type Vote = {
+    id: string;
+    userId: string;
+    nomineeId: string;
+    createdAt: string;
 }
