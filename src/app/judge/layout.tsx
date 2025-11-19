@@ -46,16 +46,20 @@ export default function JudgeDashboardLayout({
       <SidebarMenuItem>
         <Link href="/judge" passHref>
           <SidebarMenuButton asChild isActive={pathname === '/judge' || pathname.startsWith('/judge/submission')}>
-            <ListChecks />
-            Assigned Submissions
+            <span>
+              <ListChecks />
+              Assigned Submissions
+            </span>
           </SidebarMenuButton>
         </Link>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <Link href="#" passHref>
           <SidebarMenuButton asChild>
-            <User />
-            Profile
+            <span>
+              <User />
+              Profile
+            </span>
           </SidebarMenuButton>
         </Link>
       </SidebarMenuItem>

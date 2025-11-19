@@ -54,8 +54,10 @@ export default function UserDashboardLayout({
         <SidebarMenuItem key={item.href}>
           <Link href={item.href} passHref>
             <SidebarMenuButton asChild isActive={pathname === item.href}>
-              <item.icon />
-              {item.label}
+              <span>
+                <item.icon />
+                {item.label}
+              </span>
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
