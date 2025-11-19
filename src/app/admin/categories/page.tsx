@@ -29,6 +29,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -54,25 +56,31 @@ export default function AdminCategoriesPage() {
     resolver: zodResolver(categorySchema),
   });
 
-  const onSubmit = async (data: CategoryFormData) => {
+  const onSubmit = (data: CategoryFormData) => {
     setIsSubmitting(true);
-    try {
-      await addDoc(collection(firestore, 'categories'), data);
-      toast({
-        title: 'Category Added',
-        description: `Successfully added the "${data.name}" category.`,
+    
+    const categoriesCollection = collection(firestore, 'categories');
+
+    addDoc(categoriesCollection, data)
+      .then(() => {
+        toast({
+          title: 'Category Added',
+          description: `Successfully added the "${data.name}" category.`,
+        });
+        reset();
+        setIsDialogOpen(false);
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: categoriesCollection.path,
+          operation: 'create',
+          requestResourceData: data,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
       });
-      reset();
-      setIsDialogOpen(false);
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error Adding Category',
-        description: error.message,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleDelete = async (categoryId: string) => {
