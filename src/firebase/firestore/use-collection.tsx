@@ -1,23 +1,29 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onSnapshot, collection, query, where, type Query, type DocumentData, type CollectionReference } from 'firebase/firestore';
+import { onSnapshot, collection, query, where, type Query, type DocumentData, type CollectionReference, orderBy, limit } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 
-export function useCollection<T = DocumentData>(path: string, options?: { where?: [string, any, any] }) {
+export function useCollection<T = DocumentData>(path: string, options?: { where?: [string, any, any], orderBy?: [string, 'asc' | 'desc'], limit?: number }) {
   const firestore = useFirestore();
   const [data, setData] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const whereString = options?.where ? JSON.stringify(options.where) : '';
+  const optionsString = options ? JSON.stringify(options) : '';
 
   useEffect(() => {
-    const whereClause = whereString ? JSON.parse(whereString) : undefined;
+    const parsedOptions = optionsString ? JSON.parse(optionsString) : {};
     let q: Query | CollectionReference = collection(firestore, path);
     
-    if (whereClause) {
-      q = query(q, where(...whereClause));
+    if (parsedOptions.where) {
+      q = query(q, where(...parsedOptions.where));
+    }
+    if (parsedOptions.orderBy) {
+      q = query(q, orderBy(...parsedOptions.orderBy));
+    }
+    if (parsedOptions.limit) {
+        q = query(q, limit(parsedOptions.limit));
     }
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -35,7 +41,7 @@ export function useCollection<T = DocumentData>(path: string, options?: { where?
 
     return () => unsubscribe();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, path, whereString]);
+  }, [firestore, path, optionsString]);
 
   return { data, loading, error };
 }

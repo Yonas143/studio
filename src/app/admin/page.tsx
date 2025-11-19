@@ -22,29 +22,35 @@ import {
   Vote,
 } from 'lucide-react';
 import { useCollection } from '@/firebase';
-import type { Submission, UserProfile } from '@/lib/types';
+import type { Submission, UserProfile, Category } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { useMemo } from 'react';
 
 
 export default function AdminDashboardPage() {
-    const { data: users, loading: usersLoading } = useCollection<UserProfile>('users');
-    const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions');
+    const { data: participants, loading: participantsLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
+    const { data: judges, loading: judgesLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'judge'] });
+    const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions', { orderBy: ['createdAt', 'desc'], limit: 5 });
     const { data: votes, loading: votesLoading } = useCollection('votes');
+    const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
 
-    const loading = usersLoading || submissionsLoading || votesLoading;
+    const loading = participantsLoading || judgesLoading || submissionsLoading || votesLoading || categoriesLoading;
 
     const stats = [
-        { title: 'Total Participants', value: users?.filter(u => u.role === 'participant').length ?? 0, icon: Users, loading },
+        { title: 'Total Participants', value: participants?.length ?? 0, icon: Users, loading },
         { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
-        { title: 'Registered Judges', value: users?.filter(u => u.role === 'judge').length ?? 0, icon: Gavel, loading },
+        { title: 'Registered Judges', value: judges?.length ?? 0, icon: Gavel, loading },
         { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
     ];
 
-    const recentSubmissions = submissions?.slice(0, 5) || [];
+    const categoryMap = useMemo(() => {
+        if (!categories) return new Map();
+        return new Map(categories.map(c => [c.id, c.name]));
+    }, [categories]);
 
 
   return (
@@ -105,11 +111,11 @@ export default function AdminDashboardPage() {
                                 <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                             </TableRow>
                         ))
-                    ): recentSubmissions.length > 0 ? (
-                        recentSubmissions.map((submission) => (
+                    ): submissions && submissions.length > 0 ? (
+                        submissions.map((submission) => (
                         <TableRow key={submission.id}>
                             <TableCell className="font-medium">{submission.title}</TableCell>
-                            <TableCell>{submission.categoryId}</TableCell>
+                            <TableCell>{categoryMap.get(submission.categoryId) || submission.categoryId}</TableCell>
                             <TableCell>
                                <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
                                 {submission.status}
