@@ -8,6 +8,7 @@ import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import Link from 'next/link';
 
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -58,10 +59,12 @@ export default function AdminDashboardLayout({
     <SidebarMenu>
         {navItems.map(item => (
              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton href={item.href} isActive={pathname === item.href}>
-                    <item.icon />
-                    {item.label}
-                </SidebarMenuButton>
+                <Link href={item.href} passHref>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                      <item.icon />
+                      {item.label}
+                  </SidebarMenuButton>
+                </Link>
             </SidebarMenuItem>
         ))}
     </SidebarMenu>

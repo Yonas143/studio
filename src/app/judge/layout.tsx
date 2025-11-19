@@ -8,6 +8,7 @@ import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 export default function JudgeDashboardLayout({
   children,
@@ -43,16 +44,20 @@ export default function JudgeDashboardLayout({
   const sidebarContent = (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton href="/judge" isActive={pathname === '/judge' || pathname.startsWith('/judge/submission')}>
-          <ListChecks />
-          Assigned Submissions
-        </SidebarMenuButton>
+        <Link href="/judge" passHref>
+          <SidebarMenuButton asChild isActive={pathname === '/judge' || pathname.startsWith('/judge/submission')}>
+            <ListChecks />
+            Assigned Submissions
+          </SidebarMenuButton>
+        </Link>
       </SidebarMenuItem>
       <SidebarMenuItem>
-        <SidebarMenuButton href="#">
-          <User />
-          Profile
-        </SidebarMenuButton>
+        <Link href="#" passHref>
+          <SidebarMenuButton asChild>
+            <User />
+            Profile
+          </SidebarMenuButton>
+        </Link>
       </SidebarMenuItem>
     </SidebarMenu>
   );
