@@ -53,7 +53,7 @@ export default function AdminNomineesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNominee, setEditingNominee] = useState<Nominee | null>(null);
-  
+
   const loading = nomineesLoading || categoriesLoading;
 
   const {
@@ -66,7 +66,7 @@ export default function AdminNomineesPage() {
   } = useForm<NomineeFormData>({
     resolver: zodResolver(nomineeSchema),
     defaultValues: {
-        featured: false,
+      featured: false,
     }
   });
 
@@ -79,7 +79,7 @@ export default function AdminNomineesPage() {
       setValue('imageId', editingNominee.imageId);
       setValue('featured', editingNominee.featured || false);
     } else {
-        reset({ name: '', category: '', region: '', bio: '', imageId: '', featured: false });
+      reset({ name: '', category: '', region: '', bio: '', imageId: '', featured: false });
     }
   }, [editingNominee, setValue, reset]);
 
@@ -88,7 +88,7 @@ export default function AdminNomineesPage() {
     setEditingNominee(nominee);
     setIsDialogOpen(true);
   };
-  
+
   const handleCloseDialog = () => {
     setEditingNominee(null);
     setIsDialogOpen(false);
@@ -98,68 +98,53 @@ export default function AdminNomineesPage() {
 
   const onSubmit = async (data: NomineeFormData) => {
     setIsSubmitting(true);
-    if(editingNominee) {
+    try {
+      if (editingNominee) {
         // Update existing nominee
         const nomineeDoc = doc(firestore, 'nominees', editingNominee.id);
-        updateDoc(nomineeDoc, data)
-        .then(() => {
-            toast({
-              title: 'Nominee Updated',
-              description: `Successfully updated "${data.name}".`,
-            });
-            handleCloseDialog();
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: nomineeDoc.path,
-                operation: 'update',
-                requestResourceData: data,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-        })
-        .finally(() => {
-            setIsSubmitting(false);
+        await updateDoc(nomineeDoc, data);
+        toast({
+          title: 'Nominee Updated',
+          description: `Successfully updated "${data.name}".`,
         });
-    } else {
+        handleCloseDialog();
+      } else {
         // Add new nominee
-        addDoc(collection(firestore, 'nominees'), { ...data, votes: 0, media: [] })
-        .then(() => {
-            toast({
-                title: 'Nominee Added',
-                description: `Successfully added "${data.name}".`,
-              });
-              handleCloseDialog();
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: 'nominees',
-                operation: 'create',
-                requestResourceData: data,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-        })
-        .finally(() => {
-            setIsSubmitting(false);
+        await addDoc(collection(firestore, 'nominees'), { ...data, votes: 0, media: [] });
+        toast({
+          title: 'Nominee Added',
+          description: `Successfully added "${data.name}".`,
         });
+        handleCloseDialog();
+      }
+    } catch (error: any) {
+      console.error('Nominee operation error:', error);
+      toast({
+        variant: 'destructive',
+        title: editingNominee ? 'Update Failed' : 'Add Failed',
+        description: error.message || 'An error occurred. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (nomineeId: string) => {
-    const nomineeDoc = doc(firestore, 'nominees', nomineeId);
-    deleteDoc(nomineeDoc)
-    .then(() => {
-         toast({
-            title: 'Nominee Deleted',
-            description: 'The nominee has been successfully deleted.',
-          });
-    })
-    .catch(async (serverError) => {
-        const permissionError = new FirestorePermissionError({
-            path: nomineeDoc.path,
-            operation: 'delete',
-        });
-        errorEmitter.emit('permission-error', permissionError);
-    });
+    try {
+      const nomineeDoc = doc(firestore, 'nominees', nomineeId);
+      await deleteDoc(nomineeDoc);
+      toast({
+        title: 'Nominee Deleted',
+        description: 'The nominee has been successfully deleted.',
+      });
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Delete Failed',
+        description: error.message || 'Failed to delete nominee. Please try again.',
+      });
+    }
   };
 
   return (
@@ -170,11 +155,11 @@ export default function AdminNomineesPage() {
           <p className="text-muted-foreground">Add, edit, or remove award nominees.</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-             if (!isOpen) handleCloseDialog();
-             else setIsDialogOpen(true);
+          if (!isOpen) handleCloseDialog();
+          else setIsDialogOpen(true);
         }}>
           <DialogTrigger asChild>
-             <Button onClick={() => handleOpenDialog()}>
+            <Button onClick={() => handleOpenDialog()}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add New Nominee
             </Button>
           </DialogTrigger>
@@ -188,7 +173,7 @@ export default function AdminNomineesPage() {
                 <Input id="name" {...register('name')} placeholder="e.g., Aster Aweke" />
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
-               <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
                 <Controller
                   name="category"
@@ -222,21 +207,21 @@ export default function AdminNomineesPage() {
                 <Label htmlFor="imageId">Placeholder Image ID</Label>
                 <Input id="imageId" {...register('imageId')} placeholder="e.g., nominee-1" />
                 {errors.imageId && <p className="text-sm text-destructive">{errors.imageId.message}</p>}
-                 <p className="text-xs text-muted-foreground">
-                    Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
+                <p className="text-xs text-muted-foreground">
+                  Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
                 </p>
               </div>
-               <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
                 <Controller
-                    name="featured"
-                    control={control}
-                    render={({ field }) => (
-                         <Checkbox
-                            id="featured"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                        />
-                    )}
+                  name="featured"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="featured"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
                 />
                 <Label htmlFor="featured">Feature this nominee on the homepage</Label>
               </div>

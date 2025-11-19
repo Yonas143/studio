@@ -43,37 +43,55 @@ export default function SubmitPage() {
   });
 
   const onSubmit = async (data: SubmissionFormData) => {
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Required',
+        description: 'Please log in to submit your work.',
+      });
+      router.push('/login');
+      return;
+    }
+
     setIsSubmitting(true);
     let mediaUrl = '';
-    
+
     try {
-      if (data.submissionFile) {
-        const uniqueFileName = `${Date.now()}-${data.submissionFile.name}`;
-        const fileRef = ref(storage, `submissions/${user ? user.uid : 'anonymous'}/${uniqueFileName}`);
-        const snapshot = await uploadBytes(fileRef, data.submissionFile);
-        mediaUrl = await getDownloadURL(snapshot.ref);
+      // Only upload file if one was selected
+      if (data.submissionFile && data.submissionFile.size > 0) {
+        try {
+          const uniqueFileName = `${Date.now()}-${data.submissionFile.name}`;
+          const fileRef = ref(storage, `submissions/${user.uid}/${uniqueFileName}`);
+          const snapshot = await uploadBytes(fileRef, data.submissionFile);
+          mediaUrl = await getDownloadURL(snapshot.ref);
+        } catch (uploadError: any) {
+          console.error('File upload error:', uploadError);
+          toast({
+            variant: 'destructive',
+            title: 'File Upload Failed',
+            description: 'Submission will be created without the file. Error: ' + uploadError.message,
+          });
+        }
       }
-      
+
       const submissionData: any = {
         title: data.title,
         categoryId: data.categoryId,
         culturalRelevance: data.culturalRelevance,
-        mediaUrl: mediaUrl,
+        mediaUrl: mediaUrl || '',
         status: 'Pending',
+        submitterId: user.uid,
         createdAt: serverTimestamp(),
       };
 
-      if (user) {
-        submissionData.submitterId = user.uid;
-      }
-      
       await addDoc(collection(firestore, 'submissions'), submissionData);
-      
+
       toast({ title: 'Submission Successful', description: 'Your work has been submitted for review.' });
       router.push('/dashboard');
-      
+
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Submission Failed', description: error.message });
+      console.error('Submission error:', error);
+      toast({ variant: 'destructive', title: 'Submission Failed', description: error.message || 'An error occurred while submitting your work.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -81,89 +99,95 @@ export default function SubmitPage() {
 
   return (
     <div className="bg-secondary">
-        <div className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
-            <Card>
-                <CardHeader className="text-center">
-                    <CardTitle className="font-headline text-3xl md:text-4xl">Submit Your Work</CardTitle>
-                    <CardDescription className="text-lg">Share your cultural expression with Ethiopia and the world.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="title" className="text-base">Submission Title</Label>
-                            <Input id="title" placeholder="e.g., 'The Soul of the Krar'" {...register('title')} />
-                            {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-                        </div>
+      <div className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="font-headline text-3xl md:text-4xl">Submit Your Work</CardTitle>
+            <CardDescription className="text-lg">Share your cultural expression with Ethiopia and the world.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-base">Submission Title</Label>
+                <Input id="title" placeholder="e.g., 'The Soul of the Krar'" {...register('title')} />
+                {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
+              </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="category" className="text-base">Category</Label>
-                            <Controller
-                              name="categoryId"
-                              control={control}
-                              render={({ field }) => (
-                                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={categoriesLoading}>
-                                  <SelectTrigger id="category">
-                                    <SelectValue placeholder="Select a category" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {categories?.map(cat => (
-                                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            {errors.categoryId && <p className="text-sm text-destructive">{errors.categoryId.message}</p>}
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="cultural-relevance" className="text-base">Cultural Relevance</Label>
-                          <Textarea 
-                            id="cultural-relevance" 
-                            placeholder="Explain the cultural significance of your submission. What traditions, stories, or values does it represent?"
-                            rows={5}
-                            {...register('culturalRelevance')}
-                          />
-                           {errors.culturalRelevance && <p className="text-sm text-destructive">{errors.culturalRelevance.message}</p>}
-                        </div>
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-base">Category</Label>
+                <Controller
+                  name="categoryId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={categoriesLoading}>
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories && categories.length > 0 ? (
+                          categories.map(cat => (
+                            <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                          ))
+                        ) : (
+                          <div className="p-2 text-sm text-muted-foreground">
+                            No categories available. Please contact an administrator.
+                          </div>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.categoryId && <p className="text-sm text-destructive">{errors.categoryId.message}</p>}
+              </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="submission-file" className="text-base">Upload Your Submission (Optional)</Label>
-                            <div className="flex items-center justify-center w-full">
-                                <label htmlFor="submission-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-border border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                        <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
-                                        {fileName ? (
-                                          <p className="font-semibold text-primary">{fileName}</p>
-                                        ) : (
-                                          <>
-                                            <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                                            <p className="text-xs text-muted-foreground">Video, Audio, Text, or Images</p>
-                                          </>
-                                        )}
-                                    </div>
-                                    <input 
-                                      id="submission-file" 
-                                      type="file" 
-                                      className="hidden" 
-                                      {...register('submissionFile', {
-                                        onChange: (e) => setFileName(e.target.files?.[0]?.name || '')
-                                      })}
-                                    />
-                                </label>
-                            </div> 
-                        </div>
+              <div className="space-y-2">
+                <Label htmlFor="cultural-relevance" className="text-base">Cultural Relevance</Label>
+                <Textarea
+                  id="cultural-relevance"
+                  placeholder="Explain the cultural significance of your submission. What traditions, stories, or values does it represent?"
+                  rows={5}
+                  {...register('culturalRelevance')}
+                />
+                {errors.culturalRelevance && <p className="text-sm text-destructive">{errors.culturalRelevance.message}</p>}
+              </div>
 
-                        <div className="text-center pt-4">
-                            <Button type="submit" size="lg" className="w-full md:w-auto font-bold" disabled={isSubmitting}>
-                                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Submit for Review
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="submission-file" className="text-base">Upload Your Submission (Optional)</Label>
+                <div className="flex items-center justify-center w-full">
+                  <label htmlFor="submission-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-border border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
+                      {fileName ? (
+                        <p className="font-semibold text-primary">{fileName}</p>
+                      ) : (
+                        <>
+                          <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                          <p className="text-xs text-muted-foreground">Video, Audio, Text, or Images</p>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      id="submission-file"
+                      type="file"
+                      className="hidden"
+                      {...register('submissionFile', {
+                        onChange: (e) => setFileName(e.target.files?.[0]?.name || '')
+                      })}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="text-center pt-4">
+                <Button type="submit" size="lg" className="w-full md:w-auto font-bold" disabled={isSubmitting}>
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Submit for Review
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
