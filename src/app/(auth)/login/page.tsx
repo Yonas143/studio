@@ -25,7 +25,7 @@ export default function LoginPage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
-  
+
   const handleRedirect = async (user: User) => {
     const userDocRef = doc(firestore, 'users', user.uid);
     const userDoc = await getDoc(userDocRef);
@@ -43,7 +43,7 @@ export default function LoginPage() {
           break;
       }
     } else {
-       // Default redirect if profile doesn't exist for some reason
+      // Default redirect if profile doesn't exist for some reason
       router.push('/dashboard');
     }
   };
@@ -55,6 +55,7 @@ export default function LoginPage() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       toast({ title: 'Login Successful', description: 'Welcome back!' });
+      document.cookie = "is-logged-in=true; path=/; max-age=86400";
       await handleRedirect(userCredential.user);
     } catch (error: any) {
       toast({
@@ -66,13 +67,14 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-  
+
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       toast({ title: 'Login Successful', description: 'Welcome!' });
+      document.cookie = "is-logged-in=true; path=/; max-age=86400";
       await handleRedirect(result.user);
     } catch (error: any) {
       toast({
