@@ -1,12 +1,11 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -46,34 +45,58 @@ export default function AdminCategoriesPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
   });
 
+  useEffect(() => {
+    if (editingCategory) {
+      setValue('name', editingCategory.name);
+      setValue('description', editingCategory.description);
+      setValue('imageId', editingCategory.imageId);
+    } else {
+      reset();
+    }
+  }, [editingCategory, setValue, reset]);
+
+
+  const handleOpenDialog = (category: Category | null = null) => {
+    setEditingCategory(category);
+    setIsDialogOpen(true);
+  };
+  
+  const handleCloseDialog = () => {
+    setEditingCategory(null);
+    setIsDialogOpen(false);
+    reset();
+  }
+
   const onSubmit = (data: CategoryFormData) => {
     setIsSubmitting(true);
     
-    const categoriesCollection = collection(firestore, 'categories');
-
-    addDoc(categoriesCollection, data)
+    if (editingCategory) {
+      // Update existing category
+      const categoryDoc = doc(firestore, 'categories', editingCategory.id);
+      updateDoc(categoryDoc, data)
       .then(() => {
         toast({
-          title: 'Category Added',
-          description: `Successfully added the "${data.name}" category.`,
+          title: 'Category Updated',
+          description: `Successfully updated the "${data.name}" category.`,
         });
-        reset();
-        setIsDialogOpen(false);
+        handleCloseDialog();
       })
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
-          path: categoriesCollection.path,
-          operation: 'create',
+          path: categoryDoc.path,
+          operation: 'update',
           requestResourceData: data,
         });
         errorEmitter.emit('permission-error', permissionError);
@@ -81,22 +104,47 @@ export default function AdminCategoriesPage() {
       .finally(() => {
         setIsSubmitting(false);
       });
+    } else {
+      // Add new category
+      const categoriesCollection = collection(firestore, 'categories');
+      addDoc(categoriesCollection, data)
+        .then(() => {
+          toast({
+            title: 'Category Added',
+            description: `Successfully added the "${data.name}" category.`,
+          });
+          handleCloseDialog();
+        })
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: categoriesCollection.path,
+            operation: 'create',
+            requestResourceData: data,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+        });
+    }
   };
 
   const handleDelete = async (categoryId: string) => {
-    try {
-      await deleteDoc(doc(firestore, 'categories', categoryId));
-      toast({
-        title: 'Category Deleted',
-        description: 'The category has been successfully deleted.',
-      });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error Deleting Category',
-        description: error.message,
-      });
-    }
+    const categoryRef = doc(firestore, 'categories', categoryId);
+    deleteDoc(categoryRef)
+        .then(() => {
+             toast({
+                title: 'Category Deleted',
+                description: 'The category has been successfully deleted.',
+            });
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: categoryRef.path,
+                operation: 'delete',
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        });
   };
 
 
@@ -107,15 +155,18 @@ export default function AdminCategoriesPage() {
           <h1 className="text-3xl font-bold font-headline">Manage Categories</h1>
           <p className="text-muted-foreground">Add, edit, or remove award categories.</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+            if (!isOpen) handleCloseDialog();
+            else setIsDialogOpen(true);
+        }}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={() => handleOpenDialog()}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add New Category
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add a New Category</DialogTitle>
+              <DialogTitle>{editingCategory ? 'Edit Category' : 'Add a New Category'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
@@ -139,7 +190,7 @@ export default function AdminCategoriesPage() {
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Add Category
+                  {editingCategory ? 'Save Changes' : 'Add Category'}
                 </Button>
               </div>
             </form>
@@ -182,7 +233,9 @@ export default function AdminCategoriesPage() {
                     <TableCell className="font-medium">{category.name}</TableCell>
                     <TableCell>{category.description}</TableCell>
                     <TableCell className="text-right space-x-2">
-                       <Button variant="ghost" size="sm" disabled>Edit</Button>
+                       <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(category)}>
+                         <Edit className="h-4 w-4" />
+                       </Button>
                        <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="icon">

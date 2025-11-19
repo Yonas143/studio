@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCollection, useFirestore } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Nominee, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -30,6 +30,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 
 const nomineeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -49,6 +52,7 @@ export default function AdminNomineesPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingNominee, setEditingNominee] = useState<Nominee | null>(null);
   
   const loading = nomineesLoading || categoriesLoading;
 
@@ -57,6 +61,7 @@ export default function AdminNomineesPage() {
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm<NomineeFormData>({
     resolver: zodResolver(nomineeSchema),
@@ -65,41 +70,96 @@ export default function AdminNomineesPage() {
     }
   });
 
+  useEffect(() => {
+    if (editingNominee) {
+      setValue('name', editingNominee.name);
+      setValue('category', editingNominee.category);
+      setValue('region', editingNominee.region);
+      setValue('bio', editingNominee.bio);
+      setValue('imageId', editingNominee.imageId);
+      setValue('featured', editingNominee.featured || false);
+    } else {
+        reset({ name: '', category: '', region: '', bio: '', imageId: '', featured: false });
+    }
+  }, [editingNominee, setValue, reset]);
+
+
+  const handleOpenDialog = (nominee: Nominee | null = null) => {
+    setEditingNominee(nominee);
+    setIsDialogOpen(true);
+  };
+  
+  const handleCloseDialog = () => {
+    setEditingNominee(null);
+    setIsDialogOpen(false);
+    reset();
+  }
+
+
   const onSubmit = async (data: NomineeFormData) => {
     setIsSubmitting(true);
-    try {
-      await addDoc(collection(firestore, 'nominees'), { ...data, votes: 0, media: [] });
-      toast({
-        title: 'Nominee Added',
-        description: `Successfully added "${data.name}".`,
-      });
-      reset();
-      setIsDialogOpen(false);
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error Adding Nominee',
-        description: error.message,
-      });
-    } finally {
-      setIsSubmitting(false);
+    if(editingNominee) {
+        // Update existing nominee
+        const nomineeDoc = doc(firestore, 'nominees', editingNominee.id);
+        updateDoc(nomineeDoc, data)
+        .then(() => {
+            toast({
+              title: 'Nominee Updated',
+              description: `Successfully updated "${data.name}".`,
+            });
+            handleCloseDialog();
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: nomineeDoc.path,
+                operation: 'update',
+                requestResourceData: data,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        })
+        .finally(() => {
+            setIsSubmitting(false);
+        });
+    } else {
+        // Add new nominee
+        addDoc(collection(firestore, 'nominees'), { ...data, votes: 0, media: [] })
+        .then(() => {
+            toast({
+                title: 'Nominee Added',
+                description: `Successfully added "${data.name}".`,
+              });
+              handleCloseDialog();
+        })
+        .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: 'nominees',
+                operation: 'create',
+                requestResourceData: data,
+            });
+            errorEmitter.emit('permission-error', permissionError);
+        })
+        .finally(() => {
+            setIsSubmitting(false);
+        });
     }
   };
 
   const handleDelete = async (nomineeId: string) => {
-    try {
-      await deleteDoc(doc(firestore, 'nominees', nomineeId));
-      toast({
-        title: 'Nominee Deleted',
-        description: 'The nominee has been successfully deleted.',
-      });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error Deleting Nominee',
-        description: error.message,
-      });
-    }
+    const nomineeDoc = doc(firestore, 'nominees', nomineeId);
+    deleteDoc(nomineeDoc)
+    .then(() => {
+         toast({
+            title: 'Nominee Deleted',
+            description: 'The nominee has been successfully deleted.',
+          });
+    })
+    .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+            path: nomineeDoc.path,
+            operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+    });
   };
 
   return (
@@ -109,15 +169,18 @@ export default function AdminNomineesPage() {
           <h1 className="text-3xl font-bold font-headline">Manage Nominees</h1>
           <p className="text-muted-foreground">Add, edit, or remove award nominees.</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
+             if (!isOpen) handleCloseDialog();
+             else setIsDialogOpen(true);
+        }}>
           <DialogTrigger asChild>
-            <Button>
+             <Button onClick={() => handleOpenDialog()}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add New Nominee
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Add a New Nominee</DialogTitle>
+              <DialogTitle>{editingNominee ? 'Edit Nominee' : 'Add a New Nominee'}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
@@ -131,7 +194,7 @@ export default function AdminNomineesPage() {
                   name="category"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={categoriesLoading}>
+                    <Select onValueChange={field.onChange} value={field.value} disabled={categoriesLoading}>
                       <SelectTrigger id="category">
                         <SelectValue placeholder="Select a category..." />
                       </SelectTrigger>
@@ -180,7 +243,7 @@ export default function AdminNomineesPage() {
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Add Nominee
+                  {editingNominee ? 'Save Changes' : 'Add Nominee'}
                 </Button>
               </div>
             </form>
@@ -223,7 +286,9 @@ export default function AdminNomineesPage() {
                     <TableCell>{nominee.region}</TableCell>
                     <TableCell>{nominee.featured ? 'Yes' : 'No'}</TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant="ghost" size="sm" disabled>Edit</Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(nominee)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="icon">
