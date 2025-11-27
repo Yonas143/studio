@@ -11,7 +11,7 @@ export interface UserProfile {
   uid: string;
   email: string;
   name: string;
-  role: 'participant' | 'judge' | 'admin';
+  role: 'participant' | 'admin';
 }
 
 export type Category = {
@@ -52,10 +52,7 @@ export type Submission = {
   createdAt: string; // Should be handled as a server timestamp
 };
 
-export type JudgeSubmission = Submission & {
-  nomineeName?: string; // This might need to be resolved via submitterId
-  status: 'Pending' | 'Scored' | 'Feedback Provided';
-};
+
 
 export type TimelineEvent = {
   id: string;

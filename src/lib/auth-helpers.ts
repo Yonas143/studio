@@ -28,7 +28,7 @@ export async function getUserProfile(
 export async function hasRole(
     firestore: Firestore,
     uid: string,
-    role: 'admin' | 'judge' | 'participant'
+    role: 'admin' | 'participant'
 ): Promise<boolean> {
     const profile = await getUserProfile(firestore, uid);
     return profile?.role === role;
@@ -41,12 +41,7 @@ export async function isAdmin(firestore: Firestore, uid: string): Promise<boolea
     return hasRole(firestore, uid, 'admin');
 }
 
-/**
- * Check if user is a judge
- */
-export async function isJudge(firestore: Firestore, uid: string): Promise<boolean> {
-    return hasRole(firestore, uid, 'judge');
-}
+
 
 /**
  * Check if user is a participant
@@ -75,13 +70,4 @@ export async function requireAdmin(firestore: Firestore, user: User | null): Pro
     }
 }
 
-/**
- * Require judge role - throws error if user is not a judge
- */
-export async function requireJudge(firestore: Firestore, user: User | null): Promise<void> {
-    requireAuth(user);
-    const isUserJudge = await isJudge(firestore, user.uid);
-    if (!isUserJudge) {
-        throw new Error('Judge access required');
-    }
-}
+

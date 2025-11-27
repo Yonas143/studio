@@ -124,7 +124,7 @@ export async function verifyAuthToken(request: NextRequest): Promise<DecodedIdTo
  */
 export async function verifyRole(
     decodedToken: DecodedIdToken,
-    requiredRole: 'admin' | 'judge' | 'participant'
+    requiredRole: 'admin' | 'participant'
 ): Promise<void> {
     const userRole = decodedToken.role as string | undefined;
 
@@ -134,11 +134,6 @@ export async function verifyRole(
 
     // Admin can access everything
     if (userRole === 'admin') {
-        return;
-    }
-
-    // Judge can access judge endpoints
-    if (requiredRole === 'judge' && userRole === 'judge') {
         return;
     }
 

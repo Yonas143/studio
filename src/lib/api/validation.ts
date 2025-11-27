@@ -45,7 +45,7 @@ export const updateCategorySchema = createCategorySchema.partial();
 
 // User schemas
 export const updateUserRoleSchema = z.object({
-    role: z.enum(['participant', 'judge', 'admin']),
+    role: z.enum(['participant', 'admin']),
 });
 
 // Query parameter schemas
