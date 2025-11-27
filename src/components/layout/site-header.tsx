@@ -29,7 +29,7 @@ const mainNav: NavItem[] = [
   { title: 'Nominees', href: '/nominees' },
   { title: 'Submit', href: '/submit' },
   
-  { title: 'Cultural insight', href: '/Culturalinsight' },
+  { title: 'Cultural Insight', href: '/cultural-insight' },
   { title: 'About', href: '/about' },
 ];
 
