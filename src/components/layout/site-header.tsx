@@ -24,10 +24,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 
 const mainNav: NavItem[] = [
-  { title: 'About', href: '/about' },
+  
   { title: 'Categories', href: '/categories' },
   { title: 'Nominees', href: '/nominees' },
   { title: 'Submit', href: '/submit' },
+  { title: 'About', href: '/about' },
   { title: 'Cultural insight', href: '/Culturalinsight' },
 ];
 
