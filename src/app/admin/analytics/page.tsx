@@ -28,76 +28,91 @@ export default function AdminAnalyticsPage() {
 
     const categoryVotes: { [categoryId: string]: number } = {};
     const categoryIdToName: { [categoryId: string]: string } = {};
-    
+
     categories.forEach(c => categoryIdToName[c.id] = c.name);
 
     votes.forEach(vote => {
-        const nominee = nominees.find(n => n.id === vote.nomineeId);
-        if (nominee) {
-            const categoryName = nominee.category;
-            if (!categoryVotes[categoryName]) {
-                categoryVotes[categoryName] = 0;
-            }
-            categoryVotes[categoryName]++;
+      const nominee = nominees.find(n => n.id === vote.nomineeId);
+      if (nominee) {
+        const categoryName = nominee.category;
+        if (!categoryVotes[categoryName]) {
+          categoryVotes[categoryName] = 0;
         }
+        categoryVotes[categoryName]++;
+      }
     });
 
     return Object.entries(categoryVotes).map(([category, votes]) => ({
-        category,
-        votes
+      category,
+      votes
     }));
-    
+
   }, [nominees, votes, categories]);
-  
+
   const votesOverTime = useMemo(() => {
     if (!votes) return [];
-    
+
     const votesByDay: { [date: string]: number } = {};
 
     votes.forEach(vote => {
       if (vote.createdAt) {
-        const date = format(startOfDay(new Date(vote.createdAt)), 'MM/dd');
-        if (!votesByDay[date]) {
-          votesByDay[date] = 0;
+        try {
+          // Handle both Firestore Timestamp and string dates
+          let dateObj: Date;
+          if (typeof vote.createdAt === 'string') {
+            dateObj = new Date(vote.createdAt);
+          } else if (vote.createdAt && typeof vote.createdAt === 'object' && 'toDate' in vote.createdAt) {
+            // Firestore Timestamp object
+            dateObj = (vote.createdAt as any).toDate();
+          } else {
+            dateObj = new Date(vote.createdAt);
+          }
+
+          const date = format(startOfDay(dateObj), 'MM/dd');
+          if (!votesByDay[date]) {
+            votesByDay[date] = 0;
+          }
+          votesByDay[date]++;
+        } catch (error) {
+          console.error('Error parsing vote date:', error);
         }
-        votesByDay[date]++;
       }
     });
-    
+
     return Object.entries(votesByDay)
-        .map(([date, count]) => ({ date, votes: count }))
-        .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      .map(([date, count]) => ({ date, votes: count }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   }, [votes]);
 
   if (loading) {
     return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold font-headline">Analytics</h1>
-                <p className="text-muted-foreground">
-                Insights into votes, participants, and engagement.
-                </p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Votes by Category</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Skeleton className="h-[300px] w-full" />
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Votes Over Time</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Skeleton className="h-[300px] w-full" />
-                    </CardContent>
-                </Card>
-            </div>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold font-headline">Analytics</h1>
+          <p className="text-muted-foreground">
+            Insights into votes, participants, and engagement.
+          </p>
         </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Votes by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[300px] w-full" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Votes Over Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-[300px] w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     )
   }
 
@@ -146,7 +161,7 @@ export default function AdminAnalyticsPage() {
                   axisLine={false}
                   tickMargin={8}
                 />
-                 <YAxis />
+                <YAxis />
                 <Tooltip cursor={false} content={<ChartTooltipContent />} />
                 <Line
                   dataKey="votes"
