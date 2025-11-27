@@ -49,32 +49,35 @@ export default function NomineesPage() {
     }
 
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(n => n.category.toLowerCase().replace(/\s/g, '-') === selectedCategory);
+      const category = categories?.find(c => c.id === selectedCategory);
+      if (category) {
+        filtered = filtered.filter(n => n.category === category.name);
+      }
     }
-    
+
     if (selectedRegion !== 'all') {
       filtered = filtered.filter(n => n.region === selectedRegion);
     }
-    
+
     // sorting logic can be added here based on `sortMethod`
     if (sortMethod === 'trending') {
-        filtered.sort((a,b) => (b.votes || 0) - (a.votes || 0));
-    } else if(sortMethod === 'newest') {
-        // Assuming createdAt field exists. If not, this needs adjustment.
-        // filtered.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+    } else if (sortMethod === 'newest') {
+      // Assuming createdAt field exists. If not, this needs adjustment.
+      // filtered.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
     }
 
 
     return filtered;
-  }, [nominees, searchTerm, selectedCategory, selectedRegion, sortMethod]);
-  
+  }, [nominees, searchTerm, selectedCategory, selectedRegion, sortMethod, categories]);
+
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
     const params = new URLSearchParams(searchParams.toString());
     if (value === 'all') {
-        params.delete('category');
+      params.delete('category');
     } else {
-        params.set('category', value);
+      params.set('category', value);
     }
     router.push(`/nominees?${params.toString()}`);
   }
@@ -95,54 +98,54 @@ export default function NomineesPage() {
 
       <Card className="mb-8 p-4 bg-secondary">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search nominees..." className="pl-10" onChange={e => setSearchTerm(e.target.value)} />
-            </div>
-            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Filter by Category" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories?.map(cat => (
-                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Filter by Region" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">All Regions</SelectItem>
-                    {allRegions.map(region => (
-                         <SelectItem key={region} value={region}>{region}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            <Select value={sortMethod} onValueChange={setSortMethod}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="trending">Trending</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
-                </SelectContent>
-            </Select>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input placeholder="Search nominees..." className="pl-10" onChange={e => setSearchTerm(e.target.value)} />
+          </div>
+          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories?.map(cat => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Region" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Regions</SelectItem>
+              {allRegions.map(region => (
+                <SelectItem key={region} value={region}>{region}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={sortMethod} onValueChange={setSortMethod}>
+            <SelectTrigger>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="trending">Trending</SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </Card>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {loading && [...Array(8)].map((_, i) => (
-            <Card key={i} className="overflow-hidden">
-                <Skeleton className="h-60 w-full" />
-                <CardContent className="p-4 space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-5 w-1/3 mt-2" />
-                </CardContent>
-            </Card>
+          <Card key={i} className="overflow-hidden">
+            <Skeleton className="h-60 w-full" />
+            <CardContent className="p-4 space-y-2">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-5 w-1/3 mt-2" />
+            </CardContent>
+          </Card>
         ))}
         {filteredNominees?.map((nominee) => {
           const nomineeImage = placeholderImages.find(p => p.id === nominee.imageId);
@@ -150,7 +153,14 @@ export default function NomineesPage() {
             <Card key={nominee.id} className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader className="p-0">
                 <div className="relative h-60 w-full">
-                  {nomineeImage && (
+                  {nominee.imageUrl ? (
+                    <Image
+                      src={nominee.imageUrl}
+                      alt={`Photo of ${nominee.name}`}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                    />
+                  ) : nomineeImage ? (
                     <Image
                       src={nomineeImage.imageUrl}
                       alt={`Photo of ${nominee.name}`}
@@ -158,7 +168,7 @@ export default function NomineesPage() {
                       className="object-cover transition-transform group-hover:scale-105"
                       data-ai-hint={nomineeImage.imageHint}
                     />
-                  )}
+                  ) : null}
                 </div>
               </CardHeader>
               <CardContent className="p-4">
