@@ -1,4 +1,4 @@
-'''use client';
+'use client';
 
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
@@ -75,4 +75,3 @@ export default function AdminDashboardLayout({
 
   return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`}} sidebarContent={sidebarContent}><FirebaseErrorListener />{children}</DashboardLayout>;
 }
-'''
