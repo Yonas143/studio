@@ -1,13 +1,10 @@
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
-  apiKey: "AIzaSyBrTKwKOsDFs9__A4dk3zDMoV8qX0CqrnY",
-  authDomain: "switch-9675b.firebaseapp.com",
-  databaseURL: "https://switch-9675b.firebaseio.com",
-  projectId: "switch-9675b",
-  storageBucket: "switch-9675b.firebasestorage.app",
-  messagingSenderId: "964507862245",
-  appId: "1:964507862245:web:6ba3f111775fd25023400c",
-  measurementId: "G-NWMV0J5BGK"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
