@@ -283,7 +283,28 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">About ABN Studio</h2>
                         <p className="mt-6 text-lg text-muted-foreground">
-                            ABN Studio is Ethiopia's creative powerhouse — a media and cultural hub that promotes youth talent, strengthens artistic identity, and blends heritage with digital innovation. As a sister platform to ABN Magazine & Africa for Africans, the studio offers professional exposure, production quality and global creative reach.
+                            ABN Studio is a leading creative hub in Ethiopia, dedicated to empowering
+                            youth, promoting cultural excellence, and fostering innovation across the arts.
+                            As a sister company of Abyssinia Business Network (ABN) Magazine and
+                            Africa for Africans, ABN Studio leverages a strong media and cultural
+                            network to provide artists, performers, writers, and innovators with
+                            opportunities to showcase their talents, develop professionally, and reach
+                            national and international audiences.
+                            The studio operates with the highest standards of professionalism, ensuring all
+                            creative projects meet international benchmarks in production quality, digital
+                            media, and cultural presentation. ABN Studio specializes in a wide range of
+                            services, including:
+
+
+
+
+
+                            Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
+                            studio blends traditional Ethiopian heritage with modern digital technologies,
+                            creating platforms that celebrate culture, encourage innovation, and amplify
+                            the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
+                            cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
+                            Ethiopia’s rich artistic legacy.
                         </p>
                     </div>
                 </div>

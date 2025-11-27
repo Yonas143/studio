@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <Logo className="h-8 w-8 text-primary" />
-              <span className="font-headline text-xl font-bold">ABN Awards</span>
+              <span className="font-headline text-xl font-bold">Cultural Ambassador Award</span>
             </Link>
             <p className="text-sm">
               Celebrating Ethiopian Cultural Excellence.
@@ -44,15 +44,14 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2">
               <li><Link href="/privacy" className="text-sm hover:text-primary">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-sm hover:text-primary">Terms of Service</Link></li>
-              <li><Link href="/rules" className="text-sm hover:text-primary">Voting Rules</Link></li>
+
             </ul>
           </div>
           <div>
             <h3 className="font-headline font-semibold">Connect</h3>
             <ul className="mt-4 space-y-2">
               <li><Link href="/contact" className="text-sm hover:text-primary">Contact</Link></li>
-              <li><Link href="/sponsors" className="text-sm hover:text-primary">Sponsorship</Link></li>
-              <li><Link href="/press" className="text-sm hover:text-primary">Press Kit</Link></li>
+
             </ul>
           </div>
         </div>
