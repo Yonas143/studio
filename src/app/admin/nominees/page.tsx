@@ -211,7 +211,7 @@ export default function AdminNomineesPage() {
               </div>
               <div className="space-y-2">
                 <Label>Nominee Image</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="imageUrl" className="text-xs text-muted-foreground">Upload Image</Label>
                     <Controller
@@ -224,13 +224,7 @@ export default function AdminNomineesPage() {
                         />
                       )}
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="imageId" className="text-xs text-muted-foreground">Or use Placeholder ID</Label>
-                    <Input id="imageId" {...register('imageId')} placeholder="e.g., nominee-1" />
-                    <p className="text-xs text-muted-foreground">
-                      Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
-                    </p>
+                    <input type="hidden" {...register('imageId')} />
                   </div>
                 </div>
                 {errors.imageUrl && <p className="text-sm text-destructive">{errors.imageUrl.message}</p>}
