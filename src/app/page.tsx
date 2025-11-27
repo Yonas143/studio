@@ -4,12 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import placeholderImagesData from '@/lib/placeholder-images.json';
-import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
+import { ArrowRight, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useCollection } from '@/firebase';
-import type { Nominee, TimelineEvent } from '@/lib/types';
+import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
 import {
@@ -63,11 +63,10 @@ const timelineData = [
 
 export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
-  const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
 
   const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
 
-  const loading = nomineesLoading || timelineLoading;
+  const loading = nomineesLoading;
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -145,28 +144,33 @@ export default function Home() {
             </div>
             <div className="relative mx-auto max-w-3xl">
               <div className="absolute left-1/2 top-4 h-full w-0.5 -translate-x-1/2 bg-border"></div>
-              {timelineData.map((item, index) => (
-                <div
-                  key={index}
-                  className={`relative mb-12 flex w-full items-center ${index % 2 === 0 ? "justify-start" : "justify-end"}`}>
-                  <div className={`w-1/2 ${index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"}`}>
-                    <Card className="transition-all hover:shadow-xl hover:scale-105">
-                      <CardHeader>
-                        <p className="font-bold text-primary">Months {item.months}</p>
-                        <CardTitle className="font-headline text-xl">{item.title.split('— ')[1]}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-1.5 text-sm text-muted-foreground">
-                          {item.points.map((point, i) => (
-                            <li key={i}>{point}</li>
-                          ))}
-                        </ul>
-                      </CardContent>
-                    </Card>
+              {timelineData.map((item, index) => {
+                const titleParts = item.title.split('— ');
+                const displayTitle = titleParts.length > 1 ? titleParts[1] : item.title;
+
+                return (
+                  <div
+                    key={index}
+                    className={`relative mb-12 flex w-full items-center ${index % 2 === 0 ? "justify-start" : "justify-end"}`}>
+                    <div className={`w-1/2 ${index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"}`}>
+                      <Card className="transition-all hover:shadow-xl hover:scale-105">
+                        <CardHeader>
+                          <p className="font-bold text-primary">Months {item.months}</p>
+                          <CardTitle className="font-headline text-xl">{displayTitle}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <ul className="space-y-1.5 text-sm text-muted-foreground">
+                            {item.points.map((point, i) => (
+                              <li key={i}>{point}</li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    </div>
+                    <div className="absolute left-1/2 z-10 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-primary"></div>
                   </div>
-                  <div className="absolute left-1/2 z-10 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-primary"></div>
-                </div>
-              ))}
+                );
+              })}
             </div>
              <p className="mt-12 text-center text-lg font-semibold text-primary">
               Outcome: A new generation of cultural leaders representing Ethiopia.
