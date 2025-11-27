@@ -27,7 +27,7 @@ service cloud.firestore {
     match /submissions/{submissionId} {
       // Allow reads for all users
       allow read;
-      allow create: if isSignedIn();
+      allow create;
       allow update, delete: if isAdmin();
     }
 
