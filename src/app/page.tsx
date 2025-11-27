@@ -65,7 +65,7 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center">
               <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl">
-                Cultural Ambassadors Award 2025/26
+                Cultural Ambassador Award 2025/26
               </h2>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
                 A national creative initiative designed to recognize and elevate Ethiopia's young talents in music, performance, poetry, traditional instruments, and digital expression.
@@ -184,14 +184,14 @@ export default function Home() {
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4">🎭</div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Performing Arts</h3>
-                  <p className="text-muted-foreground">Dance • Drama • Cultural performance • Stage expression</p>
+                  <p className="text-muted-foreground">Dance • Cultural performance •</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4">🎵</div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Digital Music & Vocal Innovation</h3>
-                  <p className="text-muted-foreground">Modern beats fused with Ethiopian rhythm & creative production</p>
+                  <p className="text-muted-foreground">Ethiopian rhythm & creative production</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -283,7 +283,7 @@ export default function Home() {
 
         <Separator />
 
-        <section id="timeline" className="py-12 md:py-20 bg-secondary">
+        {/* <section id="timeline" className="py-12 md:py-20 bg-secondary">
           <div className="container mx-auto px-4">
             <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
               Award Timeline
@@ -319,12 +319,12 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section id="sponsors" className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
-              Our Sponsors
+              Our Partners
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {sponsors.map((sponsor) => (
