@@ -22,7 +22,7 @@ export default function AdminSettingsPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="program-name">Program Name</Label>
-            <Input id="program-name" defaultValue="ABN Studio Cultural Awards" />
+            <Input id="program-name" defaultValue="Cultural Ambassador Award" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="voting-start">Voting Start Date</Label>

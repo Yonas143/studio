@@ -7,7 +7,7 @@ import { SiteFooter } from '@/components/layout/site-footer';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'ABN Studio Cultural Ambassadors Award',
+  title: 'Cultural Ambassador Award',
   description: 'Promoting, judging, and celebrating Ethiopian cultural excellence.',
 };
 

@@ -19,6 +19,7 @@ export type Category = {
   name: string;
   description: string;
   imageId: string;
+  imageUrl?: string;
 };
 
 export type Nominee = {
@@ -28,6 +29,7 @@ export type Nominee = {
   region: string;
   bio: string;
   imageId: string;
+  imageUrl?: string;
   media: {
     type: 'image' | 'video' | 'audio';
     url: string;
@@ -56,16 +58,16 @@ export type JudgeSubmission = Submission & {
 };
 
 export type TimelineEvent = {
-    id: string;
-    date: string;
-    title: string;
-    description: string;
-    order: number;
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  order: number;
 }
 
 export type Vote = {
-    id: string;
-    userId: string;
-    nomineeId: string;
-    createdAt: string;
+  id: string;
+  userId: string;
+  nomineeId: string;
+  createdAt: string;
 }

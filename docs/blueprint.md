@@ -1,4 +1,4 @@
-# **App Name**: ABN Studio Cultural Ambassadors Award
+# **App Name**: Cultural Ambassador Award
 
 ## Core Features:
 

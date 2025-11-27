@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCollection, useFirestore } from '@/firebase';
@@ -17,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ImageUpload } from '@/components/ui/image-upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +36,11 @@ import { FirestorePermissionError } from '@/firebase/errors';
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
   description: z.string().min(1, 'Description is required'),
-  imageId: z.string().min(1, 'A placeholder image ID is required (e.g., category-new-item)'),
+  imageId: z.string().optional(),
+  imageUrl: z.string().optional(),
+}).refine(data => data.imageId || data.imageUrl, {
+  message: "Either an Image ID or an uploaded Image is required",
+  path: ["imageUrl"],
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;
@@ -62,6 +68,7 @@ export default function AdminCategoriesPage() {
       setValue('name', editingCategory.name);
       setValue('description', editingCategory.description);
       setValue('imageId', editingCategory.imageId);
+      setValue('imageUrl', editingCategory.imageUrl);
     } else {
       reset();
     }
@@ -72,7 +79,7 @@ export default function AdminCategoriesPage() {
     setEditingCategory(category);
     setIsDialogOpen(true);
   };
-  
+
   const handleCloseDialog = () => {
     setEditingCategory(null);
     setIsDialogOpen(false);
@@ -81,29 +88,29 @@ export default function AdminCategoriesPage() {
 
   const onSubmit = (data: CategoryFormData) => {
     setIsSubmitting(true);
-    
+
     if (editingCategory) {
       // Update existing category
       const categoryDoc = doc(firestore, 'categories', editingCategory.id);
       updateDoc(categoryDoc, data)
-      .then(() => {
-        toast({
-          title: 'Category Updated',
-          description: `Successfully updated the "${data.name}" category.`,
+        .then(() => {
+          toast({
+            title: 'Category Updated',
+            description: `Successfully updated the "${data.name}" category.`,
+          });
+          handleCloseDialog();
+        })
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: categoryDoc.path,
+            operation: 'update',
+            requestResourceData: data,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
         });
-        handleCloseDialog();
-      })
-      .catch(async (serverError) => {
-        const permissionError = new FirestorePermissionError({
-          path: categoryDoc.path,
-          operation: 'update',
-          requestResourceData: data,
-        });
-        errorEmitter.emit('permission-error', permissionError);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
     } else {
       // Add new category
       const categoriesCollection = collection(firestore, 'categories');
@@ -132,19 +139,19 @@ export default function AdminCategoriesPage() {
   const handleDelete = async (categoryId: string) => {
     const categoryRef = doc(firestore, 'categories', categoryId);
     deleteDoc(categoryRef)
-        .then(() => {
-             toast({
-                title: 'Category Deleted',
-                description: 'The category has been successfully deleted.',
-            });
-        })
-        .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-                path: categoryRef.path,
-                operation: 'delete',
-            });
-            errorEmitter.emit('permission-error', permissionError);
+      .then(() => {
+        toast({
+          title: 'Category Deleted',
+          description: 'The category has been successfully deleted.',
         });
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: categoryRef.path,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      });
   };
 
 
@@ -156,8 +163,8 @@ export default function AdminCategoriesPage() {
           <p className="text-muted-foreground">Add, edit, or remove award categories.</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => {
-            if (!isOpen) handleCloseDialog();
-            else setIsDialogOpen(true);
+          if (!isOpen) handleCloseDialog();
+          else setIsDialogOpen(true);
         }}>
           <DialogTrigger asChild>
             <Button onClick={() => handleOpenDialog()}>
@@ -179,13 +186,31 @@ export default function AdminCategoriesPage() {
                 <Textarea id="description" {...register('description')} placeholder="A brief description of the category." />
                 {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
               </div>
-               <div className="space-y-2">
-                <Label htmlFor="imageId">Placeholder Image ID</Label>
-                <Input id="imageId" {...register('imageId')} placeholder="e.g., category-visual-arts" />
-                {errors.imageId && <p className="text-sm text-destructive">{errors.imageId.message}</p>}
-                <p className="text-xs text-muted-foreground">
-                    Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
-                </p>
+              <div className="space-y-2">
+                <Label>Category Image</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="imageUrl" className="text-xs text-muted-foreground">Upload Image</Label>
+                    <Controller
+                      name="imageUrl"
+                      control={control}
+                      render={({ field }) => (
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="imageId" className="text-xs text-muted-foreground">Or use Placeholder ID</Label>
+                    <Input id="imageId" {...register('imageId')} placeholder="e.g., category-visual-arts" />
+                    <p className="text-xs text-muted-foreground">
+                      Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
+                    </p>
+                  </div>
+                </div>
+                {errors.imageUrl && <p className="text-sm text-destructive">{errors.imageUrl.message}</p>}
               </div>
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSubmitting}>
@@ -233,10 +258,10 @@ export default function AdminCategoriesPage() {
                     <TableCell className="font-medium">{category.name}</TableCell>
                     <TableCell>{category.description}</TableCell>
                     <TableCell className="text-right space-x-2">
-                       <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(category)}>
-                         <Edit className="h-4 w-4" />
-                       </Button>
-                       <AlertDialog>
+                      <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(category)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="icon">
                             <Trash2 className="h-4 w-4" />

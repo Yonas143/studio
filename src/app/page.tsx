@@ -41,7 +41,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white p-4">
             <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-              ABN Studio Cultural Awards
+              Cultural Ambassador Award
             </h1>
             <p className="mt-4 max-w-2xl text-lg md:text-xl">
               Celebrating and preserving the rich tapestry of Ethiopian cultural heritage.
@@ -82,7 +82,14 @@ export default function Home() {
                   <Card key={nominee.id} className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
                     <CardHeader className="p-0">
                       <div className="relative h-48 w-full">
-                        {nomineeImage && (
+                        {nominee.imageUrl ? (
+                          <Image
+                            src={nominee.imageUrl}
+                            alt={`Photo of ${nominee.name}`}
+                            fill
+                            className="object-cover transition-transform group-hover:scale-105"
+                          />
+                        ) : nomineeImage ? (
                           <Image
                             src={nomineeImage.imageUrl}
                             alt={`Photo of ${nominee.name}`}
@@ -90,7 +97,7 @@ export default function Home() {
                             className="object-cover transition-transform group-hover:scale-105"
                             data-ai-hint={nomineeImage.imageHint}
                           />
-                        )}
+                        ) : null}
                       </div>
                     </CardHeader>
                     <CardContent className="p-4">

@@ -1,0 +1,195 @@
+'use client';
+
+import { useState, useRef, ChangeEvent } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useStorage } from '@/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+
+interface ImageUploadProps {
+    value?: string;
+    onChange: (url: string) => void;
+    disabled?: boolean;
+    className?: string;
+}
+
+export function ImageUpload({ value, onChange, disabled, className }: ImageUploadProps) {
+    const [isUploading, setIsUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const storage = useStorage();
+    const { toast } = useToast();
+
+    const handleFileSelect = async (file: File) => {
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            toast({
+                variant: 'destructive',
+                title: 'Invalid file type',
+                description: 'Please upload an image file.',
+            });
+            return;
+        }
+
+        // Validate file size (e.g., 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            toast({
+                variant: 'destructive',
+                title: 'File too large',
+                description: 'Image must be less than 5MB.',
+            });
+            return;
+        }
+
+        setIsUploading(true);
+        setProgress(0);
+
+        try {
+            const timestamp = Date.now();
+            const storageRef = ref(storage, `uploads/${timestamp}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setProgress(progress);
+                },
+                (error) => {
+                    console.error('Upload error:', error);
+                    toast({
+                        variant: 'destructive',
+                        title: 'Upload failed',
+                        description: 'There was an error uploading your image.',
+                    });
+                    setIsUploading(false);
+                },
+                async () => {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    onChange(downloadURL);
+                    setIsUploading(false);
+                    toast({
+                        title: 'Image uploaded',
+                        description: 'Your image has been uploaded successfully.',
+                    });
+                }
+            );
+        } catch (error) {
+            console.error('Error starting upload:', error);
+            setIsUploading(false);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Could not start upload.',
+            });
+        }
+    };
+
+    const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFileSelect(e.target.files[0]);
+        }
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        if (!disabled) {
+            setIsDragging(true);
+        }
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (disabled) return;
+
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    };
+
+    const handleRemove = () => {
+        onChange('');
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    return (
+        <div className={cn("space-y-4", className)}>
+            <Input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={onInputChange}
+                disabled={disabled || isUploading}
+            />
+
+            {!value ? (
+                <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={cn(
+                        "border-2 border-dashed rounded-lg p-12 flex flex-col items-center justify-center cursor-pointer transition-colors",
+                        isDragging ? "border-primary bg-primary/10" : "border-muted-foreground/25 hover:border-primary/50",
+                        (disabled || isUploading) && "opacity-50 cursor-not-allowed"
+                    )}
+                >
+                    {isUploading ? (
+                        <div className="flex flex-col items-center space-y-2">
+                            <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground">Uploading... {Math.round(progress)}%</p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center space-y-2 text-center">
+                            <div className="p-4 bg-muted rounded-full">
+                                <Upload className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                            <div>
+                                <p className="font-medium">Click to upload or drag and drop</p>
+                                <p className="text-xs text-muted-foreground">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border bg-muted">
+                    <Image
+                        src={value}
+                        alt="Uploaded image"
+                        fill
+                        className="object-cover"
+                    />
+                    <div className="absolute top-2 right-2">
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="h-8 w-8 rounded-full"
+                            onClick={handleRemove}
+                            disabled={disabled}
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

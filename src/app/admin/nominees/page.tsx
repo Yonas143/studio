@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, PlusCircle, Trash2, Edit } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ImageUpload } from '@/components/ui/image-upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,8 +40,12 @@ const nomineeSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   region: z.string().min(1, 'Region is required'),
   bio: z.string().min(1, 'Bio is required'),
-  imageId: z.string().min(1, 'Image ID is required'),
+  imageId: z.string().optional(),
+  imageUrl: z.string().optional(),
   featured: z.boolean().default(false),
+}).refine(data => data.imageId || data.imageUrl, {
+  message: "Either an Image ID or an uploaded Image is required",
+  path: ["imageUrl"],
 });
 
 type NomineeFormData = z.infer<typeof nomineeSchema>;
@@ -77,9 +82,10 @@ export default function AdminNomineesPage() {
       setValue('region', editingNominee.region);
       setValue('bio', editingNominee.bio);
       setValue('imageId', editingNominee.imageId);
+      setValue('imageUrl', editingNominee.imageUrl);
       setValue('featured', editingNominee.featured || false);
     } else {
-      reset({ name: '', category: '', region: '', bio: '', imageId: '', featured: false });
+      reset({ name: '', category: '', region: '', bio: '', imageId: '', imageUrl: '', featured: false });
     }
   }, [editingNominee, setValue, reset]);
 
@@ -204,12 +210,30 @@ export default function AdminNomineesPage() {
                 {errors.bio && <p className="text-sm text-destructive">{errors.bio.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="imageId">Placeholder Image ID</Label>
-                <Input id="imageId" {...register('imageId')} placeholder="e.g., nominee-1" />
-                {errors.imageId && <p className="text-sm text-destructive">{errors.imageId.message}</p>}
-                <p className="text-xs text-muted-foreground">
-                  Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
-                </p>
+                <Label>Nominee Image</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="imageUrl" className="text-xs text-muted-foreground">Upload Image</Label>
+                    <Controller
+                      name="imageUrl"
+                      control={control}
+                      render={({ field }) => (
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="imageId" className="text-xs text-muted-foreground">Or use Placeholder ID</Label>
+                    <Input id="imageId" {...register('imageId')} placeholder="e.g., nominee-1" />
+                    <p className="text-xs text-muted-foreground">
+                      Find available IDs in <code className='bg-muted p-1 rounded-sm'>src/lib/placeholder-images.json</code>.
+                    </p>
+                  </div>
+                </div>
+                {errors.imageUrl && <p className="text-sm text-destructive">{errors.imageUrl.message}</p>}
               </div>
               <div className="flex items-center space-x-2">
                 <Controller
