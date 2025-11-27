@@ -1,193 +1,242 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Loader2, UploadCloud } from 'lucide-react';
-import { useCollection, useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getStorage } from 'firebase/storage';
-import type { Category } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { addDoc, collection } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
 
 const submissionSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  categoryId: z.string().min(1, 'Category is required'),
-  culturalRelevance: z.string().min(20, 'Please provide more detail on cultural relevance'),
-  submissionFile: z.instanceof(File).optional(),
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  nomineeName: z.string().min(1, "Nominee name is required"),
+  category: z.string().min(1, "Category is required"),
+  biography: z.string().min(100, "Biography must be at least 100 characters"),
+  culturalRelevance: z.string().min(100, "Cultural relevance statement must be at least 100 characters"),
+  mediaUrl: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
+  photoUrl: z.string().url("Please upload a photo").min(1, "Photo is required"),
 });
 
-type SubmissionFormData = z.infer<typeof submissionSchema>;
+type SubmissionFormValues = z.infer<typeof submissionSchema>;
 
 export default function SubmitPage() {
-  const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
-  const { user } = useUser();
-  const firestore = useFirestore();
-  const storage = getStorage();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const firestore = useFirestore();
 
-  const { control, handleSubmit, register, setValue, formState: { errors } } = useForm<SubmissionFormData>({
+  const form = useForm<SubmissionFormValues>({
     resolver: zodResolver(submissionSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      nomineeName: "",
+      category: "",
+      biography: "",
+      culturalRelevance: "",
+      mediaUrl: "",
+      photoUrl: "",
+    },
   });
 
-  const onSubmit = async (data: SubmissionFormData) => {
-    if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Required',
-        description: 'Please log in to submit your work.',
-      });
-      router.push('/login');
-      return;
-    }
-
+  const onSubmit = async (values: SubmissionFormValues) => {
     setIsSubmitting(true);
-    let mediaUrl = '';
-
     try {
-      // Only upload file if one was selected
-      if (data.submissionFile && data.submissionFile.size > 0) {
-        try {
-          const uniqueFileName = `${Date.now()}-${data.submissionFile.name}`;
-          const fileRef = ref(storage, `submissions/${user.uid}/${uniqueFileName}`);
-          const snapshot = await uploadBytes(fileRef, data.submissionFile);
-          mediaUrl = await getDownloadURL(snapshot.ref);
-        } catch (uploadError: any) {
-          console.error('File upload error:', uploadError);
-          toast({
-            variant: 'destructive',
-            title: 'File Upload Failed',
-            description: 'Submission will be created without the file. Error: ' + uploadError.message,
-          });
-        }
-      }
+      // A real app would have more robust backend validation and error handling
+      await addDoc(collection(firestore, 'submissions'), {
+        ...values,
+        status: 'pending',
+        submittedAt: new Date(),
+      });
 
-      const submissionData: any = {
-        title: data.title,
-        categoryId: data.categoryId,
-        culturalRelevance: data.culturalRelevance,
-        mediaUrl: mediaUrl || '',
-        status: 'Pending',
-        submitterId: user.uid,
-        createdAt: serverTimestamp(),
-      };
-
-      await addDoc(collection(firestore, 'submissions'), submissionData);
-
-      toast({ title: 'Submission Successful', description: 'Your work has been submitted for review.' });
-      router.push('/dashboard');
-
-    } catch (error: any) {
-      console.error('Submission error:', error);
-      toast({ variant: 'destructive', title: 'Submission Failed', description: error.message || 'An error occurred while submitting your work.' });
+      toast({
+        title: "Submission successful!",
+        description: "Thank you for your submission. It is now pending review.",
+      });
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: "There was an error processing your submission. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-secondary">
-      <div className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle className="font-headline text-3xl md:text-4xl">Submit Your Work</CardTitle>
-            <CardDescription className="text-lg">Share your cultural expression with Ethiopia and the world.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title" className="text-base">Submission Title</Label>
-                <Input id="title" placeholder="e.g., 'The Soul of the Krar'" {...register('title')} />
-                {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-base">Category</Label>
-                <Controller
-                  name="categoryId"
-                  control={control}
+    <div className="container mx-auto px-4 py-12 max-w-4xl">
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline text-3xl">Submit a Nomination</CardTitle>
+          <CardDescription>
+            Complete the form below to nominate a cultural ambassador.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <FormField
+                  control={form.control}
+                  name="fullName"
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={categoriesLoading}>
-                      <SelectTrigger id="category">
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories && categories.length > 0 ? (
-                          categories.map(cat => (
-                            <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                          ))
-                        ) : (
-                          <div className="p-2 text-sm text-muted-foreground">
-                            No categories available. Please contact an administrator.
-                          </div>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <FormItem>
+                      <FormLabel>Your Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Jane Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
-                {errors.categoryId && <p className="text-sm text-destructive">{errors.categoryId.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cultural-relevance" className="text-base">Cultural Relevance</Label>
-                <Textarea
-                  id="cultural-relevance"
-                  placeholder="Explain the cultural significance of your submission. What traditions, stories, or values does it represent?"
-                  rows={5}
-                  {...register('culturalRelevance')}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="e.g., jane.doe@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {errors.culturalRelevance && <p className="text-sm text-destructive">{errors.culturalRelevance.message}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="submission-file" className="text-base">Upload Your Submission (Optional)</Label>
-                <div className="flex items-center justify-center w-full">
-                  <label htmlFor="submission-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-border border-dashed rounded-lg cursor-pointer bg-card hover:bg-secondary">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <UploadCloud className="w-10 h-10 mb-3 text-muted-foreground" />
-                      {fileName ? (
-                        <p className="font-semibold text-primary">{fileName}</p>
-                      ) : (
-                        <>
-                          <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                          <p className="text-xs text-muted-foreground">Video, Audio, Text, or Images</p>
-                        </>
-                      )}
-                    </div>
-                    <input
-                      id="submission-file"
-                      type="file"
-                      className="hidden"
-                      {...register('submissionFile', {
-                        onChange: (e) => setFileName(e.target.files?.[0]?.name || '')
-                      })}
-                    />
-                  </label>
-                </div>
-              </div>
+              <Separator />
 
-              <div className="text-center pt-4">
-                <Button type="submit" size="lg" className="w-full md:w-auto font-bold" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Submit for Review
+              <h3 className="text-xl font-semibold font-headline">Nominee Details</h3>
+
+              <div className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="nomineeName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nominee&apos;s Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., John Smith" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="photoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nominee&apos;s Photo</FormLabel>
+                      <FormControl>
+                        <ImageUpload 
+                          value={field.value} 
+                          onChange={field.onChange} 
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        A clear, high-quality headshot is recommended.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category of Nomination</FormLabel>
+                      <FormControl>
+                        {/* In a real app, this would likely be a select dropdown populated from a list of categories */}
+                        <Input placeholder="e.g., Traditional Music, Culinary Arts" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="biography"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nominee Biography</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Provide a detailed biography of the nominee..."
+                          className="min-h-[150px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Include their background, achievements, and contributions to their cultural field.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="culturalRelevance"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cultural Relevance Statement</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Explain why this nominee is a significant cultural ambassador..."
+                          className="min-h-[150px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Focus on their impact, influence, and the importance of their work in a modern context.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mediaUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Supporting Media Link (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://example.com/media" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        A link to a portfolio, video, or other relevant online media.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSubmitting} size="lg">
+                  {isSubmitting ? "Submitting..." : "Submit Nomination"}
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
-      </div>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
+}
+function Separator() {
+    return <hr className="my-8 border-border" />;
 }
