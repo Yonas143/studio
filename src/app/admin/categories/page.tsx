@@ -85,6 +85,7 @@ export default function AdminCategoriesPage() {
   }
 
   const onSubmit = (data: CategoryFormData) => {
+    console.log('Category form submitted:', data);
     setIsSubmitting(true);
 
     if (editingCategory) {
@@ -98,37 +99,42 @@ export default function AdminCategoriesPage() {
           });
           handleCloseDialog();
         })
-        .catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: categoryDoc.path,
-            operation: 'update',
-            requestResourceData: data,
+        .catch((error) => {
+          console.error('Error updating category:', error);
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: error.message || 'Failed to update category. Please try again.',
           });
-          errorEmitter.emit('permission-error', permissionError);
         })
         .finally(() => {
           setIsSubmitting(false);
         });
     } else {
       // Add new category
+      console.log('Adding new category to Firestore...');
       const categoriesCollection = collection(firestore, 'categories');
       addDoc(categoriesCollection, data)
-        .then(() => {
+        .then((docRef) => {
+          console.log('Category added successfully with ID:', docRef.id);
           toast({
             title: 'Category Added',
             description: `Successfully added the "${data.name}" category.`,
           });
           handleCloseDialog();
         })
-        .catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: categoriesCollection.path,
-            operation: 'create',
-            requestResourceData: data,
+        .catch((error) => {
+          console.error('Error adding category:', error);
+          console.error('Error code:', error.code);
+          console.error('Error message:', error.message);
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: error.message || 'Failed to add category. Please try again.',
           });
-          errorEmitter.emit('permission-error', permissionError);
         })
         .finally(() => {
+          console.log('Category operation completed');
           setIsSubmitting(false);
         });
     }
