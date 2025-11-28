@@ -183,14 +183,14 @@ export default function Home() {
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4"></div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">traditional dance</h3>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional dance</h3>
                   <p className="text-muted-foreground">Dance • Cultural performance •</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4"></div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">traditional music</h3>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Cultural music</h3>
                   <p className="text-muted-foreground">Ethiopian rhythm & creative production</p>
                 </CardContent>
               </Card>
@@ -328,15 +328,15 @@ export default function Home() {
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {sponsors.map((sponsor) => (
-                <div key={sponsor.id} className="relative h-16 w-32 grayscale opacity-60 transition-all hover:opacity-100 hover:grayscale-0">
-                  <Image
-                    src={sponsor.imageUrl}
-                    alt={sponsor.description}
-                    fill
-                    className="object-contain"
-                    data-ai-hint={sponsor.imageHint}
-                  />
-                </div>
+                // <div key={sponsor.id} className="relative h-16 w-32 grayscale opacity-60 transition-all hover:opacity-100 hover:grayscale-0">
+                //   <Image
+                //     src={sponsor.imageUrl}
+                //     alt={sponsor.description}
+                //     fill
+                //     className="object-contain"
+                //     data-ai-hint={sponsor.imageHint}
+                //   />
+                // </div>
               ))}
             </div>
           </div>
