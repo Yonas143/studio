@@ -50,8 +50,16 @@ export function SiteFooter() {
           <div>
             <h3 className="font-headline font-semibold">Connect</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link href="/contact" className="text-sm hover:text-primary">Contact</Link></li>
-
+              <li className="text-sm">
+                Merkeb Plaza | Olompia<br />
+                መርከብ ፕላዛ | ኦሎምፒያ<br />
+                Addis Ababa, Ethiopia
+              </li>
+              <li>
+                <a href="tel:+251945443450" className="text-sm hover:text-primary">
+                  +251 945 44 34 50
+                </a>
+              </li>
             </ul>
           </div>
         </div>

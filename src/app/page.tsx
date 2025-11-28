@@ -182,30 +182,58 @@ export default function Home() {
             <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4"></div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional dance</h3>
-                  <p className="text-muted-foreground">Dance • Cultural performance •</p>
+                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
+                    <Image
+                      src="/files/dance-category.png"
+                      alt="Traditional Dance"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Dance</h3>
+                  <p className="text-muted-foreground">Traditional & contemporary dance, music & drama.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4"></div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Cultural music</h3>
-                  <p className="text-muted-foreground">Ethiopian rhythm & creative production</p>
+                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
+                    <Image
+                      src="/files/vocal-category.png"
+                      alt="Cultural Music & Vocal Innovation"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Cultural Music & Vocal Innovation</h3>
+                  <p className="text-muted-foreground">Modern production fused with Ethiopian sound.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4"></div>
+                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
+                    <Image
+                      src="/files/instruments-category.png"
+                      alt="Traditional Instruments"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Instruments</h3>
-                  <p className="text-muted-foreground">Krar • Masinko • Kebero • Washint & more — pure heritage sound</p>
+                  <p className="text-muted-foreground">Creative instrumental performance & presentation.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4"></div>
+                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
+                    <Image
+                      src="/files/poetry-category.png"
+                      alt="Literary & Poetry Excellence"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Literary & Poetry Excellence</h3>
-                  <p className="text-muted-foreground">Poetry, storytelling, spoken word & written cultural expression</p>
+                  <p className="text-muted-foreground">Storytelling, poetry & written cultural expression.</p>
                 </CardContent>
               </Card>
             </div>
