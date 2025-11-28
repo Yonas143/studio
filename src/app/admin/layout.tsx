@@ -2,13 +2,14 @@
 
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Gavel, List, BarChart2, Settings, FileText, UserPlus } from 'lucide-react';
+import { LayoutDashboard, Users, Gavel, List, BarChart2, Settings, FileText, UserPlus, BookOpen } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -18,6 +19,7 @@ const navItems = [
     { href: '/admin/judges', label: 'Judges', icon: Gavel },
     { href: '/admin/categories', label: 'Categories', icon: List },
     { href: '/admin/nominees', label: 'Nominees', icon: UserPlus },
+    { href: '/admin/insights', label: 'Insights', icon: BookOpen },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -72,5 +74,5 @@ export default function AdminDashboardLayout({
     </SidebarMenu>
   );
 
-  return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`}} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
+  return <DashboardLayout user={{name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`}} sidebarContent={sidebarContent}><FirebaseErrorListener />{children}</DashboardLayout>;
 }

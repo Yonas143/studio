@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot, collection, query, where, type Query, type DocumentData, type CollectionReference, orderBy, limit } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
+import { errorEmitter } from '../error-emitter';
 
 export function useCollection<T = DocumentData>(path: string, options?: { where?: [string, any, any], orderBy?: [string, 'asc' | 'desc'], limit?: number }) {
   const firestore = useFirestore();
@@ -33,10 +34,21 @@ export function useCollection<T = DocumentData>(path: string, options?: { where?
       });
       setData(result);
       setLoading(false);
-    }, (err) => {
+    }, (err: any) => {
       console.error(err);
-      setError(err);
-      setLoading(false);
+
+      if (err.code === 'permission-denied') {
+        setData([]);
+        setLoading(false);
+        setError(null);
+        errorEmitter.emit('permission-error', {
+          message: err.message,
+          source: `useCollection: ${path}`,
+        });
+      } else {
+        setError(err);
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();

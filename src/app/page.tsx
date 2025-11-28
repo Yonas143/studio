@@ -4,112 +4,60 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import placeholderImagesData from '@/lib/placeholder-images.json';
-import { ArrowRight, Trophy } from 'lucide-react';
+import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useCollection } from '@/firebase';
-import type { Nominee } from '@/lib/types';
+import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 const { placeholderImages } = placeholderImagesData;
 
-const timelineData = [
-    {
-        months: "1-2",
-        title: "Month 1–2 — Summit & Orientation",
-        points: [
-            "Program launch event",
-            "Creative mentorship & cultural innovation workshops",
-            "Public introduction of participants",
-        ],
-    },
-    {
-        months: "3-4",
-        title: "Month 3–4 — Competition Rounds",
-        points: [
-            "Audience-voted performance showcases",
-            "Digital submissions & creative challenges",
-            "Top talents advance to semi-finals",
-        ],
-    },
-    {
-        months: "5",
-        title: "Month 5 — Finalist Selection",
-        points: [
-            "Expert judging panel review",
-            "Final presentations & performances",
-            "Cultural talent refinement sessions",
-        ],
-    },
-    {
-        months: "6",
-        title: "Month 6 — Grand Award Ceremony",
-        points: [
-            "Winners announced on stage",
-            "Trophy & certificate presentation",
-            "Media exposure + Ambassador title awarding",
-        ],
-    },
-];
-
 export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
+  const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
 
+  const heroImage = placeholderImages.find(p => p.id === 'hero-banner');
   const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
 
-  const loading = nomineesLoading;
+  const loading = nomineesLoading || timelineLoading;
 
   return (
     <div className="flex flex-col min-h-dvh">
       <main className="flex-1">
-        <section className="w-full">
-          <Carousel className="w-full">
-            <CarouselContent>
-              {featuredNominees?.map((nominee, index) => (
-                <CarouselItem key={index}>
-                  <div className="relative h-[60vh] min-h-[400px] w-full">
-                    {nominee.imageUrl && (
-                      <Image
-                        src={nominee.imageUrl}
-                        alt={nominee.name}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                    <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white p-4">
-                      <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-                        {nominee.name}
-                      </h1>
-                      <p className="mt-4 max-w-2xl text-lg md:text-xl">
-                        {nominee.category}
-                      </p>
-                      <div className="mt-8 flex flex-wrap justify-center gap-4">
-                        <Button asChild size="lg" className="font-bold">
-                          <Link href={`/nominees/${nominee.id}`}>Vote Now <Trophy className="ml-2" /></Link>
-                        </Button>
-                        <Button asChild size="lg" variant="secondary" className="font-bold">
-                          <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10" />
-            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10" />
-          </Carousel>
+        <section className="relative h-[60vh] min-h-[400px] w-full">
+          {heroImage && (
+            <Image
+              src={heroImage.imageUrl}
+              alt={heroImage.description}
+              fill
+              className="object-cover"
+              data-ai-hint={heroImage.imageHint}
+              priority
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white p-4">
+            <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+              Cultural Ambassador Award
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg md:text-xl">
+              Celebrating and preserving the rich tapestry of Ethiopian cultural heritage.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Button asChild size="lg" className="font-bold">
+                <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="font-bold">
+                <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white hover:bg-white/10">
+                <Link href="/categories">View Categories</Link>
+              </Button>
+            </div>
+          </div>
         </section>
 
         {/* Short Intro Section */}
@@ -117,7 +65,7 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center">
               <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl">
-                Cultural Ambassadors Award 2025/26
+                Cultural Ambassador Award 2025/26
               </h2>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
                 A national creative initiative designed to recognize and elevate Ethiopia's young talents in music, performance, poetry, traditional instruments, and digital expression.
@@ -132,9 +80,9 @@ export default function Home() {
         <Separator />
 
         {/* Award & Program Timeline Section */}
-        <section className="py-16 md:py-24 bg-secondary/20">
+        <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl text-center mb-16">
+            <div className="mx-auto max-w-4xl text-center mb-12">
               <h2 className="font-headline text-3xl font-bold md:text-4xl">
                 Award & Program Timeline
               </h2>
@@ -142,37 +90,77 @@ export default function Home() {
                 A six-month journey of recognition, development, and cultural excellence.
               </p>
             </div>
-            <div className="relative mx-auto max-w-3xl">
-              <div className="absolute left-1/2 top-4 h-full w-0.5 -translate-x-1/2 bg-border"></div>
-              {timelineData.map((item, index) => {
-                const titleParts = item.title.split('— ');
-                const displayTitle = titleParts.length > 1 ? titleParts[1] : item.title;
-
-                return (
-                  <div
-                    key={index}
-                    className={`relative mb-12 flex w-full items-center ${index % 2 === 0 ? "justify-start" : "justify-end"}`}>
-                    <div className={`w-1/2 ${index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"}`}>
-                      <Card className="transition-all hover:shadow-xl hover:scale-105">
-                        <CardHeader>
-                          <p className="font-bold text-primary">Months {item.months}</p>
-                          <CardTitle className="font-headline text-xl">{displayTitle}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="space-y-1.5 text-sm text-muted-foreground">
-                            {item.points.map((point, i) => (
-                              <li key={i}>{point}</li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
+            <div className="mx-auto max-w-5xl grid gap-8 md:grid-cols-2">
+              <Card className="border-2 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                      1-2
                     </div>
-                    <div className="absolute left-1/2 z-10 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-primary"></div>
+                    <div>
+                      <h3 className="font-headline text-xl font-semibold">Month 1–2 — Summit & Orientation</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                        <li>• Program launch event</li>
+                        <li>• Creative mentorship & cultural innovation workshops</li>
+                        <li>• Public introduction of participants</li>
+                      </ul>
+                    </div>
                   </div>
-                );
-              })}
+                </CardContent>
+              </Card>
+              <Card className="border-2 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                      3-4
+                    </div>
+                    <div>
+                      <h3 className="font-headline text-xl font-semibold">Month 3–4 — Competition Rounds</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                        <li>• Audience-voted performance showcases</li>
+                        <li>• Digital submissions & creative challenges</li>
+                        <li>• Top talents advance to semi-finals</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-2 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                      5
+                    </div>
+                    <div>
+                      <h3 className="font-headline text-xl font-semibold">Month 5 — Finalist Selection</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                        <li>• Expert judging panel review</li>
+                        <li>• Final presentations & performances</li>
+                        <li>• Cultural talent refinement sessions</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-2 transition-all hover:shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                      6
+                    </div>
+                    <div>
+                      <h3 className="font-headline text-xl font-semibold">Month 6 — Grand Award Ceremony</h3>
+                      <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                        <li>• Winners announced on stage</li>
+                        <li>• Trophy & certificate presentation</li>
+                        <li>• Media exposure + Ambassador title awarding</li>
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-             <p className="mt-12 text-center text-lg font-semibold text-primary">
+            <p className="mt-8 text-center text-lg font-semibold text-primary">
               Outcome: A new generation of cultural leaders representing Ethiopia.
             </p>
           </div>
@@ -196,14 +184,14 @@ export default function Home() {
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4">🎭</div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Performing Arts</h3>
-                  <p className="text-muted-foreground">Dance • Drama • Cultural performance • Stage expression</p>
+                  <p className="text-muted-foreground">Dance • Cultural performance •</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
                   <div className="text-4xl mb-4">🎵</div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Digital Music & Vocal Innovation</h3>
-                  <p className="text-muted-foreground">Modern beats fused with Ethiopian rhythm & creative production</p>
+                  <p className="text-muted-foreground">Ethiopian rhythm & creative production</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -295,10 +283,48 @@ export default function Home() {
 
         <Separator />
 
+        {/* <section id="timeline" className="py-12 md:py-20 bg-secondary">
+          <div className="container mx-auto px-4">
+            <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
+              Award Timeline
+            </h2>
+            <div className="relative mx-auto max-w-2xl">
+              <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-border"></div>
+              {loading && [...Array(4)].map((_, index) => (
+                <div key={index} className="relative mb-8 flex items-center justify-between w-full">
+                  <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                    <Skeleton className="h-5 w-24 ml-auto" />
+                  </div>
+                  <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-muted shadow-lg">
+                  </div>
+                  <div className={`order-1 w-5/12 px-4 py-3 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
+                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-4 w-48 mt-1" />
+                  </div>
+                </div>
+              ))}
+              {timelineEvents?.sort((a, b) => a.order - b.order).map((event, index) => (
+                <div key={index} className="relative mb-8 flex items-center justify-between w-full">
+                  <div className={`order-1 w-5/12 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                    <p className="font-bold text-primary">{event.date}</p>
+                  </div>
+                  <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+                    {index === 0 ? <Medal /> : <Calendar />}
+                  </div>
+                  <div className={`order-1 w-5/12 px-4 py-3 ${index % 2 === 0 ? 'text-left' : 'text-right'}`}>
+                    <h3 className="font-headline font-semibold">{event.title}</h3>
+                    <p className="text-sm text-muted-foreground">{event.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section> */}
+
         <section id="sponsors" className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
-              Our Sponsors
+              Our Partners
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {sponsors.map((sponsor) => (
