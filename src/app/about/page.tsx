@@ -13,10 +13,11 @@ export default function AboutPage() {
                 <div className="container relative z-10">
                     <div className="mx-auto max-w-4xl text-center">
                         <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-                            Cultural Ambassadors Award 2025/26
+                            Cultural Ambassador Award 2025/26
                         </h1>
                         <p className="mt-6 text-xl text-muted-foreground md:text-2xl">
-                            Celebrating Ethiopia's Creative Youth Voices of Culture, Innovation & Heritage
+                            Celebrating Ethiopia's culture  with   traditional dance,traditional instruments,
+                            traditional music, poetry
                         </p>
                         <p className="mt-4 text-lg text-muted-foreground">
                             Where tradition meets digital creativity.
@@ -57,7 +58,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">What We Stand For</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            We empower youth through creativity, mentorship & visibility. Our mission is built on four pillars:
+                            We empower cultural youth through creativity, mentorship & visibility. Our mission is built on four pillars:
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -114,7 +115,7 @@ export default function AboutPage() {
                                         <Music className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="font-headline text-xl font-semibold">Performing Arts</h3>
+                                        <h3 className="font-headline text-xl font-semibold">Traditional Dance </h3>
                                         <p className="mt-2 text-muted-foreground">Traditional & contemporary dance, music & drama.</p>
                                     </div>
                                 </div>
@@ -127,7 +128,7 @@ export default function AboutPage() {
                                         <Mic className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="font-headline text-xl font-semibold">Digital Music & Vocal Innovation</h3>
+                                        <h3 className="font-headline text-xl font-semibold">cultural Music & Vocal Innovation</h3>
                                         <p className="mt-2 text-muted-foreground">Modern production fused with Ethiopian sound.</p>
                                     </div>
                                 </div>
@@ -172,7 +173,7 @@ export default function AboutPage() {
             <section className="bg-secondary/30 py-16 md:py-24">
                 <div className="container">
                     <div className="mx-auto max-w-4xl">
-                        <h2 className="font-headline text-3xl font-bold md:text-4xl">Who Can Participate?</h2>
+                        <h2 className="font-headline text-3xl font-bold md:text-4xl">Objectives</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
                             Young Ethiopian innovators age 15–35 who are:
                         </p>
@@ -202,7 +203,7 @@ export default function AboutPage() {
             <section className="py-16 md:py-24">
                 <div className="container">
                     <div className="mx-auto max-w-4xl">
-                        <h2 className="font-headline text-3xl font-bold md:text-4xl">Why This Matters</h2>
+                        <h2 className="font-headline text-3xl font-bold md:text-4xl"> Expected outcome & Impacts</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
                             This initiative is creating a lifelong network of leaders who:
                         </p>
@@ -292,25 +293,25 @@ export default function AboutPage() {
                             national and international audiences.
 
 
-                        </br>
-                        The studio operates with the highest standards of professionalism, ensuring all
-                        creative projects meet international benchmarks in production quality, digital
-                        media, and cultural presentation. ABN Studio specializes in a wide range of
-                        services, including:
+                            <br />
+                            The studio operates with the highest standards of professionalism, ensuring all
+                            creative projects meet international benchmarks in production quality, digital
+                            media, and cultural presentation. ABN Studio specializes in a wide range of
+                            services, including:
 
 
 
 
 
-                        Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
-                        studio blends traditional Ethiopian heritage with modern digital technologies,
-                        creating platforms that celebrate culture, encourage innovation, and amplify
-                        the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
-                        cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
-                        Ethiopia’s rich artistic legacy.
-                    </p>
+                            Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
+                            studio blends traditional Ethiopian heritage with modern digital technologies,
+                            creating platforms that celebrate culture, encourage innovation, and amplify
+                            the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
+                            cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
+                            Ethiopia’s rich artistic legacy.
+                        </p>
+                    </div>
                 </div>
-        </div>
             </section >
         </div >
     );
