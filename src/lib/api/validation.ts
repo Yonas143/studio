@@ -23,7 +23,7 @@ export const createNomineeSchema = z.object({
     category: z.string().min(1, 'Category is required'),
     region: z.string().min(1, 'Region is required').max(100),
     bio: z.string().min(1, 'Bio is required').max(1000),
-    imageId: z.string().min(1, 'Image ID is required'),
+    imageId: z.string().optional(),
     featured: z.boolean().default(false),
 });
 
@@ -38,7 +38,7 @@ export const createVoteSchema = z.object({
 export const createCategorySchema = z.object({
     name: z.string().min(1, 'Name is required').max(100),
     description: z.string().min(1, 'Description is required').max(500),
-    imageId: z.string().min(1, 'Image ID is required'),
+    imageId: z.string().optional(),
 });
 
 export const updateCategorySchema = createCategorySchema.partial();

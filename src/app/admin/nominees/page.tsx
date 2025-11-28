@@ -43,9 +43,6 @@ const nomineeSchema = z.object({
   imageId: z.string().optional(),
   imageUrl: z.string().optional(),
   featured: z.boolean().default(false),
-}).refine(data => data.imageId || data.imageUrl, {
-  message: "Either an Image ID or an uploaded Image is required",
-  path: ["imageUrl"],
 });
 
 type NomineeFormData = z.infer<typeof nomineeSchema>;

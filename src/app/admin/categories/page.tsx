@@ -38,9 +38,6 @@ const categorySchema = z.object({
   description: z.string().min(1, 'Description is required'),
   imageId: z.string().optional(),
   imageUrl: z.string().optional(),
-}).refine(data => data.imageId || data.imageUrl, {
-  message: "Either an Image ID or an uploaded Image is required",
-  path: ["imageUrl"],
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;

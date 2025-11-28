@@ -22,7 +22,7 @@ const submissionSchema = z.object({
   biography: z.string().min(100, "Biography must be at least 100 characters"),
   culturalRelevance: z.string().min(100, "Cultural relevance statement must be at least 100 characters"),
   mediaUrl: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
-  photoUrl: z.string().url("Please upload a photo").min(1, "Photo is required"),
+  photoUrl: z.string().url("Please upload a photo").optional().or(z.literal("")),
 });
 
 type SubmissionFormValues = z.infer<typeof submissionSchema>;
@@ -140,9 +140,9 @@ export default function SubmitPage() {
                     <FormItem>
                       <FormLabel>Nominee&apos;s Photo</FormLabel>
                       <FormControl>
-                        <ImageUpload 
-                          value={field.value} 
-                          onChange={field.onChange} 
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
                           disabled={isSubmitting}
                         />
                       </FormControl>
@@ -224,7 +224,7 @@ export default function SubmitPage() {
                   )}
                 />
               </div>
-              
+
               <div className="flex justify-end">
                 <Button type="submit" disabled={isSubmitting} size="lg">
                   {isSubmitting ? "Submitting..." : "Submit Nomination"}
@@ -238,5 +238,5 @@ export default function SubmitPage() {
   );
 }
 function Separator() {
-    return <hr className="my-8 border-border" />;
+  return <hr className="my-8 border-border" />;
 }

@@ -3,11 +3,8 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Upload, X } from 'lucide-react';
 import Image from 'next/image';
-import { useStorage } from '@/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,10 +17,8 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, disabled, className }: ImageUploadProps) {
     const [isUploading, setIsUploading] = useState(false);
-    const [progress, setProgress] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const storage = useStorage();
     const { toast } = useToast();
 
     const handleFileSelect = async (file: File) => {
@@ -50,46 +45,36 @@ export function ImageUpload({ value, onChange, disabled, className }: ImageUploa
         }
 
         setIsUploading(true);
-        setProgress(0);
 
         try {
-            const timestamp = Date.now();
-            const storageRef = ref(storage, `uploads/${timestamp}_${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
+            const formData = new FormData();
+            formData.append('file', file);
 
-            uploadTask.on(
-                'state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setProgress(progress);
-                },
-                (error) => {
-                    console.error('Upload error:', error);
-                    toast({
-                        variant: 'destructive',
-                        title: 'Upload failed',
-                        description: 'There was an error uploading your image.',
-                    });
-                    setIsUploading(false);
-                },
-                async () => {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    onChange(downloadURL);
-                    setIsUploading(false);
-                    toast({
-                        title: 'Image uploaded',
-                        description: 'Your image has been uploaded successfully.',
-                    });
-                }
-            );
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const data = await response.json();
+            onChange(data.url);
+
+            toast({
+                title: 'Image uploaded',
+                description: 'Your image has been uploaded successfully.',
+            });
         } catch (error) {
-            console.error('Error starting upload:', error);
-            setIsUploading(false);
+            console.error('Upload error:', error);
             toast({
                 variant: 'destructive',
-                title: 'Error',
-                description: 'Could not start upload.',
+                title: 'Upload failed',
+                description: 'There was an error uploading your image.',
             });
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -154,7 +139,7 @@ export function ImageUpload({ value, onChange, disabled, className }: ImageUploa
                     {isUploading ? (
                         <div className="flex flex-col items-center space-y-2">
                             <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">Uploading... {Math.round(progress)}%</p>
+                            <p className="text-sm text-muted-foreground">Uploading...</p>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center space-y-2 text-center">
