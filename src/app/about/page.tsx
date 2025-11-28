@@ -16,7 +16,7 @@ export default function AboutPage() {
                             Cultural Ambassadors Award 2025/26
                         </h1>
                         <p className="mt-6 text-xl text-muted-foreground md:text-2xl">
-                            Celebrating Ethiopia's Creative Youth — Voices of Culture, Innovation & Heritage
+                            Celebrating Ethiopia's Creative Youth Voices of Culture, Innovation & Heritage
                         </p>
                         <p className="mt-4 text-lg text-muted-foreground">
                             Where tradition meets digital creativity.
@@ -41,7 +41,7 @@ export default function AboutPage() {
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">About the Initiative</h2>
                         <div className="mt-6 space-y-4 text-lg text-muted-foreground">
                             <p>
-                                Ethiopia holds a deep cultural beauty — music, dance, poetry, storytelling, traditional instruments and digital creativity. The ABN Studio Cultural Ambassadors Award is a national program designed to identify, elevate, and empower talented young creators, giving them a platform to showcase their art to Ethiopia and the world.
+                                Ethiopia holds a deep cultural beauty music, dance, poetry, storytelling, traditional instruments and digital creativity. The ABN Studio Cultural Ambassadors Award is a national program designed to identify, elevate, and empower talented young creators, giving them a platform to showcase their art to Ethiopia and the world.
                             </p>
                             <p>
                                 We celebrate youth who preserve culture while innovating through digital media, performance, literature and creative expression. The goal is to build a new generation of Cultural Ambassadors who will inspire pride and lead Ethiopia's cultural future.
@@ -290,25 +290,28 @@ export default function AboutPage() {
                             network to provide artists, performers, writers, and innovators with
                             opportunities to showcase their talents, develop professionally, and reach
                             national and international audiences.
-                            The studio operates with the highest standards of professionalism, ensuring all
-                            creative projects meet international benchmarks in production quality, digital
-                            media, and cultural presentation. ABN Studio specializes in a wide range of
-                            services, including:
+
+
+                        </br>
+                        The studio operates with the highest standards of professionalism, ensuring all
+                        creative projects meet international benchmarks in production quality, digital
+                        media, and cultural presentation. ABN Studio specializes in a wide range of
+                        services, including:
 
 
 
 
 
-                            Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
-                            studio blends traditional Ethiopian heritage with modern digital technologies,
-                            creating platforms that celebrate culture, encourage innovation, and amplify
-                            the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
-                            cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
-                            Ethiopia’s rich artistic legacy.
-                        </p>
-                    </div>
+                        Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
+                        studio blends traditional Ethiopian heritage with modern digital technologies,
+                        creating platforms that celebrate culture, encourage innovation, and amplify
+                        the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
+                        cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
+                        Ethiopia’s rich artistic legacy.
+                    </p>
                 </div>
-            </section>
         </div>
+            </section >
+        </div >
     );
 }
