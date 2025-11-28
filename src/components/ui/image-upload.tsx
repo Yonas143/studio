@@ -56,7 +56,8 @@ export function ImageUpload({ value, onChange, disabled, className }: ImageUploa
             });
 
             if (!response.ok) {
-                throw new Error('Upload failed');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Upload failed');
             }
 
             const data = await response.json();
@@ -66,12 +67,12 @@ export function ImageUpload({ value, onChange, disabled, className }: ImageUploa
                 title: 'Image uploaded',
                 description: 'Your image has been uploaded successfully.',
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Upload error:', error);
             toast({
                 variant: 'destructive',
                 title: 'Upload failed',
-                description: 'There was an error uploading your image.',
+                description: error.message || 'There was an error uploading your image.',
             });
         } finally {
             setIsUploading(false);
