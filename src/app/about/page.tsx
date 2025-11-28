@@ -294,6 +294,8 @@ export default function AboutPage() {
 
 
                             <br />
+                            <br />
+                            <br />
                             The studio operates with the highest standards of professionalism, ensuring all
                             creative projects meet international benchmarks in production quality, digital
                             media, and cultural presentation. ABN Studio specializes in a wide range of
