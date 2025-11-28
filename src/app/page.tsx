@@ -80,7 +80,7 @@ export default function Home() {
         <Separator />
 
         {/* Award & Program Timeline Section */}
-        <section className="py-16 md:py-24">
+        {/* <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center mb-12">
               <h2 className="font-headline text-3xl font-bold md:text-4xl">
@@ -164,7 +164,7 @@ export default function Home() {
               Outcome: A new generation of cultural leaders representing Ethiopia.
             </p>
           </div>
-        </section>
+        </section> */}
 
         <Separator />
 
@@ -182,28 +182,28 @@ export default function Home() {
             <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4">🎭</div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Performing Arts</h3>
+                  <div className="text-4xl mb-4"></div>
+                  <h3 className="font-headline text-xl font-semibold mb-2">traditional dance</h3>
                   <p className="text-muted-foreground">Dance • Cultural performance •</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4">🎵</div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Digital Music & Vocal Innovation</h3>
+                  <div className="text-4xl mb-4"></div>
+                  <h3 className="font-headline text-xl font-semibold mb-2">traditional music</h3>
                   <p className="text-muted-foreground">Ethiopian rhythm & creative production</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4">🎻</div>
+                  <div className="text-4xl mb-4"></div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Instruments</h3>
                   <p className="text-muted-foreground">Krar • Masinko • Kebero • Washint & more — pure heritage sound</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="text-4xl mb-4">✍</div>
+                  <div className="text-4xl mb-4"></div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Literary & Poetry Excellence</h3>
                   <p className="text-muted-foreground">Poetry, storytelling, spoken word & written cultural expression</p>
                 </CardContent>
