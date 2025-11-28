@@ -3,65 +3,8 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-    
-    function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Rules for collections
-    match /users/{userId} {
-      allow read;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-    }
-    
-    match /submissions/{submissionId} {
-      // Allow reads for all users
-      allow read;
-      allow create: if isSignedIn();
-      allow update, delete: if isAdmin();
-    }
-
-    match /votes/{voteId} {
-      // Allow reads for analytics and leaderboards
-      allow read; 
-      // Only signed-in users can create a vote
-      // Enforce voteId format: userId_nomineeId to prevent duplicates
-      allow create: if isSignedIn() 
-        && voteId == request.auth.uid + '_' + request.resource.data.nomineeId
-        && request.resource.data.userId == request.auth.uid;
-      // Allow users to delete their own votes
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
-    }
-
-    match /categories/{categoryId} {
-      allow read;
-      allow write: if isAdmin();
-    }
-
-    match /nominees/{nomineeId} {
-      allow read;
-      allow write: if isAdmin();
-    }
-
-    match /timelineEvents/{eventId} {
-      allow read;
-      allow write: if isAdmin();
-    }
-
-    match /scores/{scoreId} {
-      allow read: if isAdmin() || isSignedIn();
-      allow create: if isSignedIn();
-      allow update, delete: if isAdmin();
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
