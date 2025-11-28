@@ -44,7 +44,7 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2">
               <li><Link href="/privacy" className="text-sm hover:text-primary">Privacy Policy</Link></li>
               <li><Link href="/terms" className="text-sm hover:text-primary">Terms of Service</Link></li>
-
+              <li><Link href="/voting-rules" className="text-sm hover:text-primary">Voting Rules</Link></li>
             </ul>
           </div>
           <div>
