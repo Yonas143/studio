@@ -326,19 +326,19 @@ export default function Home() {
             <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
               Our Partners
             </h2>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+            {/* <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {sponsors.map((sponsor) => (
-                // <div key={sponsor.id} className="relative h-16 w-32 grayscale opacity-60 transition-all hover:opacity-100 hover:grayscale-0">
-                //   <Image
-                //     src={sponsor.imageUrl}
-                //     alt={sponsor.description}
-                //     fill
-                //     className="object-contain"
-                //     data-ai-hint={sponsor.imageHint}
-                //   />
-                // </div>
+                <div key={sponsor.id} className="relative h-16 w-32 grayscale opacity-60 transition-all hover:opacity-100 hover:grayscale-0">
+                  <Image
+                    src={sponsor.imageUrl}
+                    alt={sponsor.description}
+                    fill
+                    className="object-contain"
+                    data-ai-hint={sponsor.imageHint}
+                  />
+                </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </section>
       </main>
