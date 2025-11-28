@@ -182,12 +182,14 @@ export default function Home() {
             <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
-                    <Image
-                      src="/files/dance-category.png"
-                      alt="Traditional Dance"
-                      fill
-                      className="object-cover"
+                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
+                    <video
+                      src="/files/DANCE.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Dance</h3>
@@ -196,12 +198,14 @@ export default function Home() {
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
-                    <Image
-                      src="/files/vocal-category.png"
-                      alt="Cultural Music & Vocal Innovation"
-                      fill
-                      className="object-cover"
+                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
+                    <video
+                      src="/files/music.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Cultural Music & Vocal Innovation</h3>
@@ -210,12 +214,14 @@ export default function Home() {
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
-                    <Image
-                      src="/files/instruments-category.png"
-                      alt="Traditional Instruments"
-                      fill
-                      className="object-cover"
+                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
+                    <video
+                      src="/files/instrument.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Instruments</h3>
@@ -224,12 +230,14 @@ export default function Home() {
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
                 <CardContent className="p-6">
-                  <div className="relative h-32 w-full mb-4 rounded-lg overflow-hidden">
-                    <Image
-                      src="/files/poetry-category.png"
-                      alt="Literary & Poetry Excellence"
-                      fill
-                      className="object-cover"
+                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
+                    <video
+                      src="/files/poem.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Literary & Poetry Excellence</h3>
