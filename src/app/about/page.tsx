@@ -175,56 +175,84 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Objectives</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            Young Ethiopian innovators age 15–35 who are:
+                            The ABN Studio Cultural Ambassadors initiative is designed to empower Ethiopia’s youth by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of young leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
                         </p>
                         <ul className="mt-6 space-y-3 text-lg">
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Musicians, dancers, poets, writers</span>
+                                <span>Honor young individuals and groups demonstrating creativity, innovation, and social impact.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Traditional instrument performers</span>
+                                <span>Amplify the voices of Ethiopia’s creative youth through media, digital platforms, and public engagement.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Digital creatives & vocal innovators</span>
+                                <span>Offer mentorship, training, and workshops to strengthen artistic skills and digital innovation.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Passionate about cultural preservation & creative impact</span>
+                                <span>Encourage the integration of traditional Ethiopian arts with modern technologies to preserve heritage and inspire creativity.</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <span className="mt-1 text-primary">✔</span>
+                                <span>Establish a community of Cultural Ambassadors who serve as role models, advocates, and leaders for Ethiopian culture.</span>
                             </li>
                         </ul>
                     </div>
                 </div>
             </section>
 
-            {/* Why This Matters */}
+            {/* Expected Outcomes */}
             <section className="py-16 md:py-24">
                 <div className="container">
-                    <div className="mx-auto max-w-4xl">
-                        <h2 className="font-headline text-3xl font-bold md:text-4xl"> Expected outcome & Impacts</h2>
-                        <p className="mt-4 text-lg text-muted-foreground">
-                            This initiative is creating a lifelong network of leaders who:
-                        </p>
-                        <ul className="mt-6 space-y-3 text-lg">
-                            <li className="flex items-start gap-3">
-                                <span className="text-2xl">🔥</span>
-                                <span>Preserve Ethiopian heritage</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <span className="text-2xl">🔥</span>
-                                <span>Innovate creatively with modern technology</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <span className="text-2xl">🔥</span>
-                                <span>Inspire the next generation</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <span className="text-2xl">🔥</span>
-                                <span>Represent Ethiopia globally</span>
-                            </li>
-                        </ul>
+                    <div className="mx-auto max-w-4xl text-center mb-12">
+                        <h2 className="font-headline text-3xl font-bold md:text-4xl">Expected Outcomes & Impacts</h2>
+                    </div>
+                    <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">Recognition of Talent & Creativity</h3>
+                                <p className="text-muted-foreground mb-2">Young creatives gain formal acknowledgment for their artistic excellence, innovation, and cultural contribution.</p>
+                                <p className="text-muted-foreground">Awardees are celebrated nationally and internationally, inspiring peers and emerging artists.</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">Capacity Building & Skills Development</h3>
+                                <p className="text-muted-foreground mb-2">Participants acquire enhanced skills in performing arts, digital innovation, creative expression, and cultural leadership.</p>
+                                <p className="text-muted-foreground">Mentorship and workshops strengthen professional growth and open pathways to career opportunities.</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">Cultural Preservation & Innovation</h3>
+                                <p className="text-muted-foreground mb-2">Traditional Ethiopian arts, music, dance, literature, and instruments are preserved and promoted.</p>
+                                <p className="text-muted-foreground mb-2">Integration of modern digital techniques encourages innovative expression while respecting heritage.</p>
+                                <p className="text-primary font-medium">የድምፅ ውድድር፣ ባህላዊ ውዝዋዜ፣ ባህላዊ የሙዚቃ መሳሪያዎች መጫወት፣ ግጥም</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">National & International Visibility</h3>
+                                <p className="text-muted-foreground mb-2">Participants’ work is amplified through ABN Studio platforms, media coverage, cultural events, and digital channels.</p>
+                                <p className="text-muted-foreground">Ethiopia’s creative youth gain recognition as ambassadors of the nation’s artistic and cultural excellence.</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">Sustainable Network of Ambassadors</h3>
+                                <p className="text-muted-foreground mb-2">A lasting community of young leaders is established, fostering collaboration, mentorship, and ongoing cultural initiatives.</p>
+                                <p className="text-muted-foreground">Ambassadors serve as advocates for Ethiopian culture, inspiring social impact and youth participation in the arts.</p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <h3 className="font-headline text-xl font-semibold mb-3">Societal & Economic Impact</h3>
+                                <p className="text-muted-foreground mb-2">Promotion of cultural arts contributes to social cohesion, national pride, and community engagement.</p>
+                                <p className="text-muted-foreground">Creative and digital innovation provides pathways for employment, entrepreneurship, and cultural tourism opportunities.</p>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </section>
