@@ -90,7 +90,7 @@ export default function Home() {
         <section className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-background to-primary/10">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center">
-              <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl">
+              <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl text-primary">
                 Cultural Ambassador Award 2025/26
               </h2>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
@@ -198,7 +198,7 @@ export default function Home() {
         <section className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center mb-12">
-              <h2 className="font-headline text-3xl font-bold md:text-4xl">
+              <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">
                 Award Categories
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">

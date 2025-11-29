@@ -80,7 +80,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                'transition-colors hover:text-foreground/80',
+                'font-headline transition-colors hover:text-foreground/80',
                 pathname?.startsWith(item.href)
                   ? 'text-foreground'
                   : 'text-foreground/60'
@@ -160,7 +160,7 @@ export function SiteHeader() {
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        'text-lg font-medium transition-colors hover:text-primary',
+                        'font-headline text-lg font-medium transition-colors hover:text-primary',
                         pathname?.startsWith(item.href)
                           ? 'text-primary'
                           : 'text-foreground/80'
@@ -173,7 +173,7 @@ export function SiteHeader() {
                     <Link
                       href={getDashboardUrl()}
                       className={cn(
-                        'text-lg font-medium transition-colors hover:text-primary',
+                        'font-headline text-lg font-medium transition-colors hover:text-primary',
                         pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/judge')
                           ? 'text-primary'
                           : 'text-foreground/80'
