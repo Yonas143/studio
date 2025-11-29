@@ -79,10 +79,10 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               className={cn(
-                'font-headline transition-colors hover:text-foreground/80',
+                'font-headline transition-colors hover:text-primary',
                 pathname?.startsWith(item.href)
-                  ? 'text-foreground'
-                  : 'text-foreground/60'
+                  ? 'text-primary'
+                  : 'text-primary/70'
               )}
             >
               {item.title}
