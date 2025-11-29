@@ -88,21 +88,26 @@ export default function PopupsPage() {
                 storageKey: formData.storageKey || `popup-${Date.now()}`,
             };
 
+            console.log('Submitting popup data:', popupData);
+
             if (editingId) {
                 await updateDoc(doc(firestore, 'popups', editingId), popupData);
+                console.log('Popup updated:', editingId);
                 toast({ title: 'Success', description: 'Popup updated successfully' });
             } else {
-                await addDoc(collection(firestore, 'popups'), popupData);
+                const docRef = await addDoc(collection(firestore, 'popups'), popupData);
+                console.log('Popup created with ID:', docRef.id);
                 toast({ title: 'Success', description: 'Popup created successfully' });
             }
 
             resetForm();
-            loadPopups();
+            await loadPopups();
         } catch (error) {
+            console.error('Error saving popup:', error);
             toast({
                 variant: 'destructive',
                 title: 'Error',
-                description: 'Failed to save popup',
+                description: `Failed to save popup: ${error instanceof Error ? error.message : 'Unknown error'}`,
             });
         } finally {
             setSaving(false);

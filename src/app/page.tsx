@@ -15,6 +15,8 @@ import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
 import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
+import { useCollection } from '@/firebase';
+import { useEffect } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
@@ -34,6 +36,12 @@ export default function Home() {
 
   // Get the first active popup
   const activePopup = popups && popups.length > 0 ? popups[0] : null;
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Popups from Firebase:', popups);
+    console.log('Active popup:', activePopup);
+  }, [popups, activePopup]);
 
   return (
     <div className="flex flex-col min-h-dvh">
