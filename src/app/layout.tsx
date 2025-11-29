@@ -1,3 +1,4 @@
+import localFont from 'next/font/local';
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -6,6 +7,52 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
+
+const lemonMilk = localFont({
+  src: [
+    {
+      path: '../../public/files/LEMONMILK-Light.otf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/files/LEMONMILK-LightItalic.otf',
+      weight: '300',
+      style: 'italic',
+    },
+    {
+      path: '../../public/files/LEMONMILK-Regular.otf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/files/LEMONMILK-RegularItalic.otf',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: '../../public/files/LEMONMILK-Medium.otf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/files/LEMONMILK-MediumItalic.otf',
+      weight: '500',
+      style: 'italic',
+    },
+    {
+      path: '../../public/files/LEMONMILK-Bold.otf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../public/files/LEMONMILK-BoldItalic.otf',
+      weight: '700',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-lemon-milk',
+});
 
 export const metadata: Metadata = {
   title: 'Cultural Ambassador Award',
@@ -29,7 +76,8 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          'min-h-screen bg-background font-body text-foreground antialiased'
+          'min-h-screen bg-background font-body text-foreground antialiased',
+          lemonMilk.variable
         )}
       >
         <FirebaseClientProvider>
