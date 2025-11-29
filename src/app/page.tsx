@@ -14,6 +14,7 @@ import { useCollection } from '@/firebase';
 import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
+import { AnnouncementPopup } from '@/components/announcement-popup';
 
 const { placeholderImages } = placeholderImagesData;
 
@@ -32,8 +33,20 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-dvh">
+      {/* Announcement Popup - Change content as needed */}
+      <AnnouncementPopup
+        content={{
+          type: 'text',
+          title: 'Welcome to Cultural Ambassador Award 2025/26!',
+          description: 'Join us in celebrating Ethiopia\'s rich cultural heritage. Submit your work or vote for your favorite nominees today!',
+        }}
+        showOnLoad={true}
+        delaySeconds={2}
+        storageKey="welcome-popup-2025"
+      />
+
       <main className="flex-1">
-        <section className="relative h-screen w-full overflow-hidden pt-16">
+        <section className="relative h-screen w-full overflow-hidden">
           <Carousel
             opts={{
               loop: true,
