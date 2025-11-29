@@ -21,10 +21,12 @@ export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
   const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
 
-  const heroImages = placeholderImages.filter(p =>
-    ['hero-banner', 'category-performing-arts', 'category-traditional-music', 'category-digital-arts', 'category-poetry'].includes(p.id)
-  );
-  const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
+  const heroVideos = [
+    { id: 'dance', src: '/files/DANCE.mp4', description: 'Traditional Dance' },
+    { id: 'music', src: '/files/music.mp4', description: 'Cultural Music' },
+    { id: 'instrument', src: '/files/instrument.mp4', description: 'Traditional Instruments' },
+    { id: 'poem', src: '/files/poem.mp4', description: 'Poetry' },
+  ];
 
   const loading = nomineesLoading || timelineLoading;
 
@@ -39,21 +41,21 @@ export default function Home() {
             }}
             plugins={[
               Autoplay({
-                delay: 5000,
+                delay: 8000,
               }),
             ]}
             className="h-full w-full"
           >
             <CarouselContent className="h-full ml-0">
-              {heroImages.map((image) => (
-                <CarouselItem key={image.id} className="relative h-full w-full pl-0">
-                  <Image
-                    src={image.imageUrl}
-                    alt={image.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={image.imageHint}
-                    priority
+              {heroVideos.map((video) => (
+                <CarouselItem key={video.id} className="relative h-full w-full pl-0">
+                  <video
+                    src={video.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                 </CarouselItem>
