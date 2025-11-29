@@ -5,6 +5,8 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -19,7 +21,9 @@ export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
   const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
 
-  const heroImage = placeholderImages.find(p => p.id === 'hero-banner');
+  const heroImages = placeholderImages.filter(p =>
+    ['hero-banner', 'category-performing-arts', 'category-traditional-music', 'category-digital-arts', 'category-poetry'].includes(p.id)
+  );
   const sponsors = placeholderImages.filter(p => p.imageHint.includes('logo'));
 
   const loading = nomineesLoading || timelineLoading;
@@ -27,35 +31,55 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-dvh">
       <main className="flex-1">
-        <section className="relative h-[60vh] min-h-[400px] w-full">
-          {heroImage && (
-            <Image
-              src={heroImage.imageUrl}
-              alt={heroImage.description}
-              fill
-              className="object-cover"
-              data-ai-hint={heroImage.imageHint}
-              priority
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-          <div className="relative z-10 flex h-full flex-col items-center justify-center text-center text-white p-4">
-            <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-              Cultural Ambassador Award
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg md:text-xl">
-              Celebrating and preserving the rich tapestry of Ethiopian cultural heritage.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button asChild size="lg" className="font-bold">
-                <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="secondary" className="font-bold">
-                <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="font-bold bg-transparent text-white hover:bg-white/10">
-                <Link href="/categories">View Categories</Link>
-              </Button>
+        <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+          <Carousel
+            opts={{
+              loop: true,
+              duration: 60,
+            }}
+            plugins={[
+              Autoplay({
+                delay: 5000,
+              }),
+            ]}
+            className="h-full w-full"
+          >
+            <CarouselContent className="h-full ml-0">
+              {heroImages.map((image) => (
+                <CarouselItem key={image.id} className="relative h-full w-full pl-0">
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.description}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={image.imageHint}
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+
+          <div className="absolute inset-0 z-10 flex h-full flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
+            <div className="pointer-events-auto">
+              <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl drop-shadow-lg">
+                Cultural Ambassador Award
+              </h1>
+              <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl drop-shadow-md text-gray-200">
+                Celebrating and preserving the rich tapestry of Ethiopian cultural heritage.
+              </p>
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Button asChild size="lg" className="font-bold shadow-lg">
+                  <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
+                </Button>
+                <Button asChild size="lg" variant="secondary" className="font-bold shadow-lg">
+                  <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="font-bold bg-black/20 text-white hover:bg-white/20 border-white/40 backdrop-blur-sm shadow-lg">
+                  <Link href="/categories">View Categories</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
