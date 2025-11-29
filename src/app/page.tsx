@@ -14,13 +14,14 @@ import { useCollection } from '@/firebase';
 import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
-import { AnnouncementPopup } from '@/components/announcement-popup';
+import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
   const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
+  const { data: popups } = useCollection<any>('popups', { where: ['isActive', '==', true] });
 
   const heroVideos = [
     { id: 'dance', src: '/files/DANCE.mp4', description: 'Traditional Dance' },
@@ -31,19 +32,27 @@ export default function Home() {
 
   const loading = nomineesLoading || timelineLoading;
 
+  // Get the first active popup
+  const activePopup = popups && popups.length > 0 ? popups[0] : null;
+
   return (
     <div className="flex flex-col min-h-dvh">
-      {/* Announcement Popup - Change content as needed */}
-      <AnnouncementPopup
-        content={{
-          type: 'text',
-          title: 'Welcome to Cultural Ambassador Award 2025/26!',
-          description: 'Join us in celebrating Ethiopia\'s rich cultural heritage. Submit your work or vote for your favorite nominees today!',
-        }}
-        showOnLoad={true}
-        delaySeconds={2}
-        storageKey="welcome-popup-2025"
-      />
+      {/* Dynamic Announcement Popup from Firebase */}
+      {activePopup && (
+        <AnnouncementPopup
+          content={{
+            type: activePopup.type,
+            title: activePopup.title,
+            description: activePopup.description,
+            videoUrl: activePopup.videoUrl,
+            imageUrl: activePopup.imageUrl,
+            imageLink: activePopup.imageLink,
+          }}
+          showOnLoad={true}
+          delaySeconds={activePopup.delaySeconds || 2}
+          storageKey={activePopup.storageKey}
+        />
+      )}
 
       <main className="flex-1">
         <section className="relative h-screen w-full overflow-hidden">
