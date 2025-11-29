@@ -229,7 +229,7 @@ export default function AboutPage() {
                                 <h3 className="font-headline text-xl font-semibold mb-3">Cultural Preservation & Innovation</h3>
                                 <p className="text-muted-foreground mb-2">Traditional Ethiopian arts, music, dance, literature, and instruments are preserved and promoted.</p>
                                 <p className="text-muted-foreground mb-2">Integration of modern digital techniques encourages innovative expression while respecting heritage.</p>
-                                <p className="text-primary font-medium">የድምፅ ውድድር፣ ባህላዊ ውዝዋዜ፣ ባህላዊ የሙዚቃ መሳሪያዎች መጫወት፣ ግጥም</p>
+                                <p className="text-primary font-medium"></p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
