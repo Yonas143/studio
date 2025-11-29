@@ -232,27 +232,103 @@ export default function PopupsPage() {
                             )}
 
                             {formData.type === 'video' && (
-                                <div className="space-y-2">
-                                    <Label htmlFor="videoUrl">Video URL</Label>
-                                    <Input
-                                        id="videoUrl"
-                                        placeholder="YouTube embed URL or /files/video.mp4"
-                                        value={formData.videoUrl}
-                                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                                    />
-                                </div>
+                                <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="videoUrl">Video URL or Upload</Label>
+                                        <Input
+                                            id="videoUrl"
+                                            placeholder="YouTube embed URL or /files/video.mp4"
+                                            value={formData.videoUrl}
+                                            onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="videoFile">Or Upload Video (.mp4)</Label>
+                                        <Input
+                                            id="videoFile"
+                                            type="file"
+                                            accept="video/mp4"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    const fileName = `${Date.now()}-${file.name}`;
+                                                    const formData = new FormData();
+                                                    formData.append('file', file);
+                                                    formData.append('fileName', fileName);
+
+                                                    try {
+                                                        const response = await fetch('/api/upload', {
+                                                            method: 'POST',
+                                                            body: formData,
+                                                        });
+
+                                                        if (response.ok) {
+                                                            const data = await response.json();
+                                                            setFormData(prev => ({ ...prev, videoUrl: data.url }));
+                                                            toast({ title: 'Success', description: 'Video uploaded successfully' });
+                                                        } else {
+                                                            toast({ variant: 'destructive', title: 'Error', description: 'Failed to upload video' });
+                                                        }
+                                                    } catch (error) {
+                                                        toast({ variant: 'destructive', title: 'Error', description: 'Upload failed' });
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        {formData.videoUrl && formData.videoUrl.startsWith('/files/') && (
+                                            <p className="text-sm text-muted-foreground">Uploaded: {formData.videoUrl}</p>
+                                        )}
+                                    </div>
+                                </>
                             )}
 
                             {formData.type === 'image' && (
                                 <>
                                     <div className="space-y-2">
-                                        <Label htmlFor="imageUrl">Image URL</Label>
+                                        <Label htmlFor="imageUrl">Image URL or Upload</Label>
                                         <Input
                                             id="imageUrl"
                                             placeholder="/path/to/image.jpg"
                                             value={formData.imageUrl}
                                             onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                                         />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="imageFile">Or Upload Image</Label>
+                                        <Input
+                                            id="imageFile"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    const fileName = `${Date.now()}-${file.name}`;
+                                                    const formData = new FormData();
+                                                    formData.append('file', file);
+                                                    formData.append('fileName', fileName);
+
+                                                    try {
+                                                        const response = await fetch('/api/upload', {
+                                                            method: 'POST',
+                                                            body: formData,
+                                                        });
+
+                                                        if (response.ok) {
+                                                            const data = await response.json();
+                                                            setFormData(prev => ({ ...prev, imageUrl: data.url }));
+                                                            toast({ title: 'Success', description: 'Image uploaded successfully' });
+                                                        } else {
+                                                            toast({ variant: 'destructive', title: 'Error', description: 'Failed to upload image' });
+                                                        }
+                                                    } catch (error) {
+                                                        toast({ variant: 'destructive', title: 'Error', description: 'Upload failed' });
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        {formData.imageUrl && formData.imageUrl.startsWith('/files/') && (
+                                            <p className="text-sm text-muted-foreground">Uploaded: {formData.imageUrl}</p>
+                                        )}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="imageLink">Link (Optional)</Label>
