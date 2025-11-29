@@ -15,7 +15,6 @@ import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
 import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
-import { useCollection } from '@/firebase';
 import { useEffect } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
@@ -93,7 +92,7 @@ export default function Home() {
             </CarouselContent>
           </Carousel>
 
-          <div className="absolute inset-0 z-10 flex h-full flex-col items-center justify-center text-center text-white p-4 pointer-events-none">
+          <div className="absolute inset-0 z-10 flex h-full flex-col items-center justify-center text-center text-white p-4 pointer-events-none pt-32">
             <div className="pointer-events-auto">
               <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl drop-shadow-lg">
                 Cultural Ambassador Award
