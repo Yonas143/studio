@@ -54,8 +54,7 @@ export function SiteHeader() {
     switch (userProfile.role) {
       case 'admin':
         return '/admin';
-      case 'judge':
-        return '/judge';
+
       case 'participant':
         return '/dashboard';
       default:
@@ -135,9 +134,7 @@ export function SiteHeader() {
                 </Button>
               </>
             )}
-            <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 hover:text-primary">
-              <Link href="/nominees"><Trophy className="mr-2 h-4 w-4" /> Vote</Link>
-            </Button>
+
           </nav>
           <Sheet>
             <SheetTrigger asChild>

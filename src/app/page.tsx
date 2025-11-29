@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-dvh">
       <main className="flex-1">
-        <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden">
+        <section className="relative h-screen w-full overflow-hidden pt-16">
           <Carousel
             opts={{
               loop: true,
