@@ -15,14 +15,31 @@ import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
 import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
   const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
   const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
-  const { data: popups } = useCollection<any>('popups', { where: ['isActive', '==', true] });
+
+  const [popups, setPopups] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPopups = async () => {
+      try {
+        const response = await fetch('/api/popups?isActive=true');
+        const data = await response.json();
+        if (data.success) {
+          setPopups(data.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch popups:', error);
+      }
+    };
+
+    fetchPopups();
+  }, []);
 
   const heroVideos = [
     { id: 'dance', src: '/files/DANCE.mp4', description: 'Traditional Dance' },
@@ -38,7 +55,7 @@ export default function Home() {
 
   // Debug logging
   useEffect(() => {
-    console.log('Popups from Firebase:', popups);
+    console.log('Popups from API:', popups);
     console.log('Active popup:', activePopup);
   }, [popups, activePopup]);
 

@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, addDoc, updateDoc, doc, deleteDoc, getDocs } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -45,7 +43,6 @@ export default function PopupsPage() {
         storageKey: '',
     });
 
-    const firestore = useFirestore();
     const { toast } = useToast();
 
     useEffect(() => {
@@ -54,12 +51,13 @@ export default function PopupsPage() {
 
     const loadPopups = async () => {
         try {
-            const querySnapshot = await getDocs(collection(firestore, 'popups'));
-            const popupsData = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as Popup[];
-            setPopups(popupsData);
+            const response = await fetch('/api/popups');
+            const data = await response.json();
+            if (data.success) {
+                setPopups(data.data.data);
+            } else {
+                throw new Error(data.error);
+            }
         } catch (error) {
             toast({
                 variant: 'destructive',
@@ -79,10 +77,10 @@ export default function PopupsPage() {
             const popupData = {
                 type: formData.type,
                 title: formData.title,
-                description: formData.description || null,
-                videoUrl: formData.videoUrl || null,
-                imageUrl: formData.imageUrl || null,
-                imageLink: formData.imageLink || null,
+                description: formData.description || undefined,
+                videoUrl: formData.videoUrl || undefined,
+                imageUrl: formData.imageUrl || undefined,
+                imageLink: formData.imageLink || undefined,
                 isActive: formData.isActive,
                 delaySeconds: formData.delaySeconds,
                 storageKey: formData.storageKey || `popup-${Date.now()}`,
@@ -90,18 +88,30 @@ export default function PopupsPage() {
 
             console.log('Submitting popup data:', popupData);
 
+            let response;
             if (editingId) {
-                await updateDoc(doc(firestore, 'popups', editingId), popupData);
-                console.log('Popup updated:', editingId);
-                toast({ title: 'Success', description: 'Popup updated successfully' });
+                response = await fetch(`/api/popups/${editingId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(popupData),
+                });
             } else {
-                const docRef = await addDoc(collection(firestore, 'popups'), popupData);
-                console.log('Popup created with ID:', docRef.id);
-                toast({ title: 'Success', description: 'Popup created successfully' });
+                response = await fetch('/api/popups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(popupData),
+                });
             }
 
-            resetForm();
-            await loadPopups();
+            const data = await response.json();
+
+            if (data.success) {
+                toast({ title: 'Success', description: `Popup ${editingId ? 'updated' : 'created'} successfully` });
+                resetForm();
+                await loadPopups();
+            } else {
+                throw new Error(data.error);
+            }
         } catch (error) {
             console.error('Error saving popup:', error);
             toast({
@@ -133,9 +143,17 @@ export default function PopupsPage() {
         if (!confirm('Are you sure you want to delete this popup?')) return;
 
         try {
-            await deleteDoc(doc(firestore, 'popups', id));
-            toast({ title: 'Success', description: 'Popup deleted successfully' });
-            loadPopups();
+            const response = await fetch(`/api/popups/${id}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                toast({ title: 'Success', description: 'Popup deleted successfully' });
+                loadPopups();
+            } else {
+                throw new Error(data.error);
+            }
         } catch (error) {
             toast({
                 variant: 'destructive',
@@ -147,11 +165,19 @@ export default function PopupsPage() {
 
     const toggleActive = async (popup: Popup) => {
         try {
-            await updateDoc(doc(firestore, 'popups', popup.id), {
-                isActive: !popup.isActive,
+            const response = await fetch(`/api/popups/${popup.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isActive: !popup.isActive }),
             });
-            toast({ title: 'Success', description: `Popup ${!popup.isActive ? 'activated' : 'deactivated'}` });
-            loadPopups();
+            const data = await response.json();
+
+            if (data.success) {
+                toast({ title: 'Success', description: `Popup ${!popup.isActive ? 'activated' : 'deactivated'}` });
+                loadPopups();
+            } else {
+                throw new Error(data.error);
+            }
         } catch (error) {
             toast({
                 variant: 'destructive',
