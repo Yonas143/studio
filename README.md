@@ -138,6 +138,38 @@ The project is configured for seamless deployment on Vercel.
 3.  Configure environment variables (Database URL, etc.).
 4.  Deploy!
 
+
+## 7. Project Structure
+
+```
+src/
+├── app/                    # App Router pages and API routes
+│   ├── (admin)/            # Protected admin routes
+│   │   └── admin/          # Admin dashboard pages
+│   ├── (auth)/             # Authentication pages (login)
+│   ├── (public)/           # Public pages group
+│   ├── api/                # Backend API routes
+│   │   ├── popups/         # Popup management endpoints
+│   │   └── upload/         # File upload endpoints
+│   ├── about/              # About page
+│   ├── categories/         # Award categories page
+│   ├── nominees/           # Nominee profiles and listing
+│   ├── globals.css         # Global styles and Tailwind directives
+│   ├── layout.tsx          # Root layout with providers
+│   └── page.tsx            # Home page with hero slider
+├── components/             # React components
+│   ├── ui/                 # Shadcn/UI primitive components
+│   ├── layout/             # Site header, footer, sidebar
+│   ├── voting/             # Voting system components
+│   └── announcement-popup.tsx # Dynamic popup component
+├── lib/                    # Utilities and libraries
+│   ├── prisma.ts           # Prisma client instance
+│   ├── api-utils.ts        # API helpers (response, error handling)
+│   └── utils.ts            # General utility functions
+├── firebase/               # Firebase configuration (Legacy)
+└── hooks/                  # Custom React hooks
+```
+
 ---
 
 **© 2025 Cultural Ambassador Award. Developed by Yonas Mulugeta.**
