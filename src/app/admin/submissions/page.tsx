@@ -1,115 +1,182 @@
 'use client';
 
-import { useCollection } from '@/firebase';
-import type { Submission } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
+import { Check, Loader2, X } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
-import { doc, updateDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function AdminSubmissionsPage() {
-    const { data: submissions, loading } = useCollection<Submission>('submissions');
-    const firestore = useFirestore();
+interface Submission {
+    id: string;
+    title: string;
+    category: string;
+    fullName: string;
+    email: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt: string;
+    fileUrl?: string;
+}
+
+export default function SubmissionsPage() {
+    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState<string | null>(null);
     const { toast } = useToast();
+    const router = useRouter();
 
-    const handleStatusChange = async (id: string, status: 'Approved' | 'Rejected') => {
-        const submissionRef = doc(firestore, 'submissions', id);
+    const fetchSubmissions = async () => {
         try {
-            await updateDoc(submissionRef, { status });
-            toast({
-                title: 'Status Updated',
-                description: `Submission has been ${status.toLowerCase()}.`,
-            });
-        } catch (error: any) {
+            const response = await fetch('/api/submissions');
+            const data = await response.json();
+            if (data.success) {
+                setSubmissions(data.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch submissions:', error);
             toast({
                 variant: 'destructive',
-                title: 'Error updating status',
-                description: error.message,
+                title: 'Error',
+                description: 'Failed to load submissions',
             });
+        } finally {
+            setLoading(false);
         }
     };
 
+    useEffect(() => {
+        fetchSubmissions();
+    }, []);
+
+    const handleApprove = async (id: string) => {
+        setProcessingId(id);
+        try {
+            const response = await fetch(`/api/submissions/${id}/approve`, {
+                method: 'POST',
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                toast({
+                    title: 'Success',
+                    description: 'Submission approved and nominee created',
+                });
+                fetchSubmissions(); // Refresh list
+            } else {
+                throw new Error(data.error || 'Failed to approve');
+            }
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: error.message,
+            });
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex h-96 items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold font-headline">Manage Submissions</h1>
-                <p className="text-muted-foreground">Approve, reject, and review all entries.</p>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold font-headline">Submissions</h1>
             </div>
+
             <Card>
                 <CardHeader>
-                    <CardTitle>All Submissions</CardTitle>
-                    <CardDescription>A complete list of all submissions from participants.</CardDescription>
+                    <CardTitle>Recent Submissions</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Title</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Nominee Name</TableHead>
                                 <TableHead>Category</TableHead>
-                                <TableHead>Submitter ID</TableHead>
+                                <TableHead>Submitted By</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {loading ? (
-                                [...Array(5)].map((_, i) => (
-                                    <TableRow key={i}>
-                                        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-40" /></TableCell>
-                                        <TableCell><Skeleton className="h-6 w-20" /></TableCell>
-                                        <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
-                                    </TableRow>
-                                ))
-                            ) : submissions && submissions.length > 0 ? (
+                            {submissions.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                                        No submissions found
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
                                 submissions.map((submission) => (
                                     <TableRow key={submission.id}>
-                                        <TableCell className="font-medium">{submission.title}</TableCell>
-                                        <TableCell>{submission.categoryId}</TableCell>
-                                        <TableCell className="font-mono text-xs">{submission.submitterId || 'Anonymous'}</TableCell>
                                         <TableCell>
-                                            <Badge variant={submission.status === 'Pending' ? 'secondary' : submission.status === 'Approved' ? 'default' : 'destructive'}>
+                                            {format(new Date(submission.createdAt), 'MMM d, yyyy')}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{submission.title}</TableCell>
+                                        <TableCell>{submission.category}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col">
+                                                <span>{submission.fullName}</span>
+                                                <span className="text-xs text-muted-foreground">{submission.email}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    submission.status === 'approved'
+                                                        ? 'default'
+                                                        : submission.status === 'rejected'
+                                                            ? 'destructive'
+                                                            : 'secondary'
+                                                }
+                                            >
                                                 {submission.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-right space-x-2">
-                                            {submission.status === 'Pending' && (
-                                                <>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleStatusChange(submission.id!, 'Approved')}>
-                                                        <CheckCircle className="h-4 w-4 text-green-500" />
+                                        <TableCell className="text-right">
+                                            {submission.status === 'pending' && (
+                                                <div className="flex justify-end gap-2">
+                                                    <Button
+                                                        size="sm"
+                                                        onClick={() => handleApprove(submission.id)}
+                                                        disabled={!!processingId}
+                                                    >
+                                                        {processingId === submission.id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <>
+                                                                <Check className="mr-1 h-4 w-4" /> Approve
+                                                            </>
+                                                        )}
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleStatusChange(submission.id!, 'Rejected')}>
-                                                        <XCircle className="h-4 w-4 text-red-500" />
-                                                    </Button>
-                                                </>
+                                                </div>
                                             )}
-                                             <Button asChild variant="outline" size="sm">
-                                                <Link href={`/admin/submissions/${submission.id}`}>
-                                                  View <ArrowRight className="ml-2 h-4 w-4" />
-                                                </Link>
-                                            </Button>
                                         </TableCell>
                                     </TableRow>
                                 ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="h-24 text-center">
-                                        No submissions found.
-                                    </TableCell>
-                                </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </CardContent>
             </Card>
         </div>
-    )
+    );
 }

@@ -21,8 +21,8 @@ model User {
   updatedAt     DateTime @updatedAt
   
   // Relations
-  submissions   Submission[]
-  votes         Vote[]
+  // submissions   Submission[] // Removed for public access
+  // votes         Vote[]       // Removed for public access
   
   @@index([email])
   @@index([role])
@@ -74,19 +74,16 @@ model Nominee {
 // Vote model
 model Vote {
   id         String   @id @default(cuid())
-  userId     String
   nomineeId  String
-  ipAddress  String?
-  userAgent  String?
+  ipAddress  String?  // For rate limiting
+  fingerprint String? // Browser fingerprint
   createdAt  DateTime @default(now())
   
   // Relations
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   nominee    Nominee  @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
   
-  // Ensure one vote per user per nominee
-  @@unique([userId, nomineeId])
-  @@index([userId])
+  // Ensure one vote per IP per nominee (basic protection)
+  @@index([ipAddress])
   @@index([nomineeId])
   @@index([createdAt])
 }
@@ -94,21 +91,24 @@ model Vote {
 // Submission model
 model Submission {
   id          String   @id @default(cuid())
-  userId      String
   title       String
   description String?
   category    String
   fileUrl     String?
+  
+  // Submitter Info (Public)
+  fullName    String
+  email       String
+  phone       String?
+  portfolioUrl String?
+  
   status      String   @default("pending") // pending, approved, rejected
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
-  // Relations
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@index([userId])
   @@index([status])
   @@index([category])
+  @@index([email])
 }
 
 // Popup model

@@ -1,54 +1,76 @@
 import { NextRequest } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase/admin';
-import {
-    handleAPIError,
-    successResponse,
-    verifyAuthToken,
-    verifyRole,
-    ValidationError,
-    NotFoundError
-} from '@/lib/api/errors';
-import { createVoteSchema } from '@/lib/api/validation';
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
+import { headers } from 'next/headers';
 
-/**
- * POST /api/votes
- * Cast a vote for a nominee
- */
+const voteSchema = z.object({
+    nomineeId: z.string().min(1, 'Nominee ID is required'),
+    fingerprint: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
     try {
-        // Verify authentication
-        const decodedToken = await verifyAuthToken(request);
-        const userId = decodedToken.uid;
-
-        // Parse and validate request body
         const body = await request.json();
-        const { nomineeId } = createVoteSchema.parse(body);
+        const { nomineeId, fingerprint } = voteSchema.parse(body);
 
-        const firestore = getAdminFirestore();
+        // Get IP address
+        const headersList = headers();
+        const forwardedFor = headersList.get('x-forwarded-for');
+        const ip = forwardedFor ? forwardedFor.split(',')[0] : 'unknown';
 
         // Check if nominee exists
-        const nomineeDoc = await firestore.collection('nominees').doc(nomineeId).get();
-        if (!nomineeDoc.exists) {
-            throw new NotFoundError('Nominee not found');
+        const nominee = await prisma.nominee.findUnique({
+            where: { id: nomineeId },
+        });
+
+        if (!nominee) {
+            return apiError('Nominee not found', 404);
         }
 
-        // Check if user already voted for this nominee
-        const voteId = `${userId}_${nomineeId}`;
-        const existingVote = await firestore.collection('votes').doc(voteId).get();
+        if (!nominee.isActive) {
+            return apiError('Voting is closed for this nominee', 400);
+        }
 
-        if (existingVote.exists) {
-            throw new ValidationError('You have already voted for this nominee');
+        // Rate Limiting: Check if IP has voted for this nominee today
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const existingVote = await prisma.vote.findFirst({
+            where: {
+                nomineeId,
+                ipAddress: ip,
+                createdAt: {
+                    gte: startOfDay,
+                },
+            },
+        });
+
+        if (existingVote) {
+            return apiError('You have already voted for this nominee today', 429);
         }
 
         // Create vote
-        await firestore.collection('votes').doc(voteId).set({
-            userId,
-            nomineeId,
-            createdAt: new Date().toISOString(),
+        const vote = await prisma.vote.create({
+            data: {
+                nomineeId,
+                ipAddress: ip,
+                fingerprint,
+            },
         });
 
-        return successResponse({ message: 'Vote recorded successfully', voteId }, 201);
+        // Increment nominee vote count
+        await prisma.nominee.update({
+            where: { id: nomineeId },
+            data: {
+                voteCount: {
+                    increment: 1,
+                },
+            },
+        });
+
+        return apiResponse({ message: 'Vote recorded successfully', vote }, 201);
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }

@@ -170,6 +170,15 @@ src/
 └── hooks/                  # Custom React hooks
 ```
 
+
+## 8. Changelog
+
+- **2025-12-01**: Refactored authentication:
+    - Admin-only login/logout retained; public "Log In/Sign Up" removed from header.
+    - Updated Prisma schema for public voting and submissions (IP/fingerprint, contact fields).
+    - Implemented public `/api/votes` and `/api/submissions` endpoints.
+    - Added changelog entry in README.
+
 ---
 
 **© 2025 Cultural Ambassador Award. Developed by Yonas Mulugeta.**

@@ -1,109 +1,60 @@
 import { NextRequest } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase/admin';
-import {
-    handleAPIError,
-    successResponse,
-    verifyAuthToken,
-    verifyRole
-} from '@/lib/api/errors';
-import { createSubmissionSchema, submissionQuerySchema } from '@/lib/api/validation';
+import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
 
-/**
- * POST /api/submissions
- * Create a new submission
- */
+const submissionSchema = z.object({
+    title: z.string().min(1, 'Title is required'),
+    description: z.string().optional(),
+    category: z.string().min(1, 'Category is required'),
+    fileUrl: z.string().url().optional().or(z.literal('')),
+    fullName: z.string().min(1, 'Full name is required'),
+    email: z.string().email('Invalid email address'),
+    phone: z.string().optional(),
+    portfolioUrl: z.string().url().optional().or(z.literal('')),
+});
+
 export async function POST(request: NextRequest) {
     try {
-        // Verify authentication
-        const decodedToken = await verifyAuthToken(request);
-        const userId = decodedToken.uid;
-
-        // Parse and validate request body
         const body = await request.json();
-        const validatedData = createSubmissionSchema.parse(body);
+        const validatedData = submissionSchema.parse(body);
 
-        const firestore = getAdminFirestore();
+        const submission = await prisma.submission.create({
+            data: {
+                title: validatedData.title,
+                description: validatedData.description,
+                category: validatedData.category,
+                fileUrl: validatedData.fileUrl,
+                fullName: validatedData.fullName,
+                email: validatedData.email,
+                phone: validatedData.phone,
+                portfolioUrl: validatedData.portfolioUrl,
+                status: 'pending',
+            },
+        });
 
-        // Create submission
-        const submissionData = {
-            ...validatedData,
-            submitterId: userId,
-            status: 'Pending',
-            createdAt: new Date().toISOString(),
-        };
-
-        const docRef = await firestore.collection('submissions').add(submissionData);
-
-        return successResponse({
-            message: 'Submission created successfully',
-            submissionId: docRef.id
-        }, 201);
+        return apiResponse(submission, 201);
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }
 
-/**
- * GET /api/submissions
- * List submissions (filtered by user role)
- */
 export async function GET(request: NextRequest) {
     try {
-        // Verify authentication
-        const decodedToken = await verifyAuthToken(request);
-        const userId = decodedToken.uid;
-        const userRole = decodedToken.role as string;
-
         const { searchParams } = new URL(request.url);
-        const query = submissionQuerySchema.parse({
-            page: searchParams.get('page'),
-            limit: searchParams.get('limit'),
-            status: searchParams.get('status'),
-            categoryId: searchParams.get('categoryId'),
-        });
+        const status = searchParams.get('status');
 
-        const firestore = getAdminFirestore();
-        let submissionsQuery = firestore.collection('submissions');
+        const where = status ? { status } : {};
 
-        // Filter by user role
-        if (userRole === 'participant') {
-            // Participants can only see their own submissions
-            submissionsQuery = submissionsQuery.where('submitterId', '==', userId) as any;
-        }
-
-        // Apply additional filters
-        if (query.status) {
-            submissionsQuery = submissionsQuery.where('status', '==', query.status) as any;
-        }
-        if (query.categoryId) {
-            submissionsQuery = submissionsQuery.where('categoryId', '==', query.categoryId) as any;
-        }
-
-        // Order by creation date
-        submissionsQuery = submissionsQuery.orderBy('createdAt', 'desc') as any;
-
-        // Get submissions
-        const snapshot = await submissionsQuery.get();
-        const submissions = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-
-        // Apply pagination
-        const start = (query.page - 1) * query.limit;
-        const end = start + query.limit;
-        const paginatedSubmissions = submissions.slice(start, end);
-
-        return successResponse({
-            submissions: paginatedSubmissions,
-            pagination: {
-                page: query.page,
-                limit: query.limit,
-                total: submissions.length,
-                totalPages: Math.ceil(submissions.length / query.limit),
+        const submissions = await prisma.submission.findMany({
+            where,
+            orderBy: {
+                createdAt: 'desc',
             },
         });
+
+        return apiResponse(submissions);
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }

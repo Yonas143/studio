@@ -124,16 +124,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : !loading && (
-              <>
-                <Button asChild variant="ghost">
-                  <Link href="/login">Log In</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/register">Sign Up</Link>
-                </Button>
-              </>
-            )}
+            ) : null}
 
           </nav>
           <Sheet>
@@ -183,16 +174,7 @@ export function SiteHeader() {
                 <div className="mt-auto flex flex-col gap-2">
                   {user ? (
                     <Button onClick={handleSignOut} variant="outline" className="w-full">Log Out</Button>
-                  ) : (
-                    <>
-                      <Button asChild className="w-full">
-                        <Link href="/register">Sign Up</Link>
-                      </Button>
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href="/login">Log In</Link>
-                      </Button>
-                    </>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </SheetContent>

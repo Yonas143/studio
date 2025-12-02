@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/ui/image-upload";
-import { addDoc, collection } from "firebase/firestore";
-import { useFirestore } from "@/firebase";
 
 const submissionSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
+  phone: z.string().optional(),
   nomineeName: z.string().min(1, "Nominee name is required"),
   category: z.string().min(1, "Category is required"),
   biography: z.string().min(100, "Biography must be at least 100 characters"),
@@ -31,13 +30,13 @@ export default function SubmitPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const firestore = useFirestore();
 
   const form = useForm<SubmissionFormValues>({
     resolver: zodResolver(submissionSchema),
     defaultValues: {
       fullName: "",
       email: "",
+      phone: "",
       nomineeName: "",
       category: "",
       biography: "",
@@ -50,24 +49,45 @@ export default function SubmitPage() {
   const onSubmit = async (values: SubmissionFormValues) => {
     setIsSubmitting(true);
     try {
-      // A real app would have more robust backend validation and error handling
-      await addDoc(collection(firestore, 'submissions'), {
-        ...values,
-        status: 'pending',
-        submittedAt: new Date(),
+      // Combine biography and cultural relevance for the description field
+      const description = `BIOGRAPHY:\n${values.biography}\n\nCULTURAL RELEVANCE:\n${values.culturalRelevance}`;
+
+      const payload = {
+        title: values.nomineeName,
+        description: description,
+        category: values.category,
+        fileUrl: values.photoUrl,
+        fullName: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        portfolioUrl: values.mediaUrl,
+      };
+
+      const response = await fetch('/api/submissions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Submission failed');
+      }
 
       toast({
         title: "Submission successful!",
         description: "Thank you for your submission. It is now pending review.",
       });
-      router.push("/dashboard");
-    } catch (error) {
+      router.push("/");
+    } catch (error: any) {
       console.error("Submission error:", error);
       toast({
         variant: "destructive",
         title: "Submission failed",
-        description: "There was an error processing your submission. Please try again.",
+        description: error.message || "There was an error processing your submission. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
@@ -108,6 +128,19 @@ export default function SubmitPage() {
                       <FormLabel>Your Email</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="e.g., jane.doe@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Phone (Optional)</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="e.g., +251 911 234 567" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
