@@ -265,7 +265,7 @@ export default function Home() {
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Dance</h3>
-                  <p className="text-muted-foreground">Traditional & contemporary dance, music & drama.</p>
+                  <p className="text-muted-foreground">This category celebrates performers who bring Ethiopia’s traditional dances to life with authenticity, skill, and emotional power.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -280,8 +280,8 @@ export default function Home() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Cultural Music & Vocal Innovation</h3>
-                  <p className="text-muted-foreground">Modern production fused with Ethiopian sound.</p>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Music</h3>
+                  <p className="text-muted-foreground">This award honors outstanding musicians who preserve and elevate Ethiopia’s cultural soundscape through traditional melodies, rhythms, and vocal styles.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -297,7 +297,7 @@ export default function Home() {
                     />
                   </div>
                   <h3 className="font-headline text-xl font-semibold mb-2">Traditional Instruments</h3>
-                  <p className="text-muted-foreground">Creative instrumental performance & presentation.</p>
+                  <p className="text-muted-foreground">This category recognizes mastery of Ethiopia’s iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero.</p>
                 </CardContent>
               </Card>
               <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -312,8 +312,8 @@ export default function Home() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Literary & Poetry Excellence</h3>
-                  <p className="text-muted-foreground">Storytelling, poetry & written cultural expression.</p>
+                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Poetry</h3>
+                  <p className="text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” to folk storytelling.</p>
                 </CardContent>
               </Card>
             </div>

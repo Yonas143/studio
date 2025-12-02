@@ -10,25 +10,25 @@ const categories = [
   {
     id: 'traditional-dance',
     name: 'Traditional Dance',
-    description: 'Traditional & contemporary dance, music & drama.',
+    description: 'This category celebrates performers who bring Ethiopia’s traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia’s diverse dance heritage.',
     imageUrl: '/files/dance-category.png',
   },
   {
-    id: 'cultural-music',
-    name: 'Cultural Music & Vocal Innovation',
-    description: 'Modern production fused with Ethiopian sound.',
+    id: 'traditional-music',
+    name: 'Traditional Music',
+    description: 'This award honors outstanding musicians who preserve and elevate Ethiopia’s cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music.',
     imageUrl: '/files/vocal-category.png',
   },
   {
     id: 'traditional-instruments',
     name: 'Traditional Instruments',
-    description: 'Creative instrumental performance & presentation.',
+    description: 'This category recognizes mastery of Ethiopia’s iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument’s ability to communicate emotion and heritage.',
     imageUrl: '/files/instruments-category.png',
   },
   {
-    id: 'literary-poetry',
-    name: 'Literary & Poetry Excellence',
-    description: 'Storytelling, poetry & written cultural expression.',
+    id: 'traditional-poetry',
+    name: 'Traditional Poetry (Qiné, Wax & Gold, Spoken Traditions)',
+    description: 'This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.',
     imageUrl: '/files/poetry-category.png',
   },
 ];
