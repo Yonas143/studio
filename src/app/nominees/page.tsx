@@ -15,16 +15,23 @@ import {
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
 import { useCollection } from '@/firebase';
-import type { Nominee, Category } from '@/lib/types';
+import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export default function NomineesPage() {
   const { data: nominees, loading: nomineesLoading } = useCollection<Nominee>('nominees');
-  const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -33,6 +40,24 @@ export default function NomineesPage() {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [sortMethod, setSortMethod] = useState('trending');
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const allRegions = useMemo(() => {
     if (!nominees) return [];
@@ -49,7 +74,10 @@ export default function NomineesPage() {
     }
 
     if (selectedCategory !== 'all') {
-      const category = categories?.find(c => c.id === selectedCategory);
+      // Match by ID or Slug or Name depending on what's stored in nominee.category
+      // Assuming nominee.category stores the category NAME currently based on previous code
+      // But ideally it should store ID. Let's check if we can match by name for now to be safe with existing data
+      const category = categories.find(c => c.id === selectedCategory || c.slug === selectedCategory);
       if (category) {
         filtered = filtered.filter(n => n.category === category.name);
       }
@@ -108,8 +136,8 @@ export default function NomineesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories?.map(cat => (
-                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              {categories.map(cat => (
+                <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
