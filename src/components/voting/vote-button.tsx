@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Heart, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,7 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
     const [hasVoted, setHasVoted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
+    const [showThankYou, setShowThankYou] = useState(false);
     const [currentVoteCount, setCurrentVoteCount] = useState(voteCount);
     const { toast } = useToast();
 
@@ -73,10 +75,9 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
                 localStorage.setItem('votedNominees', JSON.stringify(votedNominees));
             }
 
-            toast({
-                title: 'Vote Recorded',
-                description: `You voted for ${nomineeName}!`,
-            });
+            // Show Thank You Modal instead of Toast
+            setShowThankYou(true);
+
         } catch (error: any) {
             console.error('Error voting:', error);
             toast({
@@ -129,6 +130,27 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
                 onSuccess={handlePaymentSuccess}
                 nomineeName={nomineeName}
             />
+
+            <Dialog open={showThankYou} onOpenChange={setShowThankYou}>
+                <DialogContent className="sm:max-w-md text-center">
+                    <DialogHeader>
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
+                            <Heart className="h-6 w-6 text-green-600 fill-current" />
+                        </div>
+                        <DialogTitle className="text-xl">Thank You!</DialogTitle>
+                        <DialogDescription className="text-center pt-2">
+                            Your vote for <strong>{nomineeName}</strong> has been recorded.
+                            <br />
+                            Thank you for your contribution to preserving our culture.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="sm:justify-center mt-4">
+                        <Button onClick={() => setShowThankYou(false)} className="w-full sm:w-auto">
+                            Close
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
