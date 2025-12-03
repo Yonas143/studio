@@ -55,6 +55,7 @@ model Nominee {
   imageUrl    String?
   videoUrl    String?
   categoryId  String
+  scope       String   @default("ethiopia") // "ethiopia" or "worldwide"
   featured    Boolean  @default(false)
   voteCount   Int      @default(0)
   isActive    Boolean  @default(true)
@@ -66,6 +67,7 @@ model Nominee {
   votes       Vote[]
   
   @@index([categoryId])
+  @@index([scope])
   @@index([featured])
   @@index([isActive])
   @@index([voteCount])

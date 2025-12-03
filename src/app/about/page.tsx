@@ -17,7 +17,7 @@ export default function AboutPage() {
                         </h1>
                         <p className="mt-6 text-xl text-muted-foreground md:text-2xl">
                             Celebrating Ethiopia's culture  with   traditional dance,traditional instruments,
-                            traditional music, poetry
+                            traditional music, poetry.
                         </p>
                         <p className="mt-4 text-lg text-muted-foreground">
                             Where tradition meets digital creativity.
@@ -75,7 +75,7 @@ export default function AboutPage() {
                                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                                     <Globe className="h-6 w-6 text-primary" />
                                 </div>
-                                <h3 className="mt-4 font-headline text-lg font-semibold">National & International Visibility</h3>
+                                <h3 className="mt-4 font-headline text-lg font-semibold">Cultural Heritage + Digital Innovation</h3>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -91,7 +91,7 @@ export default function AboutPage() {
                                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                                     <Lightbulb className="h-6 w-6 text-primary" />
                                 </div>
-                                <h3 className="mt-4 font-headline text-lg font-semibold">Cultural Heritage + Digital Innovation</h3>
+                                <h3 className="mt-4 font-headline text-lg font-semibold">National & International Visibility</h3>
                             </CardContent>
                         </Card>
                     </div>
@@ -155,7 +155,7 @@ export default function AboutPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-headline text-xl font-semibold">Literary & Poetry Excellence</h3>
-                                        <p className="mt-2 text-muted-foreground">Storytelling, poetry & written cultural expression.</p>
+                                        <p className="mt-2 text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.</p>
                                     </div>
                                 </div>
                             </CardContent>

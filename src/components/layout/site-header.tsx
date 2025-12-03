@@ -31,7 +31,7 @@ const mainNav: NavItem[] = [
   { title: 'Vote', href: '/nominees' },
 
   { title: 'Cultural Insight', href: '/cultural-insight' },
-  { title: 'About', href: '/about' },
+  { title: 'About Us', href: '/about' },
 ];
 
 

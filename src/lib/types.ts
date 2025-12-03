@@ -27,6 +27,7 @@ export type Nominee = {
   name: string;
   category: string;
   region: string;
+  scope?: 'ethiopia' | 'worldwide'; // New field for filtering
   bio: string;
   imageId: string;
   imageUrl?: string;

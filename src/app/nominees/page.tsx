@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Search, HelpCircle } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -13,6 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Input } from '@/components/ui/input';
 import { useCollection } from '@/firebase';
 import type { Nominee } from '@/lib/types';
@@ -38,8 +43,7 @@ export default function NomineesPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
-  const [selectedRegion, setSelectedRegion] = useState('all');
-  const [sortMethod, setSortMethod] = useState('trending');
+  const [selectedScope, setSelectedScope] = useState('all'); // 'all', 'ethiopia', 'worldwide'
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -58,11 +62,6 @@ export default function NomineesPage() {
 
     fetchCategories();
   }, []);
-
-  const allRegions = useMemo(() => {
-    if (!nominees) return [];
-    return [...new Set(nominees.map(n => n.region))];
-  }, [nominees]);
 
   const filteredNominees = useMemo(() => {
     if (!nominees) return [];
@@ -83,21 +82,15 @@ export default function NomineesPage() {
       }
     }
 
-    if (selectedRegion !== 'all') {
-      filtered = filtered.filter(n => n.region === selectedRegion);
+    if (selectedScope !== 'all') {
+      filtered = filtered.filter(n => n.scope === selectedScope);
     }
 
-    // sorting logic can be added here based on `sortMethod`
-    if (sortMethod === 'trending') {
-      filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
-    } else if (sortMethod === 'newest') {
-      // Assuming createdAt field exists. If not, this needs adjustment.
-      // filtered.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    }
-
+    // Sort by trending (vote count) by default
+    filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
 
     return filtered;
-  }, [nominees, searchTerm, selectedCategory, selectedRegion, sortMethod, categories]);
+  }, [nominees, searchTerm, selectedCategory, selectedScope, categories]);
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
@@ -125,42 +118,60 @@ export default function NomineesPage() {
       </div>
 
       <Card className="mb-8 p-4 bg-secondary">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Search nominees..." className="pl-10" onChange={e => setSearchTerm(e.target.value)} />
+        <div className="flex items-start gap-4">
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input placeholder="Search nominees..." className="pl-10" onChange={e => setSearchTerm(e.target.value)} />
+            </div>
+            <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map(cat => (
+                  <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedScope} onValueChange={setSelectedScope}>
+              <SelectTrigger>
+                <SelectValue placeholder="Ethiopia or Worldwide" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Nominees</SelectItem>
+                <SelectItem value="ethiopia">Ethiopia</SelectItem>
+                <SelectItem value="worldwide">Worldwide</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(cat => (
-                <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by Region" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
-              {allRegions.map(region => (
-                <SelectItem key={region} value={region}>{region}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={sortMethod} onValueChange={setSortMethod}>
-            <SelectTrigger>
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="trending">Trending</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
-            </SelectContent>
-          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" className="shrink-0">
+                <HelpCircle className="h-5 w-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-3">
+                <h4 className="font-semibold text-sm">Filter Help</h4>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="font-medium">🔍 Search</p>
+                    <p className="text-muted-foreground">Type a nominee's name to find them quickly</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">📂 Categories</p>
+                    <p className="text-muted-foreground">Filter by award category (Dance, Music, Poetry, etc.)</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">🌍 Ethiopia or Worldwide</p>
+                    <p className="text-muted-foreground">Show nominees from Ethiopia only or from around the world</p>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </Card>
 
