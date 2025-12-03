@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Trophy, LogOut } from 'lucide-react';
+import { Menu, Trophy, MessageCircle, Send } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/lib/types';
@@ -90,8 +90,19 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="hidden items-center space-x-2 md:flex">
-            {user && userProfile ? (
+          <nav className="hidden items-center space-x-1 md:flex">
+            <span className="text-xs text-muted-foreground mr-1">For Submission:</span>
+            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+              <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                <MessageCircle className="h-4 w-4" />
+              </a>
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+              <a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" rel="noopener noreferrer" title="Telegram">
+                <Send className="h-4 w-4" />
+              </a>
+            </Button>
+            {user && userProfile && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -114,18 +125,13 @@ export function SiteHeader() {
                   <DropdownMenuItem asChild>
                     <Link href={getDashboardUrl()}>Dashboard</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard/profile">Profile</Link>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
-
+            )}
           </nav>
           <Sheet>
             <SheetTrigger asChild>
@@ -172,9 +178,26 @@ export function SiteHeader() {
                   )}
                 </div>
                 <div className="mt-auto flex flex-col gap-2">
-                  {user ? (
+                  <div className="mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">For Submission:</p>
+                    <div className="flex flex-col gap-2">
+                      <Button variant="outline" size="sm" asChild className="w-full justify-start">
+                        <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                          <MessageCircle className="h-4 w-4" />
+                          <span>WhatsApp</span>
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild className="w-full justify-start">
+                        <a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                          <Send className="h-4 w-4" />
+                          <span>Telegram</span>
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                  {user && (
                     <Button onClick={handleSignOut} variant="outline" className="w-full">Log Out</Button>
-                  ) : null}
+                  )}
                 </div>
               </div>
             </SheetContent>
