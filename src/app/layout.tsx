@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
-import { SideAd } from '@/components/ads/side-ad';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 
@@ -86,10 +85,6 @@ export default function RootLayout({
             <SiteHeader />
             <main className="flex-1">{children}</main>
             <SiteFooter />
-
-            {/* Side Ads - Visible only on large screens */}
-            <SideAd side="left" />
-            <SideAd side="right" />
           </div>
           <Toaster />
         </FirebaseClientProvider>

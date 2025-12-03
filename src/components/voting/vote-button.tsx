@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Heart, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
-import { PaymentModal } from './payment-modal';
 
 interface VoteButtonProps {
     nomineeId: string;
@@ -19,8 +18,11 @@ interface VoteButtonProps {
 export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }: VoteButtonProps) {
     const [hasVoted, setHasVoted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+<<<<<<< HEAD
     const [showPayment, setShowPayment] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
+=======
+>>>>>>> parent of 56096cc (vote payment amd ads)
     const [currentVoteCount, setCurrentVoteCount] = useState(voteCount);
     const { toast } = useToast();
 
@@ -32,12 +34,7 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
         }
     }, [nomineeId]);
 
-    const handleVoteClick = () => {
-        if (hasVoted) return;
-        setShowPayment(true);
-    };
-
-    const handlePaymentSuccess = async (transactionId: string) => {
+    const handleVote = async () => {
         setIsLoading(true);
 
         try {
@@ -54,7 +51,6 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
                 body: JSON.stringify({
                     nomineeId,
                     fingerprint,
-                    transactionId, // Send the transaction ID
                 }),
             });
 
@@ -91,6 +87,7 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
     };
 
     return (
+<<<<<<< HEAD
         <>
             <div className={cn("flex flex-col gap-2", className)}>
                 <Button
@@ -152,5 +149,38 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
                 </DialogContent>
             </Dialog>
         </>
+=======
+        <div className={cn("flex flex-col gap-2", className)}>
+            <Button
+                onClick={handleVote}
+                disabled={isLoading || hasVoted}
+                variant={hasVoted ? 'default' : 'outline'}
+                className={cn(
+                    "font-bold transition-all",
+                    hasVoted && "bg-primary text-primary-foreground hover:bg-primary/90 cursor-default"
+                )}
+            >
+                {isLoading ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Voting...
+                    </>
+                ) : hasVoted ? (
+                    <>
+                        <Heart className="mr-2 h-4 w-4 fill-current" />
+                        Voted
+                    </>
+                ) : (
+                    <>
+                        <Heart className="mr-2 h-4 w-4" />
+                        Vote Now
+                    </>
+                )}
+            </Button>
+            <p className="text-sm text-center text-muted-foreground">
+                {currentVoteCount} {currentVoteCount === 1 ? 'vote' : 'votes'}
+            </p>
+        </div>
+>>>>>>> parent of 56096cc (vote payment amd ads)
     );
 }
