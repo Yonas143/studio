@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Trophy, MessageCircle, Send, MapPin } from 'lucide-react';
+import { Menu, Trophy, MessageCircle, Send } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/lib/types';
@@ -91,34 +91,6 @@ export function SiteHeader() {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="hidden items-center space-x-1 md:flex">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8" title="View Location">
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
-                <div className="p-3 border-b">
-                  <h4 className="font-semibold text-sm">Our Location</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Merkeb Plaza | Olompia<br />
-                    Addis Ababa, Ethiopia
-                  </p>
-                </div>
-                <div className="w-full h-48">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.3!2d38.76!3d9.01!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDAnMzYuMCJOIDM4wrA0NSczNi4wIkU!5e0!3m2!1sen!2set!4v1234567890"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-              </PopoverContent>
-            </Popover>
-            <div className="h-4 w-px bg-border mx-1"></div>
             <span className="text-xs text-muted-foreground mr-1">For Submission:</span>
             <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
               <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" title="WhatsApp">
@@ -206,12 +178,6 @@ export function SiteHeader() {
                   )}
                 </div>
                 <div className="mt-auto flex flex-col gap-2">
-                  <Button variant="outline" size="sm" asChild className="w-full justify-start">
-                    <Link href="/contact" className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      <span>Location & Contact</span>
-                    </Link>
-                  </Button>
                   <div className="mb-2">
                     <p className="text-sm text-muted-foreground mb-2">For Submission:</p>
                     <div className="flex flex-col gap-2">
