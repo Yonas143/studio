@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Trophy, MessageCircle, Send } from 'lucide-react';
+import { Menu, Trophy, MessageCircle, Send, MapPin } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import type { NavItem } from '@/lib/types';
@@ -91,6 +91,12 @@ export function SiteHeader() {
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="hidden items-center space-x-1 md:flex">
+            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+              <Link href="/contact" title="Location & Contact">
+                <MapPin className="h-4 w-4" />
+              </Link>
+            </Button>
+            <div className="h-4 w-px bg-border mx-1"></div>
             <span className="text-xs text-muted-foreground mr-1">For Submission:</span>
             <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
               <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" target="_blank" rel="noopener noreferrer" title="WhatsApp">
@@ -178,6 +184,12 @@ export function SiteHeader() {
                   )}
                 </div>
                 <div className="mt-auto flex flex-col gap-2">
+                  <Button variant="outline" size="sm" asChild className="w-full justify-start">
+                    <Link href="/contact" className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>Location & Contact</span>
+                    </Link>
+                  </Button>
                   <div className="mb-2">
                     <p className="text-sm text-muted-foreground mb-2">For Submission:</p>
                     <div className="flex flex-col gap-2">
