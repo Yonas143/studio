@@ -12,7 +12,7 @@ export default function AboutPage() {
             <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5 py-20 md:py-32">
                 <div className="container relative z-10">
                     <div className="mx-auto max-w-4xl text-center">
-                        <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+                        <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl text-yellow-600">
                             Cultural Ambassador Award 2025/26
                         </h1>
                         <p className="mt-6 text-xl text-muted-foreground md:text-2xl">
@@ -42,10 +42,12 @@ export default function AboutPage() {
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">About the Initiative</h2>
                         <div className="mt-6 space-y-4 text-lg text-muted-foreground">
                             <p>
-                                Ethiopia holds a deep cultural beauty music, dance, poetry, storytelling, traditional instruments and digital creativity. The ABN Studio Cultural Ambassadors Award is a national program designed to identify, elevate, and empower talented young creators, giving them a platform to showcase their art to Ethiopia and the world.
+                                Ethiopia holds a deep cultural beauty music, dance, poetry, storytelling, traditional instruments and digital creativity. The ABN Studio Cultural Ambassador
+                                Award is a national program designed to identify, elevate, and empower talented young creators, giving them a platform to showcase their art to Ethiopia and the world.
                             </p>
                             <p>
-                                We celebrate youth who preserve culture while innovating through digital media, performance, literature and creative expression. The goal is to build a new generation of Cultural Ambassadors who will inspire pride and lead Ethiopia's cultural future.
+                                We celebrate youth who preserve culture while innovating through digital media, performance, literature and creative expression. The goal is to build a new generation of Cultural Ambassador
+                                who will inspire pride and lead Ethiopia's cultural future.
                             </p>
                         </div>
                     </div>
@@ -104,7 +106,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Award Categories</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            Young creators may compete in four major disciplines:
+                            Youth creators may compete in four major disciplines:
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
@@ -115,8 +117,8 @@ export default function AboutPage() {
                                         <Music className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="font-headline text-xl font-semibold">Traditional Dance </h3>
-                                        <p className="mt-2 text-muted-foreground">Traditional & contemporary dance, music & drama.</p>
+                                        <h3 className="font-headline text-xl font-semibold">Traditional Dance</h3>
+                                        <p className="mt-2 text-muted-foreground">This category celebrates performers who bring Ethiopia's traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia's diverse dance heritage.</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -128,8 +130,8 @@ export default function AboutPage() {
                                         <Mic className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="font-headline text-xl font-semibold">cultural Music & Vocal Innovation</h3>
-                                        <p className="mt-2 text-muted-foreground">Modern production fused with Ethiopian sound.</p>
+                                        <h3 className="font-headline text-xl font-semibold">Traditional Music</h3>
+                                        <p className="mt-2 text-muted-foreground">This award honors outstanding musicians who preserve and elevate Ethiopia's cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music.</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -142,7 +144,7 @@ export default function AboutPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-headline text-xl font-semibold">Traditional Instruments</h3>
-                                        <p className="mt-2 text-muted-foreground">Creative instrumental performance & presentation.</p>
+                                        <p className="mt-2 text-muted-foreground">This category recognizes mastery of Ethiopia's iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument's ability to communicate emotion and heritage.</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -154,8 +156,8 @@ export default function AboutPage() {
                                         <BookOpen className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="font-headline text-xl font-semibold">Literary & Poetry Excellence</h3>
-                                        <p className="mt-2 text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.</p>
+                                        <h3 className="font-headline text-xl font-semibold">Traditional Poetry (Qiné, Wax & Gold, Spoken Traditions)</h3>
+                                        <p className="mt-2 text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia's oral traditions — from Qiné and "Wax & Gold" (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -175,7 +177,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Objectives</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            The ABN Studio Cultural Ambassadors initiative is designed to empower Ethiopia’s youth by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of young leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
+                            The ABN Studio Cultural Ambassador initiative is designed to empower Ethiopia’s youth by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of young leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
                         </p>
                         <ul className="mt-6 space-y-3 text-lg">
                             <li className="flex items-start gap-3">
@@ -196,7 +198,8 @@ export default function AboutPage() {
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Establish a community of Cultural Ambassadors who serve as role models, advocates, and leaders for Ethiopian culture.</span>
+                                <span>Establish a community of Cultural Ambassador
+                                    who serve as role models, advocates, and leaders for Ethiopian culture.</span>
                             </li>
                         </ul>
                     </div>
@@ -213,7 +216,7 @@ export default function AboutPage() {
                         <Card className="border-2 transition-all hover:shadow-lg">
                             <CardContent className="p-6">
                                 <h3 className="font-headline text-xl font-semibold mb-3">Recognition of Talent & Creativity</h3>
-                                <p className="text-muted-foreground mb-2">Young creatives gain formal acknowledgment for their artistic excellence, innovation, and cultural contribution.</p>
+                                <p className="text-muted-foreground mb-2">Youth creatives gain formal acknowledgment for their artistic excellence, innovation, and cultural contribution.</p>
                                 <p className="text-muted-foreground">Awardees are celebrated nationally and internationally, inspiring peers and emerging artists.</p>
                             </CardContent>
                         </Card>
@@ -236,14 +239,18 @@ export default function AboutPage() {
                             <CardContent className="p-6">
                                 <h3 className="font-headline text-xl font-semibold mb-3">National & International Visibility</h3>
                                 <p className="text-muted-foreground mb-2">Participants’ work is amplified through ABN Studio platforms, media coverage, cultural events, and digital channels.</p>
-                                <p className="text-muted-foreground">Ethiopia’s creative youth gain recognition as ambassadors of the nation’s artistic and cultural excellence.</p>
+                                <p className="text-muted-foreground">Ethiopia’s creative youth gain recognition as ambassador
+                                    of the nation’s artistic and cultural excellence.</p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
                             <CardContent className="p-6">
-                                <h3 className="font-headline text-xl font-semibold mb-3">Sustainable Network of Ambassadors</h3>
+                                <h3 className="font-headline text-xl font-semibold mb-3">Sustainable Network of Ambassador
+
+                                </h3>
                                 <p className="text-muted-foreground mb-2">A lasting community of young leaders is established, fostering collaboration, mentorship, and ongoing cultural initiatives.</p>
-                                <p className="text-muted-foreground">Ambassadors serve as advocates for Ethiopian culture, inspiring social impact and youth participation in the arts.</p>
+                                <p className="text-muted-foreground">Ambassador
+                                    serve as advocates for Ethiopian culture, inspiring social impact and youth participation in the arts.</p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
@@ -270,7 +277,7 @@ export default function AboutPage() {
                                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                                     <Award className="h-6 w-6 text-primary" />
                                 </div>
-                                <h3 className="mt-4 font-semibold">Trophy & Certificate of Excellence</h3>
+                                <h3 className="mt-4 font-semibold">Package rewards & Certificate of Excellence</h3>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
@@ -333,11 +340,13 @@ export default function AboutPage() {
 
 
 
-                            Through initiatives such as the ABN Studio Cultural Ambassadors Award, the
+                            Through initiatives such as the ABN Studio Cultural Ambassador
+                            Award, the
                             studio blends traditional Ethiopian heritage with modern digital technologies,
                             creating platforms that celebrate culture, encourage innovation, and amplify
                             the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
-                            cultural leaders and ambassadors, inspiring creativity, innovation, and pride in
+                            cultural leaders and ambassador
+                            , inspiring creativity, innovation, and pride in
                             Ethiopia’s rich artistic legacy.
                         </p>
                     </div>
