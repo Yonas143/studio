@@ -9,26 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload, Save, Eye, EyeOff } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, storage } from '@/firebase/config';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import Image from 'next/image';
+import { useFirestore, useStorage } from '@/firebase';
 
-interface AdConfig {
-    imageUrl: string;
-    linkUrl: string;
-    active: boolean;
-}
-
-interface AdsData {
-    leftAd: AdConfig;
-    rightAd: AdConfig;
-}
-
-const defaultAd: AdConfig = {
-    imageUrl: '',
-    linkUrl: '',
-    active: true,
-};
+// ... (interfaces remain same)
 
 export default function AdManagementPage() {
     const [loading, setLoading] = useState(true);
@@ -38,11 +21,14 @@ export default function AdManagementPage() {
         rightAd: { ...defaultAd },
     });
     const { toast } = useToast();
+    const firestore = useFirestore();
+    const storage = useStorage();
 
     useEffect(() => {
         const fetchAds = async () => {
+            if (!firestore) return;
             try {
-                const docRef = doc(db, 'ads', 'config');
+                const docRef = doc(firestore, 'ads', 'config');
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
@@ -61,10 +47,10 @@ export default function AdManagementPage() {
         };
 
         fetchAds();
-    }, [toast]);
+    }, [firestore, toast]);
 
     const handleImageUpload = async (file: File, side: 'leftAd' | 'rightAd') => {
-        if (!file) return;
+        if (!file || !storage) return;
 
         try {
             const storageRef = ref(storage, `ads/${side}-${Date.now()}`);
@@ -94,9 +80,10 @@ export default function AdManagementPage() {
     };
 
     const handleSave = async () => {
+        if (!firestore) return;
         setSaving(true);
         try {
-            await setDoc(doc(db, 'ads', 'config'), ads);
+            await setDoc(doc(firestore, 'ads', 'config'), ads);
             toast({
                 title: 'Changes Saved',
                 description: 'Ad configuration has been updated successfully.',
