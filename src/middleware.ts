@@ -7,10 +7,10 @@ export function middleware(request: NextRequest) {
 
     // Check if trying to access protected routes
     const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-    const isJudgeRoute = request.nextUrl.pathname.startsWith('/judge')
+
 
     // Redirect to login if not authenticated
-    if (!isLoggedIn && (isAdminRoute || isJudgeRoute)) {
+    if (!isLoggedIn && isAdminRoute) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
@@ -19,14 +19,12 @@ export function middleware(request: NextRequest) {
         if (isAdminRoute && userRole !== 'admin') {
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
-        if (isJudgeRoute && userRole !== 'judge' && userRole !== 'admin') {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
-        }
+
     }
 
     return NextResponse.next()
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/judge/:path*'],
+    matcher: ['/admin/:path*'],
 }
