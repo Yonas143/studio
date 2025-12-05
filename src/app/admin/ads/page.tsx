@@ -10,8 +10,25 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload, Save, Eye, EyeOff } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useFirestore, useStorage } from '@/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Image from 'next/image';
 
-// ... (interfaces remain same)
+interface AdConfig {
+    imageUrl: string;
+    linkUrl: string;
+    active: boolean;
+}
+
+interface AdsData {
+    leftAd: AdConfig;
+    rightAd: AdConfig;
+}
+
+const defaultAd: AdConfig = {
+    imageUrl: '',
+    linkUrl: '',
+    active: true,
+};
 
 export default function AdManagementPage() {
     const [loading, setLoading] = useState(true);
