@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popup & Ad Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0070f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0051cc;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Popup & Ad Functionality Test Page</h1>
+    
+    <div class="test-section">
+        <h2>1. Test Popup API</h2>
+        <button onclick="testPopupAPI()">Fetch Active Popups</button>
+        <button onclick="clearPopupStorage()">Clear Popup Storage</button>
+        <div id="popup-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test Ad API</h2>
+        <button onclick="testAdAPI()">Fetch Ad Configuration</button>
+        <div id="ad-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Database Connection</h2>
+        <button onclick="testDatabase()">Check Database Status</button>
+        <div id="db-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Instructions</h2>
+        <ol>
+            <li>Click "Fetch Active Popups" to see if popups are being retrieved</li>
+            <li>Click "Clear Popup Storage" to reset localStorage (allows popup to show again)</li>
+            <li>Click "Fetch Ad Configuration" to see current ad settings</li>
+            <li>Go to <a href="http://localhost:9002" target="_blank">Home Page</a> to see if popup appears</li>
+            <li>Check if ads appear on the sides (need 2xl screen: 1536px+)</li>
+        </ol>
+    </div>
+
+    <script>
+        async function testPopupAPI() {
+            const resultDiv = document.getElementById('popup-result');
+            resultDiv.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:9002/api/popups?isActive=true');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✓ Success!\n\nFound ${data.data.data.length} active popup(s):\n\n${JSON.stringify(data.data.data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `✗ Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `✗ Fetch Error: ${error.message}`;
+            }
+        }
+
+        async function testAdAPI() {
+            const resultDiv = document.getElementById('ad-result');
+            resultDiv.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch('http://localhost:9002/api/ads');
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✓ Success!\n\nAd Configuration:\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `✗ Fetch Error: ${error.message}`;
+            }
+        }
+
+        async function testDatabase() {
+            const resultDiv = document.getElementById('db-result');
+            resultDiv.textContent = 'Testing database connection...';
+            
+            try {
+                // Test by fetching popups
+                const response = await fetch('http://localhost:9002/api/popups');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✓ Database Connected!\n\nTotal popups in database: ${data.data.total}\n\nConnection working properly.`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `✗ Database Error: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `✗ Connection Error: ${error.message}\n\nMake sure the dev server is running: npm run dev`;
+            }
+        }
+
+        function clearPopupStorage() {
+            const resultDiv = document.getElementById('popup-result');
+            
+            // Clear all popup-related localStorage keys
+            const keys = Object.keys(localStorage);
+            const popupKeys = keys.filter(key => key.includes('popup'));
+            
+            popupKeys.forEach(key => localStorage.removeItem(key));
+            
+            resultDiv.className = 'result success';
+            resultDiv.textContent = `✓ Cleared ${popupKeys.length} popup storage key(s):\n\n${popupKeys.join('\n')}\n\nPopups should now appear again on the home page.`;
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            console.log('Test page loaded. Run tests using the buttons above.');
+        });
+    </script>
+</body>
+</html>
