@@ -12,10 +12,10 @@ export async function GET() {
             config = await prisma.adConfig.create({
                 data: {
                     id: 'default',
-                    leftAdImage: 'https://placehold.co/160x600/2563eb/ffffff.png?text=Left+Ad',
+                    leftAdImage: '/files/10gif-1.gif',
                     leftAdLink: '#',
                     leftAdActive: true,
-                    rightAdImage: 'https://placehold.co/160x600/db2777/ffffff.png?text=Right+Ad',
+                    rightAdImage: '/files/10gif-1.gif',
                     rightAdLink: '#',
                     rightAdActive: true,
                 },

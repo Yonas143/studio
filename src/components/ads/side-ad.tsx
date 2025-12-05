@@ -42,18 +42,18 @@ export function SideAd({ side, className }: SideAdProps) {
   return (
     <div
       className={cn(
-        'fixed top-1/2 -translate-y-1/2 z-40 hidden 2xl:flex flex-col gap-2',
+        'fixed bottom-4 z-40 flex flex-col gap-2',
         side === 'left' ? 'left-4' : 'right-4',
         className
       )}
     >
-      <div className="relative w-[160px] h-[600px] bg-secondary/20 border border-border/50 rounded-lg overflow-hidden backdrop-blur-sm flex flex-col items-center justify-center text-center shadow-lg transition-all hover:bg-secondary/30 group">
+      <div className="relative w-[300px] h-[100px] bg-secondary/20 border border-border/50 rounded-lg overflow-hidden backdrop-blur-sm shadow-lg transition-all hover:bg-secondary/30 group">
         <button
           onClick={() => setIsVisible(false)}
-          className="absolute top-2 right-2 p-1 rounded-full bg-background/50 hover:bg-background text-muted-foreground hover:text-foreground transition-colors z-10 opacity-0 group-hover:opacity-100"
+          className="absolute top-2 right-2 p-1 rounded-full bg-background/80 hover:bg-background text-muted-foreground hover:text-foreground transition-colors z-10"
           aria-label="Close ad"
         >
-          <X size={14} />
+          <X size={16} />
         </button>
 
         <a

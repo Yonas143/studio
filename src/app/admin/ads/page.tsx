@@ -22,7 +22,7 @@ interface AdsData {
 }
 
 const defaultAd: AdConfig = {
-    imageUrl: 'https://placehold.co/160x600/2563eb/ffffff.png?text=Ad+Space',
+    imageUrl: '/files/10gif-1.gif',
     linkUrl: 'https://example.com',
     active: true,
 };
@@ -31,8 +31,8 @@ export default function AdManagementPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [ads, setAds] = useState<AdsData>({
-        leftAd: { ...defaultAd, imageUrl: 'https://placehold.co/160x600/2563eb/ffffff.png?text=Left+Ad' },
-        rightAd: { ...defaultAd, imageUrl: 'https://placehold.co/160x600/db2777/ffffff.png?text=Right+Ad' },
+        leftAd: { ...defaultAd, imageUrl: '/files/10gif-1.gif' },
+        rightAd: { ...defaultAd, imageUrl: '/files/10gif-1.gif' },
     });
     const { toast } = useToast();
 
@@ -149,7 +149,7 @@ export default function AdManagementPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Ad Management</h1>
-                    <p className="text-muted-foreground">Manage the side advertisements displayed on the website.</p>
+                    <p className="text-muted-foreground">Manage the bottom banner advertisements displayed on the website.</p>
                 </div>
                 <Button onClick={handleSave} disabled={saving}>
                     {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -162,14 +162,14 @@ export default function AdManagementPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                            Left Side Ad
+                            Left Bottom Ad
                             <Switch
                                 checked={ads.leftAd.active}
                                 onCheckedChange={(checked) => updateAd('leftAd', 'active', checked)}
                             />
                         </CardTitle>
                         <CardDescription>
-                            {ads.leftAd.active ? 'Currently Active' : 'Currently Inactive'}
+                            {ads.leftAd.active ? 'Currently Active (Bottom Left)' : 'Currently Inactive'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -196,7 +196,7 @@ export default function AdManagementPage() {
                                 ) : (
                                     <div className="text-center">
                                         <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                                        <p className="text-sm text-muted-foreground mb-2">Upload an image (160x600 recommended)</p>
+                                        <p className="text-sm text-muted-foreground mb-2">Upload an image (300x100 recommended)</p>
                                         <Input
                                             type="file"
                                             accept="image/*"
@@ -227,14 +227,14 @@ export default function AdManagementPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center justify-between">
-                            Right Side Ad
+                            Right Bottom Ad
                             <Switch
                                 checked={ads.rightAd.active}
                                 onCheckedChange={(checked) => updateAd('rightAd', 'active', checked)}
                             />
                         </CardTitle>
                         <CardDescription>
-                            {ads.rightAd.active ? 'Currently Active' : 'Currently Inactive'}
+                            {ads.rightAd.active ? 'Currently Active (Bottom Right)' : 'Currently Inactive'}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -261,7 +261,7 @@ export default function AdManagementPage() {
                                 ) : (
                                     <div className="text-center">
                                         <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                                        <p className="text-sm text-muted-foreground mb-2">Upload an image (160x600 recommended)</p>
+                                        <p className="text-sm text-muted-foreground mb-2">Upload an image (300x100 recommended)</p>
                                         <Input
                                             type="file"
                                             accept="image/*"
