@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getAdminFirestore } from '@/lib/firebase/admin';
 import {
     handleAPIError,
@@ -20,7 +20,12 @@ export async function PATCH(
     try {
         // Verify authentication and role
         const decodedToken = await verifyAuthToken(request);
-        await verifyRole(decodedToken, 'judge'); // Admin can also access (checked in verifyRole)
+        if (decodedToken.role !== 'admin') {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 403 }
+            );
+        }
 
         const { id } = params;
 

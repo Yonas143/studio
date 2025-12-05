@@ -37,9 +37,7 @@ export default function LoginPage() {
         case 'admin':
           router.push('/admin');
           break;
-        case 'judge':
-          router.push('/judge');
-          break;
+
         default:
           router.push('/dashboard');
           break;

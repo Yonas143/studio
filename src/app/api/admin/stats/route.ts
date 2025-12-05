@@ -22,14 +22,12 @@ export async function GET(request: NextRequest) {
         // Get counts for all collections
         const [
             participantsSnapshot,
-            judgesSnapshot,
             submissionsSnapshot,
             votesSnapshot,
             nomineesSnapshot,
             categoriesSnapshot,
         ] = await Promise.all([
             firestore.collection('users').where('role', '==', 'participant').get(),
-            firestore.collection('users').where('role', '==', 'judge').get(),
             firestore.collection('submissions').get(),
             firestore.collection('votes').get(),
             firestore.collection('nominees').get(),
@@ -52,9 +50,8 @@ export async function GET(request: NextRequest) {
 
         const stats = {
             users: {
-                total: participantsSnapshot.size + judgesSnapshot.size,
+                total: participantsSnapshot.size,
                 participants: participantsSnapshot.size,
-                judges: judgesSnapshot.size,
             },
             submissions: {
                 total: submissionsSnapshot.size,
