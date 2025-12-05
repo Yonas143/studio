@@ -2,42 +2,17 @@
 
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useState } from 'react';
 
 interface SideAdProps {
   side: 'left' | 'right';
   className?: string;
 }
 
-interface AdConfig {
-  imageUrl: string;
-  linkUrl: string;
-  active: boolean;
-}
-
 export function SideAd({ side, className }: SideAdProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [adConfig, setAdConfig] = useState<AdConfig | null>(null);
 
-  useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        const res = await fetch('/api/ads');
-        if (res.ok) {
-          const data = await res.json();
-          const config = side === 'left' ? data.leftAd : data.rightAd;
-          setAdConfig(config);
-        }
-      } catch (error) {
-        console.error('Failed to fetch ads:', error);
-      }
-    };
-
-    fetchAds();
-  }, [side]);
-
-  if (!isVisible || !adConfig || !adConfig.active || !adConfig.imageUrl) return null;
+  if (!isVisible) return null;
 
   return (
     <div
@@ -57,16 +32,15 @@ export function SideAd({ side, className }: SideAdProps) {
         </button>
 
         <a
-          href={adConfig.linkUrl || '#'}
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className="relative w-full h-full block"
         >
-          <Image
-            src={adConfig.imageUrl}
+          <img
+            src="/files/10gif-1.gif"
             alt="Advertisement"
-            fill
-            className="object-cover"
+            className="w-full h-full object-cover"
           />
         </a>
       </div>

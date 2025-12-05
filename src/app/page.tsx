@@ -15,6 +15,7 @@ import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
 import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
+import { SubmissionCountdown } from '@/components/submission-countdown';
 import { useEffect, useState } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
@@ -146,6 +147,15 @@ export default function Home() {
                 The program empowers youth to preserve culture while innovating for the future.
               </p>
             </div>
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Submission Countdown Section */}
+        <section className="py-16 md:py-24 bg-secondary/30">
+          <div className="container mx-auto px-4">
+            <SubmissionCountdown />
           </div>
         </section>
 
