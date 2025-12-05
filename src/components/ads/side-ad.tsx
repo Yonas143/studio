@@ -3,7 +3,6 @@
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useDoc } from '@/firebase';
 import Image from 'next/image';
 
 interface SideAdProps {
@@ -19,15 +18,24 @@ interface AdConfig {
 
 export function SideAd({ side, className }: SideAdProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const { data: adData } = useDoc<any>('ads/config');
   const [adConfig, setAdConfig] = useState<AdConfig | null>(null);
 
   useEffect(() => {
-    if (adData) {
-      const config = side === 'left' ? adData.leftAd : adData.rightAd;
-      setAdConfig(config);
-    }
-  }, [adData, side]);
+    const fetchAds = async () => {
+      try {
+        const res = await fetch('/api/ads');
+        if (res.ok) {
+          const data = await res.json();
+          const config = side === 'left' ? data.leftAd : data.rightAd;
+          setAdConfig(config);
+        }
+      } catch (error) {
+        console.error('Failed to fetch ads:', error);
+      }
+    };
+
+    fetchAds();
+  }, [side]);
 
   if (!isVisible || !adConfig || !adConfig.active || !adConfig.imageUrl) return null;
 

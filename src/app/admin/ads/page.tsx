@@ -8,9 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Upload, Save, Eye, EyeOff } from 'lucide-react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useFirestore, useStorage } from '@/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Image from 'next/image';
 
 interface AdConfig {
@@ -25,8 +22,8 @@ interface AdsData {
 }
 
 const defaultAd: AdConfig = {
-    imageUrl: '',
-    linkUrl: '',
+    imageUrl: 'https://placehold.co/160x600/2563eb/ffffff.png?text=Ad+Space',
+    linkUrl: 'https://example.com',
     active: true,
 };
 
@@ -34,22 +31,18 @@ export default function AdManagementPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [ads, setAds] = useState<AdsData>({
-        leftAd: { ...defaultAd },
-        rightAd: { ...defaultAd },
+        leftAd: { ...defaultAd, imageUrl: 'https://placehold.co/160x600/2563eb/ffffff.png?text=Left+Ad' },
+        rightAd: { ...defaultAd, imageUrl: 'https://placehold.co/160x600/db2777/ffffff.png?text=Right+Ad' },
     });
     const { toast } = useToast();
-    const firestore = useFirestore();
-    const storage = useStorage();
 
     useEffect(() => {
         const fetchAds = async () => {
-            if (!firestore) return;
             try {
-                const docRef = doc(firestore, 'ads', 'config');
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    setAds(docSnap.data() as AdsData);
+                const res = await fetch('/api/ads');
+                if (res.ok) {
+                    const data = await res.json();
+                    setAds(data);
                 }
             } catch (error) {
                 console.error('Error fetching ads:', error);
@@ -64,21 +57,31 @@ export default function AdManagementPage() {
         };
 
         fetchAds();
-    }, [firestore, toast]);
+    }, [toast]);
 
     const handleImageUpload = async (file: File, side: 'leftAd' | 'rightAd') => {
-        if (!file || !storage) return;
+        if (!file) return;
 
         try {
-            const storageRef = ref(storage, `ads/${side}-${Date.now()}`);
-            const snapshot = await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(snapshot.ref);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Upload failed');
+            }
 
             setAds(prev => ({
                 ...prev,
                 [side]: {
                     ...prev[side],
-                    imageUrl: downloadURL,
+                    imageUrl: data.url,
                 },
             }));
 
@@ -97,10 +100,16 @@ export default function AdManagementPage() {
     };
 
     const handleSave = async () => {
-        if (!firestore) return;
         setSaving(true);
         try {
-            await setDoc(doc(firestore, 'ads', 'config'), ads);
+            const res = await fetch('/api/ads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ads),
+            });
+
+            if (!res.ok) throw new Error('Failed to save');
+
             toast({
                 title: 'Changes Saved',
                 description: 'Ad configuration has been updated successfully.',

@@ -163,3 +163,15 @@ model CulturalInsight {
   @@index([isPublished])
   @@index([category])
 }
+
+// Ad Configuration model
+model AdConfig {
+  id            String   @id @default("default")
+  leftAdImage   String?
+  leftAdLink    String?
+  leftAdActive  Boolean  @default(true)
+  rightAdImage  String?
+  rightAdLink   String?
+  rightAdActive Boolean  @default(true)
+  updatedAt     DateTime @updatedAt
+}
