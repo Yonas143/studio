@@ -65,12 +65,30 @@ model Nominee {
   // Relations
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   votes       Vote[]
+  media       NomineeMedia[]
   
   @@index([categoryId])
   @@index([scope])
   @@index([featured])
   @@index([isActive])
   @@index([voteCount])
+}
+
+model NomineeMedia {
+  id          String   @id @default(cuid())
+  nomineeId   String
+  type        String   // image, video, audio
+  url         String
+  thumbnail   String
+  description String
+  hint        String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  nominee     Nominee  @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
+
+  @@index([nomineeId])
 }
 
 // Vote model
