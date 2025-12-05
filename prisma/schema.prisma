@@ -6,13 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 // User model
 model User {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   email         String   @unique
   name          String
   role          String   @default("participant") // admin, judge, participant
@@ -30,7 +30,7 @@ model User {
 
 // Category model
 model Category {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String
   slug        String   @unique
   description String?
@@ -49,7 +49,7 @@ model Category {
 
 // Nominee model
 model Nominee {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String
   bio         String?
   imageUrl    String?
@@ -75,7 +75,7 @@ model Nominee {
 }
 
 model NomineeMedia {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   nomineeId   String
   type        String   // image, video, audio
   url         String
@@ -93,7 +93,7 @@ model NomineeMedia {
 
 // Vote model
 model Vote {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   nomineeId  String
   ipAddress  String?  // For rate limiting
   fingerprint String? // Browser fingerprint
@@ -110,7 +110,7 @@ model Vote {
 
 // Submission model
 model Submission {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   category    String
@@ -133,7 +133,7 @@ model Submission {
 
 // Popup model
 model Popup {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   type          String   // video, image, text
   title         String
   description   String?
@@ -152,7 +152,7 @@ model Popup {
 
 // Timeline Event model
 model TimelineEvent {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   date        DateTime
@@ -168,7 +168,7 @@ model TimelineEvent {
 
 // Cultural Insight model
 model CulturalInsight {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   content     String
   author      String?
