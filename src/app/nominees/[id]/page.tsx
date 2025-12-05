@@ -8,14 +8,36 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VoteButton } from '@/components/voting/vote-button';
 import { Share2, MapPin, PlayCircle, Music, Image as ImageIcon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { useDoc } from '@/firebase';
 import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function NomineeProfilePage({ params }: { params: { id: string } }) {
-  const { data: nominee, loading } = useDoc<Nominee>(`nominees/${params.id}`);
+  const [nominee, setNominee] = useState<Nominee | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNominee = async () => {
+      try {
+        const response = await fetch(`/api/nominees/${params.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setNominee(data);
+        } else {
+          setNominee(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch nominee:', error);
+        setNominee(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNominee();
+  }, [params.id]);
 
   if (loading) {
     return (

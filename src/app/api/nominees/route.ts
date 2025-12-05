@@ -27,25 +27,32 @@ export async function GET(request: NextRequest) {
         });
 
         // Transform to match frontend Nominee type
-        const transformedNominees = nominees.map(nominee => ({
-            id: nominee.id,
-            name: nominee.name,
-            category: nominee.category.name,
-            region: 'Ethiopia', // Default for now
-            scope: nominee.scope,
-            bio: nominee.bio || '',
-            imageId: '', // Not used anymore
-            imageUrl: nominee.imageUrl,
-            media: nominee.media.map(m => ({
-                type: m.type as 'image' | 'video' | 'audio',
-                url: m.url,
-                thumbnail: m.thumbnail,
-                description: m.description,
-                hint: m.hint || '',
-            })),
-            votes: nominee.voteCount,
-            featured: nominee.featured,
-        }));
+        const transformedNominees = nominees.map(nominee => {
+            const nomineeWithRelations = nominee as typeof nominee & {
+                category: { name: string };
+                media: Array<{ type: string; url: string; thumbnail: string; description: string; hint: string | null }>;
+            };
+
+            return {
+                id: nomineeWithRelations.id,
+                name: nomineeWithRelations.name,
+                category: nomineeWithRelations.category.name,
+                region: 'Ethiopia', // Default for now
+                scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
+                bio: nomineeWithRelations.bio || '',
+                imageId: '', // Not used anymore
+                imageUrl: nomineeWithRelations.imageUrl,
+                media: nomineeWithRelations.media.map((m) => ({
+                    type: m.type as 'image' | 'video' | 'audio',
+                    url: m.url,
+                    thumbnail: m.thumbnail,
+                    description: m.description,
+                    hint: m.hint || '',
+                })),
+                votes: nomineeWithRelations.voteCount,
+                featured: nomineeWithRelations.featured,
+            };
+        });
 
         return NextResponse.json(transformedNominees);
     } catch (error) {

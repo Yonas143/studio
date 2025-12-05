@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validate file type
+        // Validate file type (MIME type)
         const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         if (!validTypes.includes(file.type)) {
             return NextResponse.json(
@@ -24,7 +24,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validate file size (e.g., 5MB)
+        // Validate file extension
+        const extension = file.name.split('.').pop()?.toLowerCase();
+        const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        if (!extension || !validExtensions.includes(extension)) {
+            return NextResponse.json(
+                { error: 'Invalid file extension. Only .jpg, .jpeg, .png, .webp, and .gif are allowed.' },
+                { status: 400 }
+            );
+        }
+
+        // Validate file size (5MB)
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
             return NextResponse.json(
@@ -43,9 +53,8 @@ export async function POST(request: NextRequest) {
             mkdirSync(uploadDir, { recursive: true });
         }
 
-        // Create unique filename
+        // Create unique filename (extension already validated above)
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-        const extension = file.name.split('.').pop();
         const filename = `upload-${uniqueSuffix}.${extension}`;
         const filepath = join(uploadDir, filename);
 

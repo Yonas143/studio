@@ -19,7 +19,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from '@/components/ui/input';
-import { useCollection } from '@/firebase';
 import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSearchParams, useRouter } from 'next/navigation';

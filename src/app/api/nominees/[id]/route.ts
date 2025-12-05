@@ -26,24 +26,29 @@ export async function GET(
         }
 
         // Transform to match frontend Nominee type
+        const nomineeWithRelations = nominee as typeof nominee & {
+            category: { name: string };
+            media: Array<{ type: string; url: string; thumbnail: string; description: string; hint: string | null }>;
+        };
+
         const transformed = {
-            id: nominee.id,
-            name: nominee.name,
-            category: nominee.category.name,
+            id: nomineeWithRelations.id,
+            name: nomineeWithRelations.name,
+            category: nomineeWithRelations.category.name,
             region: 'Ethiopia', // Default for now
-            scope: nominee.scope,
-            bio: nominee.bio || '',
+            scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
+            bio: nomineeWithRelations.bio || '',
             imageId: '', // Not used anymore
-            imageUrl: nominee.imageUrl,
-            media: nominee.media.map(m => ({
+            imageUrl: nomineeWithRelations.imageUrl,
+            media: nomineeWithRelations.media.map((m) => ({
                 type: m.type as 'image' | 'video' | 'audio',
                 url: m.url,
                 thumbnail: m.thumbnail,
                 description: m.description,
                 hint: m.hint || '',
             })),
-            votes: nominee.voteCount,
-            featured: nominee.featured,
+            votes: nomineeWithRelations.voteCount,
+            featured: nomineeWithRelations.featured,
         };
 
         return NextResponse.json(transformed);
