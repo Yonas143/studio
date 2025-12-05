@@ -34,7 +34,8 @@ interface Category {
 }
 
 export default function NomineesPage() {
-  const { data: nominees, loading: nomineesLoading } = useCollection<Nominee>('nominees');
+  const [nominees, setNominees] = useState<Nominee[]>([]);
+  const [nomineesLoading, setNomineesLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
 
@@ -44,6 +45,24 @@ export default function NomineesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [selectedScope, setSelectedScope] = useState('all'); // 'all', 'ethiopia', 'worldwide'
+
+  useEffect(() => {
+    const fetchNominees = async () => {
+      try {
+        const response = await fetch('/api/nominees');
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setNominees(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch nominees:', error);
+      } finally {
+        setNomineesLoading(false);
+      }
+    };
+
+    fetchNominees();
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
