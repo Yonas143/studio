@@ -10,7 +10,7 @@ import Autoplay from 'embla-carousel-autoplay';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { useCollection } from '@/firebase';
+// import { useCollection } from '@/firebase'; // Removed unused import
 import type { Nominee, TimelineEvent } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
@@ -21,25 +21,44 @@ import { useEffect, useState } from 'react';
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
-  const { data: featuredNominees, loading: nomineesLoading } = useCollection<Nominee>('nominees', { where: ['featured', '==', true] });
-  const { data: timelineEvents, loading: timelineLoading } = useCollection<TimelineEvent>('timelineEvents');
-
+  const [featuredNominees, setFeaturedNominees] = useState<Nominee[]>([]);
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [popups, setPopups] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPopups = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/popups?isActive=true');
-        const data = await response.json();
-        if (data.success) {
-          setPopups(data.data.data);
+        setLoading(true);
+        const [popupsRes, nomineesRes, timelineRes] = await Promise.all([
+          fetch('/api/popups?isActive=true'),
+          fetch('/api/nominees?featured=true'),
+          fetch('/api/timeline')
+        ]);
+
+        const popupsData = await popupsRes.json();
+        if (popupsData.success) {
+          setPopups(popupsData.data.data);
         }
+
+        const nomineesData = await nomineesRes.json();
+        if (Array.isArray(nomineesData)) {
+          setFeaturedNominees(nomineesData);
+        }
+
+        const timelineData = await timelineRes.json();
+        if (Array.isArray(timelineData)) {
+          setTimelineEvents(timelineData);
+        }
+
       } catch (error) {
-        console.error('Failed to fetch popups:', error);
+        console.error('Failed to fetch home page data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchPopups();
+    fetchData();
   }, []);
 
   const heroVideos = [
@@ -73,7 +92,7 @@ export default function Home() {
     },
   ];
 
-  const loading = nomineesLoading || timelineLoading;
+  // Placeholder removed
 
   // Get the first active popup
   const activePopup = popups && popups.length > 0 ? popups[0] : null;

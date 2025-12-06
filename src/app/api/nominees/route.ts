@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
                 isActive: true,
                 ...(categoryId && { categoryId }),
                 ...(scope && scope !== 'all' && { scope }),
+                ...(searchParams.get('featured') === 'true' && { featured: true }),
             },
             include: {
                 category: true,
