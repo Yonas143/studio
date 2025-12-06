@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
         const where = isActive !== null ? { isActive: isActive === 'true' } : {};
 
-        const [popups, total] = await Promise.all([
+        let [popups, total] = await Promise.all([
             prisma.popup.findMany({
                 where,
                 skip,
@@ -37,6 +37,23 @@ export async function GET(request: NextRequest) {
             }),
             prisma.popup.count({ where }),
         ]);
+
+        // If checking for active popups and none exist, create the default one
+        if (isActive === 'true' && popups.length === 0) {
+            const defaultPopup = await prisma.popup.create({
+                data: {
+                    type: 'video',
+                    title: 'Welcome to ABN Awards',
+                    description: 'Discover the talent.',
+                    videoUrl: '/files/All%20Talent%20Final%20%20(2)hand.mp4',
+                    isActive: true,
+                    delaySeconds: 1,
+                    storageKey: 'default-welcome-popup',
+                },
+            });
+            popups = [defaultPopup];
+            total = 1;
+        }
 
         return apiResponse(paginatedResponse(popups, total, page, limit));
     } catch (error) {
