@@ -38,7 +38,7 @@ export function SideAd({ side, className }: SideAdProps) {
           className="relative w-full h-full block"
         >
           <img
-            src="/files/10gif-1.gif"
+            src="https://abyssiniabusinessnetwork.com/wp-content/uploads/2021/12/10gif-1.gif"
             alt="Advertisement"
             className="w-full h-full object-cover"
           />

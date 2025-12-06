@@ -12,10 +12,10 @@ export async function GET() {
             config = await prisma.adConfig.create({
                 data: {
                     id: 'default',
-                    leftAdImage: '/files/10gif-1.gif',
+                    leftAdImage: 'https://abyssiniabusinessnetwork.com/wp-content/uploads/2021/12/10gif-1.gif',
                     leftAdLink: '#',
                     leftAdActive: true,
-                    rightAdImage: '/files/10gif-1.gif',
+                    rightAdImage: 'https://abyssiniabusinessnetwork.com/wp-content/uploads/2021/12/10gif-1.gif',
                     rightAdLink: '#',
                     rightAdActive: true,
                 },

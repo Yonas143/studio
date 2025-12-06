@@ -22,8 +22,8 @@ interface AdsData {
 }
 
 const defaultAd: AdConfig = {
-    imageUrl: '/files/10gif-1.gif',
-    linkUrl: 'https://example.com',
+    imageUrl: 'https://abyssiniabusinessnetwork.com/wp-content/uploads/2021/12/10gif-1.gif',
+    linkUrl: '#',
     active: true,
 };
 
