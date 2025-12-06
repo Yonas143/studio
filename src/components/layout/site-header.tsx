@@ -168,7 +168,7 @@ export function SiteHeader() {
                       href={getDashboardUrl()}
                       className={cn(
                         'font-headline text-lg font-medium transition-colors hover:text-primary',
-                        pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin') || pathname?.startsWith('/judge')
+                        pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin')
                           ? 'text-primary'
                           : 'text-foreground/80'
                       )}

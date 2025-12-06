@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/table';
 import {
   Users,
-  Gavel,
   FileText,
   Vote,
 } from 'lucide-react';
@@ -34,17 +33,17 @@ import { SeedDataButton } from '@/components/admin/seed-data-button';
 
 export default function AdminDashboardPage() {
   const { data: participants, loading: participantsLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
-  const { data: judges, loading: judgesLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'judge'] });
+
   const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions', { orderBy: ['createdAt', 'desc'], limit: 5 });
   const { data: votes, loading: votesLoading } = useCollection('votes');
   const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
 
-  const loading = participantsLoading || judgesLoading || submissionsLoading || votesLoading || categoriesLoading;
+  const loading = participantsLoading || submissionsLoading || votesLoading || categoriesLoading;
 
   const stats = [
     { title: 'Total Participants', value: participants?.length ?? 0, icon: Users, loading },
     { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
-    { title: 'Registered Judges', value: judges?.length ?? 0, icon: Gavel, loading },
+
     { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
   ];
 

@@ -40,16 +40,14 @@ export default function RegisterPage() {
       case 'admin':
         router.push('/admin');
         break;
-      case 'judge':
-        router.push('/judge');
-        break;
+
       default:
         router.push('/dashboard');
         break;
     }
   };
 
-  const createUserProfile = (user: User, customName?: string, customRole?: 'admin' | 'participant' | 'judge') => {
+  const createUserProfile = (user: User, customName?: string, customRole?: 'admin' | 'participant') => {
     const userProfile: UserProfile = {
       uid: user.uid,
       email: user.email!,

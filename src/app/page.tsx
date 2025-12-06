@@ -43,10 +43,34 @@ export default function Home() {
   }, []);
 
   const heroVideos = [
-    { id: 'dance', src: '/files/DANCE.mp4', description: 'Traditional Dance' },
-    { id: 'music', src: '/files/music.mp4', description: 'Cultural Music' },
-    { id: 'instrument', src: '/files/instrument.mp4', description: 'Traditional Instruments' },
-    { id: 'poem', src: '/files/poem.mp4', description: 'Poetry' },
+    {
+      id: 'dance',
+      src: '/files/DANCE.mp4',
+      title: 'Traditional Dance',
+      subtitle: 'Rhythms of our ancestors bringing history to life.',
+      cta: 'View Performances'
+    },
+    {
+      id: 'music',
+      src: '/files/music.mp4',
+      title: 'Cultural Music',
+      subtitle: 'Melodies that define us, echoing through generations.',
+      cta: 'Listen Now'
+    },
+    {
+      id: 'instrument',
+      src: '/files/instrument.mp4',
+      title: 'Traditional Instruments',
+      subtitle: 'Mastery of sound with Masinko, Kirar, and Begena.',
+      cta: 'Explore Instruments'
+    },
+    {
+      id: 'poem',
+      src: '/files/poem.mp4',
+      title: 'Poetic Heritage',
+      subtitle: 'Words that paint pictures of our rich cultural tapestry.',
+      cta: 'Read Poetry'
+    },
   ];
 
   const loading = nomineesLoading || timelineLoading;
@@ -105,32 +129,33 @@ export default function Home() {
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+
+                  {/* Sliding Content Layer */}
+                  <div className="absolute inset-0 z-10 flex h-full flex-col items-center justify-center text-center text-white p-4 pt-32">
+                    <div>
+                      <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl drop-shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                        {video.title}
+                      </h1>
+                      <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl drop-shadow-md text-gray-200 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+                        {video.subtitle}
+                      </p>
+                      <div className="mt-8 flex flex-wrap justify-center gap-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+                        <Button asChild size="lg" className="font-bold shadow-lg">
+                          <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
+                        </Button>
+                        <Button asChild size="lg" variant="secondary" className="font-bold shadow-lg">
+                          <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline" className="font-bold bg-black/20 text-white hover:bg-white/20 border-white/40 backdrop-blur-sm shadow-lg">
+                          <Link href="/categories">View Categories</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
-
-          <div className="absolute inset-0 z-10 flex h-full flex-col items-center justify-center text-center text-white p-4 pointer-events-none pt-32">
-            <div className="pointer-events-auto">
-              <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl drop-shadow-lg">
-                Cultural Ambassador Award
-              </h1>
-              <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl drop-shadow-md text-gray-200">
-                Celebrating and preserving the rich tapestry of Ethiopian cultural heritage.
-              </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-4">
-                <Button asChild size="lg" className="font-bold shadow-lg">
-                  <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
-                </Button>
-                <Button asChild size="lg" variant="secondary" className="font-bold shadow-lg">
-                  <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="font-bold bg-black/20 text-white hover:bg-white/20 border-white/40 backdrop-blur-sm shadow-lg">
-                  <Link href="/categories">View Categories</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* Short Intro Section */}
