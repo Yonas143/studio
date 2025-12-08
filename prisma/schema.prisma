@@ -55,6 +55,7 @@ model Nominee {
   imageUrl    String?
   videoUrl    String?
   categoryId  String
+  region      String?
   scope       String   @default("ethiopia") // "ethiopia" or "worldwide"
   featured    Boolean  @default(false)
   voteCount   Int      @default(0)
