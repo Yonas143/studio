@@ -35,7 +35,8 @@ export async function GET(
             id: nomineeWithRelations.id,
             name: nomineeWithRelations.name,
             category: nomineeWithRelations.category.name,
-            region: 'Ethiopia', // Default for now
+            category: nomineeWithRelations.category.name,
+            region: nomineeWithRelations.region || 'Ethiopia',
             scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
             bio: nomineeWithRelations.bio || '',
             imageId: '', // Not used anymore

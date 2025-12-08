@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,14 +14,19 @@ import { useState, useEffect } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
-export default function NomineeProfilePage({ params }: { params: { id: string } }) {
+export default function NomineeProfilePage() {
+  const params = useParams();
+  const id = params?.id as string;
+
   const [nominee, setNominee] = useState<Nominee | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchNominee = async () => {
       try {
-        const response = await fetch(`/api/nominees/${params.id}`);
+        const response = await fetch(`/api/nominees/${id}`);
         if (response.ok) {
           const data = await response.json();
           setNominee(data);
@@ -37,7 +42,7 @@ export default function NomineeProfilePage({ params }: { params: { id: string } 
     };
 
     fetchNominee();
-  }, [params.id]);
+  }, [id]);
 
   if (loading) {
     return (
