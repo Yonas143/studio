@@ -112,8 +112,13 @@ export default function AdminNomineesPage() {
       const nomineesData = await nomineesRes.json();
       const categoriesData = await categoriesRes.json();
 
-      setNominees(nomineesData);
-      setCategories(categoriesData);
+      // Handle potential API wrappers
+      // Check if the response is an array or wrapped in { data: ... }
+      const finalNominees = Array.isArray(nomineesData) ? nomineesData : (nomineesData.data || []);
+      const finalCategories = Array.isArray(categoriesData) ? categoriesData : (categoriesData.data || []);
+
+      setNominees(finalNominees);
+      setCategories(finalCategories);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -121,6 +126,9 @@ export default function AdminNomineesPage() {
         title: 'Error',
         description: 'Failed to load nominees or categories.'
       });
+      // Set empty arrays to prevent crashes in map()
+      setNominees([]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }

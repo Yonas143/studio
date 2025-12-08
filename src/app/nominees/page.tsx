@@ -50,11 +50,13 @@ export default function NomineesPage() {
       try {
         const response = await fetch('/api/nominees');
         const data = await response.json();
-        if (Array.isArray(data)) {
-          setNominees(data);
-        }
+
+        // Handle wrapped responses
+        const nomineesData = Array.isArray(data) ? data : (data.data || []);
+        setNominees(nomineesData);
       } catch (error) {
         console.error('Failed to fetch nominees:', error);
+        setNominees([]);
       } finally {
         setNomineesLoading(false);
       }
@@ -68,11 +70,13 @@ export default function NomineesPage() {
       try {
         const response = await fetch('/api/categories');
         const data = await response.json();
-        if (data.success) {
-          setCategories(data.data);
-        }
+
+        // Handle wrapped responses
+        const categoriesData = Array.isArray(data) ? data : (data.data || []);
+        setCategories(categoriesData);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
+        setCategories([]);
       } finally {
         setCategoriesLoading(false);
       }
