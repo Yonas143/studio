@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import type { Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -30,8 +28,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -43,8 +39,8 @@ const categorySchema = z.object({
 type CategoryFormData = z.infer<typeof categorySchema>;
 
 export default function AdminCategoriesPage() {
-  const { data: categories, loading } = useCollection<Category>('categories');
-  const firestore = useFirestore();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -61,12 +57,41 @@ export default function AdminCategoriesPage() {
     resolver: zodResolver(categorySchema),
   });
 
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      if (data.success) {
+        setCategories(data.data);
+      } else {
+        // Handle error if success is false but likely we get data directly or wrapped
+        // Check if data is array for robustness if structure varies
+        if (Array.isArray(data)) setCategories(data);
+        else if (Array.isArray(data.data)) setCategories(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load categories."
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   useEffect(() => {
     if (editingCategory) {
       setValue('name', editingCategory.name);
-      setValue('description', editingCategory.description);
-      setValue('imageId', editingCategory.imageId);
-      setValue('imageUrl', editingCategory.imageUrl);
+      setValue('description', editingCategory.description || ''); // Handle null description
+      setValue('imageId', editingCategory.imageId || '');
+      setValue('imageUrl', editingCategory.imageUrl || '');
     } else {
       reset();
     }
@@ -84,78 +109,72 @@ export default function AdminCategoriesPage() {
     reset();
   }
 
-  const onSubmit = (data: CategoryFormData) => {
-    console.log('Category form submitted:', data);
+  const onSubmit = async (data: CategoryFormData) => {
     setIsSubmitting(true);
 
-    if (editingCategory) {
-      // Update existing category
-      const categoryDoc = doc(firestore, 'categories', editingCategory.id);
-      updateDoc(categoryDoc, data)
-        .then(() => {
-          toast({
-            title: 'Category Updated',
-            description: `Successfully updated the "${data.name}" category.`,
-          });
-          handleCloseDialog();
-        })
-        .catch((error) => {
-          console.error('Error updating category:', error);
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: error.message || 'Failed to update category. Please try again.',
-          });
-        })
-        .finally(() => {
-          setIsSubmitting(false);
+    try {
+      if (editingCategory) {
+        const response = await fetch(`/api/categories/${editingCategory.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
         });
-    } else {
-      // Add new category
-      console.log('Adding new category to Firestore...');
-      const categoriesCollection = collection(firestore, 'categories');
-      addDoc(categoriesCollection, data)
-        .then((docRef) => {
-          console.log('Category added successfully with ID:', docRef.id);
-          toast({
-            title: 'Category Added',
-            description: `Successfully added the "${data.name}" category.`,
-          });
-          handleCloseDialog();
-        })
-        .catch((error) => {
-          console.error('Error adding category:', error);
-          console.error('Error code:', error.code);
-          console.error('Error message:', error.message);
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: error.message || 'Failed to add category. Please try again.',
-          });
-        })
-        .finally(() => {
-          console.log('Category operation completed');
-          setIsSubmitting(false);
+
+        if (!response.ok) throw new Error("Failed to update");
+
+        toast({
+          title: 'Category Updated',
+          description: `Successfully updated "${data.name}".`,
         });
+      } else {
+        const response = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) throw new Error("Failed to create");
+
+        toast({
+          title: 'Category Added',
+          description: `Successfully added "${data.name}".`,
+        });
+      }
+      handleCloseDialog();
+      fetchCategories();
+    } catch (error) {
+      console.error('Error saving category:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to save category. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (categoryId: string) => {
-    const categoryRef = doc(firestore, 'categories', categoryId);
-    deleteDoc(categoryRef)
-      .then(() => {
-        toast({
-          title: 'Category Deleted',
-          description: 'The category has been successfully deleted.',
-        });
-      })
-      .catch(async (serverError) => {
-        const permissionError = new FirestorePermissionError({
-          path: categoryRef.path,
-          operation: 'delete',
-        });
-        errorEmitter.emit('permission-error', permissionError);
+    try {
+      const response = await fetch(`/api/categories/${categoryId}`, {
+        method: 'DELETE',
       });
+
+      if (!response.ok) throw new Error("Failed to delete");
+
+      toast({
+        title: 'Category Deleted',
+        description: 'The category has been successfully deleted.',
+      });
+      fetchCategories();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete category.',
+      });
+    }
   };
 
 

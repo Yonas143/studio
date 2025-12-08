@@ -28,9 +28,11 @@ export function PaymentModal({ isOpen, onClose, onSuccess, nomineeName }: Paymen
             // Generate a mock transaction ID
             const mockTransactionId = `tx-${Math.random().toString(36).substring(2, 15)}`;
 
+            const paymentMethodName = method === 'chapa' ? 'Chapa' : method === 'telebirr' ? 'Telebirr' : 'CBE Birr';
+
             toast({
                 title: "Payment Successful",
-                description: `Your payment via ${method === 'chapa' ? 'Chapa' : 'Telebirr'} was successful.`,
+                description: `Your payment via ${paymentMethodName} was successful.`,
             });
 
             onSuccess(mockTransactionId);
