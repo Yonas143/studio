@@ -60,6 +60,18 @@ export function SiteFooter() {
                   +251 945 44 34 50
                 </a>
               </li>
+              <li className="pt-2">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.4679677705817!2d38.77574197059446!3d8.993602906244039!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85bf78ae5f39%3A0x5876d9eab73e5228!2zTWVya2ViIFBsYXphIHwgT2xvbXBpYSB8IOGImOGIreGKqOGJpSDhjZXhiIvhi5sgfCDhiqbhiI7hiJ3hjZLhi6s!5e0!3m2!1sen!2set!4v1765179327055!5m2!1sen!2set"
+                  width="100%"
+                  height="200"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-md shadow-sm"
+                ></iframe>
+              </li>
             </ul>
           </div>
         </div>
