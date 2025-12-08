@@ -42,12 +42,12 @@ export function ContactPopup() {
                 <div className="flex flex-col space-y-4 mt-6">
                     <div className="flex items-center justify-center space-x-3 p-4 bg-muted/30 rounded-lg">
                         <Phone className="h-6 w-6 text-primary" />
-                        <span className="font-bold text-xl tracking-wider select-all">+251 53 540 101</span>
+                        <span className="font-bold text-xl tracking-wider select-all">+251 953 540 101</span>
                     </div>
 
                     <div className="flex items-center justify-center space-x-3 p-4 bg-muted/30 rounded-lg">
                         <Phone className="h-6 w-6 text-primary" />
-                        <span className="font-bold text-xl tracking-wider select-all">+251 53 540 102</span>
+                        <span className="font-bold text-xl tracking-wider select-all">+251 953 540 102</span>
                     </div>
 
                     <div className="flex items-center justify-center space-x-2 text-muted-foreground mt-2">
