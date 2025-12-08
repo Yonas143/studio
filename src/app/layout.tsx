@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SideAd } from '@/components/ads/side-ad';
+import { ContactPopup } from '@/components/contact-popup';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 
@@ -90,6 +91,8 @@ export default function RootLayout({
             {/* Side Ads - Visible only on large screens */}
             <SideAd side="left" />
             <SideAd side="right" />
+
+            <ContactPopup />
           </div>
           <Toaster />
         </FirebaseClientProvider>
