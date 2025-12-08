@@ -57,3 +57,50 @@ export async function GET(
         return NextResponse.json({ error: 'Failed to fetch nominee' }, { status: 500 });
     }
 }
+
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const body = await request.json();
+        const { name, bio, imageUrl, categoryId, scope, featured } = body;
+
+        const nominee = await prisma.nominee.update({
+            where: { id: params.id },
+            data: {
+                name,
+                bio,
+                imageUrl,
+                categoryId,
+                scope,
+                featured,
+            },
+            include: {
+                category: true,
+                media: true,
+            },
+        });
+
+        return NextResponse.json({ success: true, nominee });
+    } catch (error) {
+        console.error('Error updating nominee:', error);
+        return NextResponse.json({ error: 'Failed to update nominee' }, { status: 500 });
+    }
+}
+
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        await prisma.nominee.delete({
+            where: { id: params.id },
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting nominee:', error);
+        return NextResponse.json({ error: 'Failed to delete nominee' }, { status: 500 });
+    }
+}
