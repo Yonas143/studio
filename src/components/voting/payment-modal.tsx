@@ -17,7 +17,7 @@ export function PaymentModal({ isOpen, onClose, onSuccess, nomineeName }: Paymen
     const [processing, setProcessing] = useState(false);
     const { toast } = useToast();
 
-    const handlePayment = async (method: 'chapa' | 'telebirr') => {
+    const handlePayment = async (method: 'chapa' | 'telebirr' | 'cbebirr') => {
         setProcessing(true);
 
         // Simulate payment processing delay
@@ -77,6 +77,22 @@ export function PaymentModal({ isOpen, onClose, onSuccess, nomineeName }: Paymen
                         <div className="flex flex-col items-start">
                             <span className="font-semibold">Pay with Telebirr</span>
                             <span className="text-xs text-muted-foreground">Mobile Money</span>
+                        </div>
+                        {processing && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
+                    </Button>
+
+                    <Button
+                        variant="outline"
+                        className="h-16 justify-start px-4 gap-4 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-all"
+                        onClick={() => handlePayment('cbebirr')}
+                        disabled={processing}
+                    >
+                        <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                            <Smartphone className="h-5 w-5 text-purple-600" />
+                        </div>
+                        <div className="flex flex-col items-start">
+                            <span className="font-semibold">Pay with CBE Birr</span>
+                            <span className="text-xs text-muted-foreground">Commercial Bank of Ethiopia</span>
                         </div>
                         {processing && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
                     </Button>

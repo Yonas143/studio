@@ -19,3 +19,31 @@ export async function GET(request: NextRequest) {
         return handleApiError(error);
     }
 }
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+        const { name, description, imageUrl } = body;
+
+        // Simple slug generation
+        const slug = name
+            .toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^\w-]+/g, '');
+
+        const category = await prisma.category.create({
+            data: {
+                name,
+                slug,
+                description,
+                imageUrl,
+                isActive: true,
+                order: 99, // Default order, can be managed later
+            },
+        });
+
+        return apiResponse(category, 201);
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
