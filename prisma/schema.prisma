@@ -96,18 +96,21 @@ model NomineeMedia {
 model Vote {
   id         String   @id @default(uuid())
   nomineeId  String
-  ipAddress  String?  // For rate limiting
+  userId     String   // Link to Clerk/User ID
+  ipAddress  String?  // Keep for additional rate limiting if needed
   fingerprint String? // Browser fingerprint
   createdAt  DateTime @default(now())
   
   // Relations
   nominee    Nominee  @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
   
-  // Ensure one vote per IP per nominee (basic protection)
+  // Ensure one vote per USER per nominee
+  @@unique([userId, nomineeId])
   @@index([ipAddress])
   @@index([nomineeId])
   @@index([createdAt])
 }
+
 
 // Submission model
 model Submission {

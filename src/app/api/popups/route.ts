@@ -61,12 +61,15 @@ export async function GET(request: NextRequest) {
     }
 }
 
+import { requireAdmin } from '@/lib/auth-helpers';
+
 /**
  * POST /api/popups
  * Create a new popup
  */
 export async function POST(request: NextRequest) {
     try {
+        await requireAdmin();
         const body = await request.json();
         const validatedData = popupSchema.parse(body);
 
@@ -89,3 +92,4 @@ export async function POST(request: NextRequest) {
         return handleApiError(error);
     }
 }
+

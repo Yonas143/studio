@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
+import { apiResponse, handleApiError } from '@/lib/api-utils';
+import { requireAdmin } from '@/lib/auth-helpers';
 
 export async function GET(request: NextRequest) {
     try {
@@ -55,15 +57,16 @@ export async function GET(request: NextRequest) {
             };
         });
 
-        return NextResponse.json(transformedNominees);
+        return apiResponse(transformedNominees);
     } catch (error) {
-        console.error('Error fetching nominees:', error);
-        return NextResponse.json({ error: 'Failed to fetch nominees' }, { status: 500 });
+        return handleApiError(error);
     }
 }
 
 export async function POST(request: NextRequest) {
     try {
+        await requireAdmin();
+
         const body = await request.json();
         const { name, bio, imageUrl, categoryId, scope, media } = body;
 
@@ -91,9 +94,9 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        return NextResponse.json({ success: true, nominee }, { status: 201 });
+        return apiResponse(nominee, 201);
     } catch (error) {
-        console.error('Error creating nominee:', error);
-        return NextResponse.json({ error: 'Failed to create nominee' }, { status: 500 });
+        return handleApiError(error);
     }
 }
+

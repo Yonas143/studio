@@ -1,30 +1,27 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export function middleware(request: NextRequest) {
-    const isLoggedIn = request.cookies.get('is-logged-in')
-    const userRole = request.cookies.get('user-role')?.value
+const isPublicRoute = createRouteMatcher([
+    '/',
+    '/nominees(.*)',
+    '/api/categories(.*)',
+    '/api/nominees(.*)',
+    '/api/popups(.*)',
+    '/api/upload(.*)', // Ideally protect upload, but for now keeping public if needed for frontend
+    '/sign-in(.*)',
+    '/sign-up(.*)'
+]);
 
-    // Check if trying to access protected routes
-    const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-
-
-    // Redirect to login if not authenticated
-    if (!isLoggedIn && isAdminRoute) {
-        return NextResponse.redirect(new URL('/login', request.url))
+export default clerkMiddleware(async (auth, request) => {
+    if (!isPublicRoute(request)) {
+        await auth.protect();
     }
-
-    // Check role-based access
-    if (isLoggedIn) {
-        if (isAdminRoute && userRole !== 'admin') {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
-        }
-
-    }
-
-    return NextResponse.next()
-}
+});
 
 export const config = {
-    matcher: ['/admin/:path*'],
-}
+    matcher: [
+        // Skip Next.js internals and all static files, unless found in search params
+        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+        // Always run for API routes
+        '/(api|trpc)(.*)',
+    ],
+};

@@ -1,11 +1,7 @@
 import { NextRequest } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase/admin';
-import {
-    handleAPIError,
-    successResponse,
-    verifyAuthToken,
-    NotFoundError
-} from '@/lib/api/errors';
+import prisma from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth-helpers';
+import { apiResponse, handleApiError } from '@/lib/api-utils';
 
 /**
  * DELETE /api/votes/[nomineeId]
@@ -13,28 +9,24 @@ import {
  */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { nomineeId: string } }
+    params: { params: Promise<{ nomineeId: string }> }
 ) {
     try {
         // Verify authentication
-        const decodedToken = await verifyAuthToken(request);
-        const userId = decodedToken.uid;
-        const { nomineeId } = params;
+        const userId = await requireAuth();
+        const { nomineeId } = await params.params;
 
-        const firestore = getAdminFirestore();
-        const voteId = `${userId}_${nomineeId}`;
+        // Delete vote where user and nominee match
+        await prisma.vote.deleteMany({
+            where: {
+                userId: userId,
+                nomineeId: nomineeId
+            }
+        });
 
-        // Check if vote exists
-        const voteDoc = await firestore.collection('votes').doc(voteId).get();
-        if (!voteDoc.exists) {
-            throw new NotFoundError('Vote not found');
-        }
-
-        // Delete vote
-        await firestore.collection('votes').doc(voteId).delete();
-
-        return successResponse({ message: 'Vote removed successfully' });
+        return apiResponse({ message: 'Vote removed successfully' });
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }
+

@@ -1,55 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase/admin';
-import {
-    handleAPIError,
-    successResponse,
-    verifyAuthToken,
-    verifyRole,
-    NotFoundError
-} from '@/lib/api/errors';
+import { NextRequest } from 'next/server';
+import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth-helpers';
+import { apiResponse, handleApiError } from '@/lib/api-utils';
 import { updateSubmissionSchema } from '@/lib/api/validation';
 
 /**
  * PATCH /api/submissions/[id]
- * Update submission (admin/judge only)
+ * Update submission (admin only)
  */
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    params: { params: Promise<{ id: string }> }
 ) {
     try {
         // Verify authentication and role
-        const decodedToken = await verifyAuthToken(request);
-        if (decodedToken.role !== 'admin') {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 403 }
-            );
-        }
+        await requireAdmin();
 
-        const { id } = params;
+        const { id } = await params.params;
 
         // Parse and validate request body
         const body = await request.json();
         const validatedData = updateSubmissionSchema.parse(body);
 
-        const firestore = getAdminFirestore();
-        const submissionRef = firestore.collection('submissions').doc(id);
-
-        // Check if submission exists
-        const submissionDoc = await submissionRef.get();
-        if (!submissionDoc.exists) {
-            throw new NotFoundError('Submission not found');
-        }
-
         // Update submission
-        await submissionRef.update({
-            ...validatedData,
-            updatedAt: new Date().toISOString(),
+        await prisma.submission.update({
+            where: { id },
+            data: validatedData
         });
 
-        return successResponse({ message: 'Submission updated successfully' });
+        return apiResponse({ message: 'Submission updated successfully' });
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }
+

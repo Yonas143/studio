@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminAuth } from '@/lib/firebase/admin';
-import { DecodedIdToken } from 'firebase-admin/auth';
 
 /**
  * API Error Classes
@@ -99,48 +97,8 @@ export function successResponse<T>(data: T, status = 200): NextResponse {
 }
 
 /**
- * Extract and verify Firebase ID token from request
+ * Extract and verify authorization (handled by Clerk Middleware generally)
+ * These helpers are kept for backward compatibility if needed, but logic is removed.
+ * Ideally, we should use requireAuth/requireAdmin from auth-helpers.
  */
-export async function verifyAuthToken(request: NextRequest): Promise<DecodedIdToken> {
-    const authHeader = request.headers.get('authorization');
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new UnauthorizedError('Missing or invalid authorization header');
-    }
-
-    const token = authHeader.split('Bearer ')[1];
-
-    try {
-        const auth = getAdminAuth();
-        const decodedToken = await auth.verifyIdToken(token);
-        return decodedToken;
-    } catch (error) {
-        throw new UnauthorizedError('Invalid or expired token');
-    }
-}
-
-/**
- * Verify user has required role
- */
-export async function verifyRole(
-    decodedToken: DecodedIdToken,
-    requiredRole: 'admin' | 'participant'
-): Promise<void> {
-    const userRole = decodedToken.role as string | undefined;
-
-    if (!userRole) {
-        throw new ForbiddenError('User role not found');
-    }
-
-    // Admin can access everything
-    if (userRole === 'admin') {
-        return;
-    }
-
-    // Participant can only access participant endpoints
-    if (requiredRole === 'participant' && userRole === 'participant') {
-        return;
-    }
-
-    throw new ForbiddenError(`Requires ${requiredRole} role`);
-}

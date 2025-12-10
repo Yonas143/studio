@@ -20,8 +20,11 @@ export async function GET(request: NextRequest) {
     }
 }
 
+import { requireAdmin } from '@/lib/auth-helpers';
+
 export async function POST(request: NextRequest) {
     try {
+        await requireAdmin();
         const body = await request.json();
         const { name, description, imageUrl } = body;
 

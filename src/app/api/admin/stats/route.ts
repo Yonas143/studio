@@ -1,11 +1,7 @@
 import { NextRequest } from 'next/server';
-import { getAdminFirestore } from '@/lib/firebase/admin';
-import {
-    handleAPIError,
-    successResponse,
-    verifyAuthToken,
-    verifyRole
-} from '@/lib/api/errors';
+import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth-helpers';
+import { apiResponse, handleApiError } from '@/lib/api-utils';
 
 /**
  * GET /api/admin/stats
@@ -14,62 +10,56 @@ import {
 export async function GET(request: NextRequest) {
     try {
         // Verify authentication and admin role
-        const decodedToken = await verifyAuthToken(request);
-        await verifyRole(decodedToken, 'admin');
-
-        const firestore = getAdminFirestore();
+        await requireAdmin();
 
         // Get counts for all collections
         const [
-            participantsSnapshot,
-            submissionsSnapshot,
-            votesSnapshot,
-            nomineesSnapshot,
-            categoriesSnapshot,
+            participantsCount,
+            submissionsCount,
+            votesCount,
+            nomineesCount,
+            categoriesCount,
+            pendingSubmissions,
+            approvedSubmissions,
+            rejectedSubmissions
         ] = await Promise.all([
-            firestore.collection('users').where('role', '==', 'participant').get(),
-            firestore.collection('submissions').get(),
-            firestore.collection('votes').get(),
-            firestore.collection('nominees').get(),
-            firestore.collection('categories').get(),
+            prisma.user.count({ where: { role: 'participant' } }),
+            prisma.submission.count(),
+            prisma.vote.count(),
+            prisma.nominee.count(),
+            prisma.category.count(),
+            prisma.submission.count({ where: { status: 'pending' } }),
+            prisma.submission.count({ where: { status: 'approved' } }),
+            prisma.submission.count({ where: { status: 'rejected' } }),
         ]);
-
-        // Get submission status breakdown
-        const submissionsByStatus = {
-            Pending: 0,
-            Approved: 0,
-            Rejected: 0,
-        };
-
-        submissionsSnapshot.docs.forEach(doc => {
-            const status = doc.data().status as keyof typeof submissionsByStatus;
-            if (status in submissionsByStatus) {
-                submissionsByStatus[status]++;
-            }
-        });
 
         const stats = {
             users: {
-                total: participantsSnapshot.size,
-                participants: participantsSnapshot.size,
+                total: participantsCount,
+                participants: participantsCount,
             },
             submissions: {
-                total: submissionsSnapshot.size,
-                byStatus: submissionsByStatus,
+                total: submissionsCount,
+                byStatus: {
+                    Pending: pendingSubmissions,
+                    Approved: approvedSubmissions,
+                    Rejected: rejectedSubmissions
+                },
             },
             votes: {
-                total: votesSnapshot.size,
+                total: votesCount,
             },
             nominees: {
-                total: nomineesSnapshot.size,
+                total: nomineesCount,
             },
             categories: {
-                total: categoriesSnapshot.size,
+                total: categoriesCount,
             },
         };
 
-        return successResponse(stats);
+        return apiResponse(stats);
     } catch (error) {
-        return handleAPIError(error);
+        return handleApiError(error);
     }
 }
+

@@ -7,8 +7,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SideAd } from '@/components/ads/side-ad';
 import { ContactPopup } from '@/components/contact-popup';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
-
+import { ClerkProvider } from '@clerk/nextjs';
 
 const lemonMilk = localFont({
   src: [
@@ -67,22 +66,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body
-        className={cn(
-          'min-h-screen bg-background font-body text-foreground antialiased',
-          lemonMilk.variable
-        )}
-      >
-        <FirebaseClientProvider>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn(
+            'min-h-screen bg-background font-body text-foreground antialiased',
+            lemonMilk.variable
+          )}
+        >
           <div className="relative flex min-h-dvh flex-col">
             <SiteHeader />
             <main className="flex-1">{children}</main>
@@ -95,8 +86,9 @@ export default function RootLayout({
             <ContactPopup />
           </div>
           <Toaster />
-        </FirebaseClientProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
+
