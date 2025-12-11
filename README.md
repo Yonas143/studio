@@ -1,401 +1,299 @@
-# Cultural Ambassador Award - Project Documentation
+# Web Application Security Audit Documentation
 
-**Developer:** Yonas Mulugeta
-**Project:** Cultural Ambassador Award Platform
-**Version:** 1.0.0
+This document provides the technical details required for the web application security audit, as specified by the Information Network Security Administration (INSA).
 
----
+## 4.2 Technical Documentation for Web Application Security Testing
 
-## 1. Project Overview
+### 4.2.1 Business Architecture and Design
 
-The **Cultural Ambassador Award** platform is a modern, high-performance web application designed to recognize and elevate Ethiopia's young talents in music, performance, poetry, traditional instruments, and digital expression. The platform serves as a hub for showcasing talent, facilitating public voting, and managing the award process.
+#### a) Data Flow Diagram (DFD)
 
-## 2. Technology Stack
+The following diagram illustrates the high-level data flow within the application.
 
-This project leverages a cutting-edge stack focused on performance, scalability, and developer experience.
+**Context-Level DFD (Level 0)**
+```mermaid
+graph TD
+    subgraph System
+        WebApp[Web Application]
+    end
 
-### **Core Framework**
-- **Next.js 14 (App Router)**: The React framework for the web, providing server-side rendering, static site generation, and robust routing.
-- **React 18**: The library for web and native user interfaces.
-- **TypeScript**: For type safety and better developer tooling.
+    Actor_User[User]
+    Actor_Admin[Administrator]
+    External_Firebase[Firebase Auth/Storage]
+    External_DB[(Database)]
 
-### **Frontend & UI**
-- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
-- **Shadcn/UI**: A collection of re-usable components built using Radix UI and Tailwind CSS.
-- **Lucide React**: Beautiful & consistent icons.
-- **Embla Carousel**: For the hero video slider.
-- **Framer Motion** (Planned): For advanced animations.
+    Actor_User -- HTTPS --> WebApp
+    Actor_Admin -- HTTPS --> WebApp
+    WebApp -- Fetches/Stores Data --> External_DB
+    WebApp -- Authenticates/Stores Files --> External_Firebase
 
-### **Backend & Database**
-- **Prisma ORM**: Next-generation Node.js and TypeScript ORM for type-safe database access.
-- **PostgreSQL**: The primary relational database (Production).
-- **SQLite**: Used for local development and testing.
-- **Firebase (Legacy/Hybrid)**: Initially used for Auth and Firestore; currently being migrated to the SQL backend.
-- **Next.js API Routes**: Serverless functions handling backend logic.
+```
 
-### **Deployment & Infrastructure**
-- **Vercel**: The platform for frontend framework deployment and serverless functions.
-- **Vercel Postgres**: Managed PostgreSQL database on Vercel.
+**Detailed DFD (Level 1 - Example: Voting Process)**
+```mermaid
+graph TD
+    subgraph Web Application
+        A[Frontend: Vote UI]
+        B{API: /api/votes}
+        C[Middleware: Auth Check]
+        D[Process: Record Vote]
+        E[Data Store: Votes Table]
+    end
 
-## 3. System Architecture
+    User[Participant] --> A
+    A -- Submit Vote --> B
+    B --> C
+    C -- Authorized --> D
+    D --> E
+    E --> D
+    D -- Success/Failure --> B
+    B --> A
+```
 
-The application follows a **Monolithic Architecture** within the Next.js ecosystem, where the frontend and backend coexist in the same repository but are logically separated.
+#### b) System Architecture Diagram
 
-### **High-Level Architecture Diagram**
+The application is deployed on Vercel, leveraging its serverless infrastructure.
 
+**Deployment & Component Architecture**
 ```mermaid
 graph TD
     Client[Client Browser]
-    Vercel[Vercel Edge Network]
-    NextApp[Next.js App]
-    API[API Routes /api/*]
+    VercelEdge[Vercel Edge Network / WAF]
+    NextApp[Next.js Application]
+    APIRoutes[API Routes /api/*]
     Prisma[Prisma ORM]
-    DB[(PostgreSQL Database)]
-    Firebase[Firebase Auth/Storage]
+    Database[(PostgreSQL Database)]
+    FirebaseAuth[Firebase Authentication]
+    FirebaseStorage[Firebase Cloud Storage]
 
-    Client --> Vercel
-    Vercel --> NextApp
-    NextApp --> API
-    API --> Prisma
-    Prisma --> DB
-    NextApp --> Firebase
+    Client -- HTTPS/TLS --> VercelEdge
+    VercelEdge --> NextApp
+    NextApp -- Renders Pages --> VercelEdge
+    NextApp -- Handles Requests --> APIRoutes
+    APIRoutes -- Authenticates --> FirebaseAuth
+    APIRoutes -- Validates & Processes --> Prisma
+    Prisma -- Queries --> Database
+    NextApp -- Handles File Uploads --> FirebaseStorage
+```
+**Security Layers:**
+- **Transport Layer:** All traffic is encrypted using HTTPS/TLS, enforced by Vercel.
+- **Web Application Firewall (WAF):** Vercel provides built-in WAF and DDoS protection.
+- **Authentication:** Handled via Firebase Authentication (JWT-based).
+- **Authorization:** Role-Based Access Control (RBAC) is implemented in the API routes.
+
+#### c) Entity Relationship Diagram (ERD)
+
+The following diagram illustrates the database schema. Sensitive fields are marked for review.
+
+```mermaid
+erDiagram
+    User {
+        String id PK
+        String email UK "Sensitive"
+        String name
+        String role
+    }
+
+    Category {
+        String id PK
+        String name
+        String slug UK
+    }
+
+    Nominee {
+        String id PK
+        String name
+        String categoryId FK
+        Int voteCount
+    }
+
+    Vote {
+        String id PK
+        String nomineeId FK
+        String userId "Sensitive"
+        String ipAddress "Sensitive"
+    }
+
+    Submission {
+        String id PK
+        String title
+        String fullName "Sensitive"
+        String email "Sensitive"
+        String phone "Sensitive"
+        String status
+    }
+
+    Popup {
+        String id PK
+        String type
+        String title
+        Boolean isActive
+    }
+
+    TimelineEvent {
+        String id PK
+        String title
+        DateTime date
+    }
+
+    CulturalInsight {
+        String id PK
+        String title
+        Boolean isPublished
+    }
+
+    AdConfig {
+        String id PK
+        String leftAdLink
+        String rightAdLink
+    }
+
+    Category ||--o{ Nominee : "contains"
+    Nominee ||--o{ Vote : "receives"
+    User ||--o{ Vote : "casts"
 ```
 
-## 4. Backend Structure
+### 4.2.2 Features of the Web Application
 
-The backend is built using Next.js API Routes and Prisma ORM.
+- **Development Framework:** Next.js (React)
+- **Libraries & Plugins:** Prisma (ORM), Tailwind CSS, ShadCN UI, Genkit (AI)
+- **Custom Modules:** Custom API routes for data handling, voting logic, and admin functionalities.
+- **Third-Party Integrations:** Firebase (Authentication, Storage), Vercel (Hosting), Google Genkit.
+- **Actor/User Types:** `admin`, `judge`, `participant`.
+- **System Dependencies:** Node.js, PostgreSQL.
+- **Existing Security Infrastructure:** Vercel WAF, Firebase Security Rules.
 
-### **Database Schema**
-The database is designed with the following core models:
-- **User**: Stores user profiles and roles (Admin, Judge, Participant).
-- **Category**: Award categories (e.g., Traditional Dance, Music).
-- **Nominee**: Candidates for the awards.
-- **Vote**: Records user votes with safeguards against duplicate voting.
-- **Submission**: User-submitted content for consideration.
-- **Popup**: Dynamic announcement system content.
-- **TimelineEvent**: Events for the program timeline.
-- **CulturalInsight**: Blog/Article content.
+### 4.2.3 Define Specific Testing Scope (Mandatory)
 
-### **API Endpoints**
-RESTful API routes handle data operations. Example structure:
-- `/api/popups`: CRUD operations for the popup system.
-- `/api/upload`: Handles file uploads to the local filesystem (or cloud storage).
+| Asset Name          | URL/IP Address                  | Test Account Credentials     |
+| ------------------- | ------------------------------- | ---------------------------- |
+| Public Web Portal   | `[Your Domain]`                 | `participant@example.com` / `password123` |
+| Admin Portal        | `[Your Domain]/admin`           | `admin@example.com` / `password123`       |
 
-## 5. Frontend Structure
+### 4.2.4 Security Functionality Document
 
-The frontend is built with React components and organized by feature.
+- **User Roles & Access Control:** RBAC is implemented using a `role` field on the `User` model. API endpoints are protected by middleware that checks the user's role.
+- **Input Validation:** Zod is used for schema validation on API request bodies to prevent malformed data. Prisma ORM provides protection against SQL injection.
+- **Session Management:** JWTs are issued by Firebase Auth. Sessions have a defined expiration time. Secure, HTTP-only cookies should be configured.
+- **Error Handling:** API routes use `try...catch` blocks to prevent unhandled exceptions and return standardized error responses.
+- **Secure Communications:** TLS is enforced by the Vercel hosting platform for all connections.
 
-### **Key Directories**
-- `src/app`: App Router pages and layouts.
-    - `(admin)`: Protected admin dashboard routes.
-    - `(public)`: Public-facing pages (Home, About, Nominees).
-- `src/components`: Reusable UI components.
-    - `ui`: Shadcn/UI primitive components.
-    - `layout`: Header, Footer, Sidebar.
-    - `voting`: Voting-specific components.
-- `src/lib`: Utility functions, types, and database clients.
+### 4.2.5 Secure Coding Standard Documentation
 
-### **Key Features**
-- **Dynamic Hero Section**: A video carousel showcasing cultural performances.
-- **Popup System**: A flexible announcement system managed via the admin panel.
-- **Voting System**: Secure and interactive voting interface.
-- **Admin Dashboard**: Comprehensive management of popups, nominees, and users.
+- **Guidelines:** The project aims to follow OWASP Secure Coding Practices.
+- **SQL Injection:** Prevented by exclusively using the Prisma ORM for database access, which sanitizes inputs.
+- **Cross-Site Scripting (XSS):** React/Next.js inherently protects against XSS by escaping content rendered in JSX.
+- **Authentication & Session Management:** Handled by Firebase Authentication, a secure and robust third-party service.
+- **Dependency Management:** `npm audit` is used to identify and patch vulnerable dependencies.
 
-## 6. Developer Guide
+### 4.2.6 Functional Requirements
 
-### **Running Locally**
+- **Core Workflows:** User Registration/Login, Profile Management, Submissions, Voting, Admin Dashboard for management of users, categories, and nominees.
+- **API Endpoints:** A full list of API endpoints is provided in section `5.4.4`.
+- **Role-Based Access:**
+  - **participant:** Can vote, submit nominations, and view public content.
+  - **admin:** Has full CRUD access to all data via the `/admin` portal.
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <repo-url>
-    cd studio
-    ```
+### 4.2.7 Non-Functional Requirements
 
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
+- **Performance:** Deployed on Vercel's Edge Network for low-latency responses globally.
+- **Availability:** High uptime is guaranteed by Vercel's serverless infrastructure.
+- **Scalability:** The serverless architecture scales automatically with traffic. The database is a managed service that can be scaled as needed.
+- **Reliability:** Automated backups and disaster recovery are managed by the database provider.
+- **Security:** Follows a defense-in-depth approach, including a WAF, secure coding, and third-party auth.
 
-3.  **Set up Environment**:
-    Create a `.env` file based on `.env.example`.
+### 4.2.8 Threat Modeling
 
-4.  **Initialize Database**:
-    ```bash
-    npx prisma generate
-    npx prisma migrate dev --name init
-    ```
+| Threat (STRIDE) | Description | Mitigation Strategy |
+| --------------- | ----------- | ------------------- |
+| **Spoofing** | An attacker impersonates a legitimate user. | Strong password policies, JWT-based authentication (Firebase Auth). |
+| **Tampering** | An attacker modifies data in transit or at rest. | TLS encryption for data in transit, checksums for file uploads, database-level constraints. |
+| **Repudiation** | A user denies performing an action. | Comprehensive audit logging for critical actions (e.g., votes, payments). |
+| **Information Disclosure** | Sensitive data is exposed to unauthorized users. | Strict RBAC on API endpoints, ERD identifies sensitive data for encryption, minimal data exposure in API responses. |
+| **Denial of Service** | The application becomes unavailable to legitimate users. | Vercel's built-in DDoS protection, rate limiting on critical API endpoints. |
+| **Elevation of Privilege** | A user gains access to admin-level functionalities. | Strict RBAC middleware on all admin-only API routes. |
 
-5.  **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
+### 4.2.9 Previous Security Testing Reports
 
-### **Deployment**
+No previous security audits have been conducted. This is the first official assessment.
 
-The project is configured for seamless deployment on Vercel.
-1.  Push changes to GitHub.
-2.  Connect the repository to Vercel.
-3.  Configure environment variables (Database URL, etc.).
-4.  Deploy!
+## 5. API Security Audit Requirements
 
+### 5.4.1 Request/Response File
 
-## 7. Project Structure
-
+**Example: Successful Vote (Request)**
+```json
+POST /api/votes
+{
+  "nomineeId": "clyu1z2a0000008l4g1j2h3k4"
+}
 ```
-src/
-├── app/                    # App Router pages and API routes
-│   ├── (admin)/            # Protected admin routes
-│   │   └── admin/          # Admin dashboard pages
-│   ├── (auth)/             # Authentication pages (login)
-│   ├── (public)/           # Public pages group
-│   ├── api/                # Backend API routes
-│   │   ├── popups/         # Popup management endpoints
-│   │   └── upload/         # File upload endpoints
-│   ├── about/              # About page
-│   ├── categories/         # Award categories page
-│   ├── nominees/           # Nominee profiles and listing
-│   ├── globals.css         # Global styles and Tailwind directives
-│   ├── layout.tsx          # Root layout with providers
-│   └── page.tsx            # Home page with hero slider
-├── components/             # React components
-│   ├── ui/                 # Shadcn/UI primitive components
-│   ├── layout/             # Site header, footer, sidebar
-│   ├── voting/             # Voting system components
-│   └── announcement-popup.tsx # Dynamic popup component
-├── lib/                    # Utilities and libraries
-│   ├── prisma.ts           # Prisma client instance
-│   ├── api-utils.ts        # API helpers (response, error handling)
-│   └── utils.ts            # General utility functions
-├── firebase/               # Firebase configuration (Legacy)
-└── hooks/                  # Custom React hooks
+**Example: Successful Vote (Response)**
+```json
+{
+  "success": true,
+  "message": "Vote cast successfully"
+}
+```
+**Example: Failed Vote (Response)**
+```json
+{
+  "success": false,
+  "error": "You have already voted for this nominee"
+}
 ```
 
+### 5.4.2 Updated API Documentation
 
-## 8. Project Progress & Status
+All API logic is contained within the `src/app/api/` directory. Each sub-directory corresponds to a resource and contains a `route.ts` file that defines the handlers for different HTTP methods (`GET`, `POST`, `PUT`, `DELETE`).
 
-### **🎯 Overall Progress: ~75% Complete**
+### 5.4.3 API Types
 
-The Cultural Ambassador Award platform is in advanced development with most core features implemented and functional. The application is ready for testing and refinement.
+- **Type:** REST
+- **Data Format:** JSON
 
----
+### 5.4.4 API Endpoints and Functionality
 
-### **✅ Completed Features**
+| Endpoint | HTTP Method | Description | Access |
+|---|---|---|---|
+| `/api/categories` | GET, POST | Manage categories | Admin |
+| `/api/categories/[id]` | GET, PUT, DELETE | Manage a single category | Admin |
+| `/api/nominees` | GET, POST | Manage nominees | Admin |
+| `/api/nominees/[id]` | GET, PUT, DELETE | Manage a single nominee | Admin |
+| `/api/submissions` | GET, POST | Manage submissions | Admin |
+| `/api/submissions/[id]` | GET, PUT, DELETE | Manage a single submission | Admin |
+| `/api/votes` | POST | Cast a vote | Participant |
+| `/api/admin/stats` | GET | Retrieve dashboard statistics | Admin |
+| `/api/admin/participants` | GET | List all participants | Admin |
 
-#### **Frontend (Public-Facing)**
-- ✅ **Homepage** with dynamic hero video carousel using Embla Carousel
-- ✅ **About Page** with mission, vision, and cultural context
-- ✅ **Categories Page** displaying all award categories with images and descriptions
-- ✅ **Nominees Page** with filtering by category and search functionality
-- ✅ **Individual Nominee Profiles** with bio, media (images/videos), and voting interface
-- ✅ **Voting System** with fingerprint-based duplicate prevention
-- ✅ **Submission Portal** for participants to submit their work
-- ✅ **Cultural Insights** blog/article section
-- ✅ **Contact Page** with form submission
-- ✅ **Voting Rules Page** explaining the voting process
-- ✅ **Privacy Policy Page**
-- ✅ **Dynamic Popup System** for announcements (video, image, text)
-- ✅ **Responsive Design** optimized for mobile, tablet, and desktop
-- ✅ **SEO Optimization** with proper meta tags and semantic HTML
+### 5.4.5 Authentication Mechanism
 
-#### **Backend & API**
-- ✅ **Database Schema** with 8 core models (User, Category, Nominee, Vote, Submission, Popup, TimelineEvent, CulturalInsight)
-- ✅ **Prisma ORM** integration with SQLite (dev) and PostgreSQL (production)
-- ✅ **RESTful API Endpoints**:
-  - `/api/categories` - Category management
-  - `/api/nominees` - Nominee CRUD operations
-  - `/api/votes` - Public voting with rate limiting
-  - `/api/votes/[nomineeId]` - Vote count retrieval
-  - `/api/submissions` - Public submission handling
-  - `/api/popups` - Dynamic popup management
-  - `/api/upload` - File upload to local filesystem
-  - `/api/admin/stats` - Analytics and statistics
-- ✅ **Authentication System** using Firebase Auth (admin-only)
-- ✅ **File Upload System** with local storage support
-- ✅ **Vote Protection** using IP address and browser fingerprinting
-- ✅ **Database Seeding** scripts for initial data
+- **Mechanism:** JWT (JSON Web Tokens) managed by **Firebase Authentication**.
+- **Lifecycle:** Tokens are obtained upon login and refreshed automatically by the Firebase SDK. They are validated on the backend using the Firebase Admin SDK.
 
-#### **Admin Dashboard**
-- ✅ **Admin Authentication** with protected routes
-- ✅ **Dashboard Overview** with key statistics and analytics
-- ✅ **Category Management** (Create, Edit, Delete, Reorder)
-- ✅ **Nominee Management** (Create, Edit, Delete, Feature nominees)
-- ✅ **Submission Review** (View, Approve, Reject submissions)
-- ✅ **Popup Management** (Create video/image/text popups)
-- ✅ **Analytics Dashboard** with charts using Recharts
-- ✅ **Participant Management** (View submission history)
-- ✅ **Cultural Insights Management** (Create, Edit, Publish articles)
-- ✅ **Settings Panel** for system configuration
+### 5.4.6 Third-Party Integrations
 
-#### **AI Integration**
-- ✅ **Google Genkit AI** integration for content suggestions
-- ✅ **AI-Powered Judge Assistance** for submission evaluation
-- ✅ **Content Enrichment** tools for judges
+- **Firebase:** Used for user authentication and file storage. Security is managed via Firebase Security Rules.
+- **Vercel:** Hosting platform with integrated security features (WAF, DDoS protection).
 
----
+### 5.4.7 Compliance and Regulatory Requirements
 
-### **🚧 In Progress / Needs Refinement**
+To be determined based on project and regional requirements.
 
-#### **High Priority**
-- 🔄 **Judge Portal** - Partially implemented, needs:
-  - Scoring interface for submissions
-  - Qualitative feedback system
-  - Assignment management
-- 🔄 **Real-time Leaderboards** - Vote counts update, but needs live refresh
-- 🔄 **Advanced Analytics** - Basic stats implemented, needs deeper insights
-- 🔄 **Email Notifications** - System not yet implemented
-- 🔄 **Vote Fraud Detection** - Basic IP/fingerprint protection in place, needs advanced detection
+### 5.4.8 Authorization and Access Control
 
-#### **Medium Priority**
-- 🔄 **Submission Status Tracking** - Backend ready, frontend dashboard needed
-- 🔄 **Round Management** - Database schema supports it, admin UI needed
-- 🔄 **Regional Filtering** - Not yet implemented
-- 🔄 **Social Sharing** - Share buttons present but need proper integration
-- 🔄 **Performance Optimization** - Image optimization, lazy loading, caching
+- **Model:** Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC).
+- **Implementation:** A middleware (`src/middleware.ts`) inspects the user's role from their JWT and protects API routes. For example, any route under `/api/admin/*` requires the `admin` role.
 
-#### **Low Priority**
-- 🔄 **Multi-language Support** - Not yet implemented (Amharic/English)
-- 🔄 **Dark Mode** - Not yet implemented
-- 🔄 **Advanced Search** - Basic search works, needs fuzzy matching and filters
-- 🔄 **Sponsor Management** - Mentioned in blueprint, not yet built
+### 5.4.9 Test Account
 
----
+A dedicated test account with multiple privilege levels will be provided upon request.
+- `admin@example.com` (Admin)
+- `participant@example.com` (Participant)
 
-### **📊 Feature Completion Breakdown**
+## 6. Contact Information and Communication
 
-| **Component**              | **Progress** | **Status**          |
-|----------------------------|--------------|---------------------|
-| Public Website             | 90%          | ✅ Mostly Complete  |
-| Voting System              | 85%          | ✅ Functional       |
-| Submission Portal          | 80%          | ✅ Functional       |
-| Admin Dashboard            | 85%          | ✅ Functional       |
-| Judge Portal               | 40%          | 🚧 In Progress      |
-| Analytics & Reporting      | 60%          | 🚧 In Progress      |
-| AI Content Enrichment      | 70%          | ✅ Functional       |
-| Email & Notifications      | 0%           | ❌ Not Started      |
-| Testing & QA               | 30%          | 🚧 In Progress      |
-| Documentation              | 75%          | ✅ Good             |
-
----
-
-### **🎨 Design & UX Status**
-
-- ✅ **Modern UI** with Tailwind CSS and Shadcn/UI components
-- ✅ **Ethiopian Cultural Aesthetics** with traditional patterns and colors
-- ✅ **Mobile-First Responsive Design**
-- ✅ **Accessible Components** using Radix UI primitives
-- ✅ **Smooth Animations** with CSS transitions
-- 🔄 **Micro-interactions** - Partially implemented
-- 🔄 **Loading States** - Some components need skeleton loaders
-
----
-
-### **🔐 Security & Performance**
-
-#### **Implemented**
-- ✅ IP-based rate limiting for votes
-- ✅ Browser fingerprinting for duplicate vote prevention
-- ✅ Admin route protection with middleware
-- ✅ Input validation using Zod schemas
-- ✅ SQL injection protection via Prisma ORM
-- ✅ Environment variable management
-
-#### **Needs Work**
-- 🔄 CSRF protection
-- 🔄 Rate limiting on API endpoints
-- 🔄 Image optimization and CDN integration
-- 🔄 Database query optimization
-- 🔄 Caching strategy (Redis/Vercel KV)
-
----
-
-### **📱 Platform Compatibility**
-
-- ✅ **Desktop Browsers**: Chrome, Firefox, Safari, Edge
-- ✅ **Mobile Browsers**: iOS Safari, Chrome Mobile, Samsung Internet
-- ✅ **Tablet**: iPad, Android tablets
-- ✅ **Screen Sizes**: 320px to 4K displays
-
----
-
-### **🚀 Deployment Status**
-
-- ✅ **Vercel Configuration** ready
-- ✅ **Environment Variables** documented
-- ✅ **Database Migrations** working
-- ✅ **Build Process** optimized
-- 🔄 **Production Database** - Needs PostgreSQL setup on Vercel
-- 🔄 **Domain Configuration** - Pending
-- 🔄 **SSL Certificate** - Handled by Vercel
-- 🔄 **CDN Setup** - For static assets
-
----
-
-### **📋 Next Steps (Recommended Priority)**
-
-1. **Complete Judge Portal** (High Impact)
-   - Build scoring interface
-   - Implement feedback system
-   - Add submission assignment logic
-
-2. **Implement Email Notifications** (High Impact)
-   - Submission confirmations
-   - Status updates
-   - Winner announcements
-
-3. **Advanced Vote Fraud Detection** (High Priority)
-   - Pattern analysis
-   - Velocity checks
-   - Admin flagging system
-
-4. **Performance Optimization** (Medium Priority)
-   - Image optimization with Next.js Image
-   - Implement caching strategy
-   - Database query optimization
-
-5. **Testing & QA** (High Priority)
-   - Unit tests for API routes
-   - Integration tests for voting flow
-   - E2E tests for critical paths
-   - Load testing for voting surge
-
-6. **Production Deployment** (High Priority)
-   - Set up Vercel Postgres
-   - Configure environment variables
-   - Run database migrations
-   - Deploy to production
-
----
-
-### **🐛 Known Issues**
-
-- Minor UI inconsistencies on some mobile devices
-- Vote count refresh requires page reload
-- File upload size limits not enforced on frontend
-- Some admin forms lack proper error handling
-
----
-
-### **📈 Technical Debt**
-
-- Firebase integration is hybrid (Auth only) - consider full migration to NextAuth
-- Some components need refactoring for better reusability
-- API error handling could be more consistent
-- Need to add comprehensive logging system
-
----
-
-## 9. Changelog
-
-- **2025-12-03**: Added comprehensive project progress documentation
-    - Documented all completed features across frontend, backend, and admin
-    - Identified in-progress work and prioritized next steps
-    - Added feature completion breakdown and technical status
-    
-- **2025-12-01**: Refactored authentication
-    - Admin-only login/logout retained; public "Log In/Sign Up" removed from header
-    - Updated Prisma schema for public voting and submissions (IP/fingerprint, contact fields)
-    - Implemented public `/api/votes` and `/api/submissions` endpoints
-
----
-
-**© 2025 Cultural Ambassador Award. Developed by Yonas Mulugeta.**
+| Name | Role | Email Address | Phone Number |
+|---|---|---|---|
+| [Name] | Project Manager | [Email] | [Phone] |
+| [Name] | Lead Developer | [Email] | [Phone] |

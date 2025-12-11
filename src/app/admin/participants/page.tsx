@@ -1,6 +1,6 @@
 'use client';
 
-import { useCollection } from '@/firebase';
+import { useEffect, useState } from 'react';
 import type { UserProfile } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,7 +9,26 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 export default function AdminParticipantsPage() {
-  const { data: users, loading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const response = await fetch('/api/admin/participants');
+        const data = await response.json();
+        if (data.success) {
+          setUsers(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching participants:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchParticipants();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -46,14 +65,14 @@ export default function AdminParticipantsPage() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar>
-                          <AvatarImage src={`https://picsum.photos/seed/${user.uid}/100/100`} alt={user.name} />
+                          <AvatarImage src={user.photoURL} alt={user.name} />
                           <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className="font-medium">{user.name}</span>
                       </div>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
-                    <TableCell className="font-mono text-xs">{user.uid}</TableCell>
+                    <TableCell className="font-mono text-xs">{user.id}</TableCell>
                   </TableRow>
                 ))
               ) : (

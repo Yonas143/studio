@@ -1,3 +1,4 @@
+'''
 'use client';
 
 import {
@@ -20,38 +21,73 @@ import {
   FileText,
   Vote,
 } from 'lucide-react';
-import { useCollection } from '@/firebase';
-import type { Submission, UserProfile, Category } from '@/lib/types';
+import type { Submission, Category } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { SeedDataButton } from '@/components/admin/seed-data-button';
 
+type AdminStats = {
+  participants: number;
+  submissions: number;
+  votes: number;
+  categories: number;
+};
 
 export default function AdminDashboardPage() {
-  const { data: participants, loading: participantsLoading } = useCollection<UserProfile>('users', { where: ['role', '==', 'participant'] });
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [recentSubmissions, setRecentSubmissions] = useState<Submission[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: submissions, loading: submissionsLoading } = useCollection<Submission>('submissions', { orderBy: ['createdAt', 'desc'], limit: 5 });
-  const { data: votes, loading: votesLoading } = useCollection('votes');
-  const { data: categories, loading: categoriesLoading } = useCollection<Category>('categories');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [statsRes, submissionsRes, categoriesRes] = await Promise.all([
+          fetch('/api/admin/stats'),
+          fetch('/api/submissions?limit=5&orderBy=createdAt&order=desc'),
+          fetch('/api/categories')
+        ]);
 
-  const loading = participantsLoading || submissionsLoading || votesLoading || categoriesLoading;
+        const statsData = await statsRes.json();
+        if (statsData.success) {
+          setStats(statsData.data);
+        }
 
-  const stats = [
-    { title: 'Total Participants', value: participants?.length ?? 0, icon: Users, loading },
-    { title: 'Total Submissions', value: submissions?.length ?? 0, icon: FileText, loading },
+        const submissionsData = await submissionsRes.json();
+        if (submissionsData.success) {
+            setRecentSubmissions(submissionsData.data);
+        }
 
-    { title: 'Total Votes Cast', value: votes?.length ?? 0, icon: Vote, loading },
+        const categoriesData = await categoriesRes.json();
+        if (categoriesData.success) {
+            setCategories(categoriesData.data);
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch admin dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const statCards = [
+    { title: 'Total Participants', value: stats?.participants ?? 0, icon: Users, loading },
+    { title: 'Total Submissions', value: stats?.submissions ?? 0, icon: FileText, loading },
+    { title: 'Total Votes Cast', value: stats?.votes ?? 0, icon: Vote, loading },
   ];
 
   const categoryMap = useMemo(() => {
     if (!categories) return new Map();
     return new Map(categories.map(c => [c.id, c.name]));
   }, [categories]);
-
 
   return (
     <div className="space-y-8">
@@ -65,7 +101,7 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="grid gap-6 sm:grid-cols-2">
-            {stats.map((stat) => (
+            {statCards.map((stat) => (
               <Card key={stat.title}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
@@ -88,7 +124,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-.tsx">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -118,8 +154,8 @@ export default function AdminDashboardPage() {
                       <TableCell><Skeleton className="h-6 w-20" /></TableCell>
                     </TableRow>
                   ))
-                ) : submissions && submissions.length > 0 ? (
-                  submissions.map((submission) => (
+                ) : recentSubmissions && recentSubmissions.length > 0 ? (
+                  recentSubmissions.map((submission) => (
                     <TableRow key={submission.id}>
                       <TableCell className="font-medium">{submission.title}</TableCell>
                       <TableCell>{categoryMap.get(submission.categoryId) || submission.categoryId}</TableCell>
@@ -143,3 +179,4 @@ export default function AdminDashboardPage() {
     </div >
   );
 }
+'''
