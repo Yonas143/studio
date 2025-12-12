@@ -105,7 +105,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-dvh">
-      {/* Dynamic Announcement Popup from Firebase */}
+      {/* Dynamic Announcement Popup */}
       {activePopup && (
         <AnnouncementPopup
           content={{

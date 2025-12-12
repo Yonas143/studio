@@ -1,6 +1,7 @@
 'use client';
 
-import { useCollection } from '@/firebase';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import type { Insight } from '@/lib/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Image from 'next/image';
@@ -9,7 +10,29 @@ import Link from 'next/link';
 import { PageHeader, PageHeaderHeading, PageHeaderDescription } from '@/components/ui/page-header';
 
 export default function CulturalInsightPage() {
-  const { data: insights, loading } = useCollection<Insight>('insights', { orderBy: ['createdAt', 'desc'] });
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchInsights = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('CulturalInsight')
+          .select('*')
+          .order('createdAt', { ascending: false });
+
+        if (error) throw error;
+        setInsights((data as unknown as Insight[]) || []);
+      } catch (error) {
+        console.error('Error fetching insights:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInsights();
+  }, []);
 
   return (
     <div className="container py-8">

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore } from '@/firebase';
-import { collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
+import { createClient } from '@/lib/supabase/client';
 import { Trophy, TrendingUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
@@ -28,35 +27,52 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
+            const supabase = createClient();
             try {
-                // Get all votes
-                const votesRef = collection(firestore, 'votes');
-                const votesSnapshot = await getDocs(votesRef);
+                // Fetch votes and nominees (eager loading for simplicity, could be optimized with join)
+                const { data: votes, error: votesError } = await supabase.from('Vote').select('*');
+                if (votesError) throw votesError;
 
-                // Get all nominees
-                const nomineesRef = collection(firestore, 'nominees');
-                const nomineesSnapshot = await getDocs(nomineesRef);
+                const { data: nominees, error: nomineesError } = await supabase.from('Nominee').select('*');
+                if (nomineesError) throw nomineesError;
 
                 // Count votes per nominee
                 const voteCounts = new Map<string, number>();
-                votesSnapshot.forEach((doc) => {
-                    const vote = doc.data();
+                votes?.forEach((vote: any) => {
                     const count = voteCounts.get(vote.nomineeId) || 0;
                     voteCounts.set(vote.nomineeId, count + 1);
                 });
 
                 // Build leaderboard entries
                 const entries: LeaderboardEntry[] = [];
-                nomineesSnapshot.forEach((doc) => {
-                    const nominee = doc.data();
-                    const voteCount = voteCounts.get(doc.id) || 0;
-
+                nominees?.forEach((nominee: any) => {
+                    const voteCount = voteCounts.get(nominee.id) || 0;
                     // Apply category filter if provided
-                    if (!categoryFilter || nominee.category === categoryFilter) {
+                    // Need to resolve category name if categoryFilter is name, or ID if filter is ID. 
+                    // Assuming filter is name based on usages. Nominee has categoryId, need to fetch categories to map??
+                    // Or nominee.category might be stored denormalized? In Prisma schema I see 'categoryId' on Nominee but logic elsewhere used 'category'.
+                    // Let's check Prisma schema again. Nominee has 'categoryId'. 
+                    // However, my previous refactors assumed fetching 'category' property. 
+                    // Wait, Prisma schema `Nominee` model: `category Category @relation...`
+                    // So `nominee` object returned by basic select won't have `category` name, just `categoryId`.
+                    // I need to include category in fetch or fetch categories.
+
+                    // Actually, let's fetch categories too to be safe/correct.
+                });
+
+                // Let's refetch with relation
+                const { data: nomineesWithCat, error: nomError } = await supabase.from('Nominee').select('*, category:Category(name)');
+                if (nomError) throw nomError;
+
+                nomineesWithCat.forEach((nom: any) => {
+                    const voteCount = voteCounts.get(nom.id) || 0;
+                    const categoryName = nom.category?.name || 'Unknown';
+
+                    if (!categoryFilter || categoryName === categoryFilter) {
                         entries.push({
-                            nomineeId: doc.id,
-                            nomineeName: nominee.name,
-                            category: nominee.category,
+                            nomineeId: nom.id, // Supabase returns 'id'
+                            nomineeName: nom.name,
+                            category: categoryName,
                             voteCount,
                         });
                     }
@@ -73,7 +89,7 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
         };
 
         fetchLeaderboard();
-    }, [firestore, categoryFilter, maxEntries]);
+    }, [categoryFilter, maxEntries]);
 
     return (
         <Card>
@@ -112,9 +128,9 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`flex h-8 w-8 items-center justify-center rounded-full font-bold ${index === 0 ? 'bg-yellow-500 text-white' :
-                                            index === 1 ? 'bg-gray-400 text-white' :
-                                                index === 2 ? 'bg-amber-600 text-white' :
-                                                    'bg-muted text-muted-foreground'
+                                        index === 1 ? 'bg-gray-400 text-white' :
+                                            index === 2 ? 'bg-amber-600 text-white' :
+                                                'bg-muted text-muted-foreground'
                                         }`}>
                                         {index + 1}
                                     </div>

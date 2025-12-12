@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useCollection, useFirestore } from '@/firebase';
-import { collection, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import type { Insight } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -21,8 +20,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 // Use dynamic import for react-quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -36,12 +33,35 @@ const insightSchema = z.object({
 type InsightFormData = z.infer<typeof insightSchema>;
 
 export default function AdminInsightsPage() {
-  const { data: insights, loading } = useCollection<Insight>('insights', { orderBy: ['createdAt', 'desc'] });
-  const firestore = useFirestore();
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
+
+  const fetchInsights = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('CulturalInsight')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (error) throw error;
+      setInsights((data as unknown as Insight[]) || []);
+    } catch (error) {
+      console.error('Error fetching insights:', error);
+      toast({ title: 'Error', description: 'Failed to fetch insights', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInsights();
+  }, []);
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<InsightFormData>({
     resolver: zodResolver(insightSchema),
@@ -80,41 +100,49 @@ export default function AdminInsightsPage() {
 
   const onSubmit = async (data: InsightFormData) => {
     setIsSubmitting(true);
-    const collectionRef = collection(firestore, 'insights');
-
     try {
       if (editingInsight) {
-        const docRef = doc(firestore, 'insights', editingInsight.id);
-        await updateDoc(docRef, { ...data });
+        const { error } = await supabase.from('CulturalInsight').update({
+          title: data.title,
+          content: data.content,
+          imageUrl: data.imageUrl,
+          updatedAt: new Date().toISOString()
+        }).eq('id', editingInsight.id);
+
+        if (error) throw error;
+
         toast({ title: 'Insight Updated', description: `Successfully updated the article "${data.title}".` });
       } else {
-        await addDoc(collectionRef, { ...data, createdAt: serverTimestamp() });
+        const { error } = await supabase.from('CulturalInsight').insert({
+          title: data.title,
+          content: data.content,
+          imageUrl: data.imageUrl,
+          isPublished: true, // Defaulting to true as per previous logic implied immediate publish
+        });
+
+        if (error) throw error;
         toast({ title: 'Insight Added', description: `Successfully added the article "${data.title}".` });
       }
       handleCloseDialog();
+      fetchInsights();
     } catch (err: any) {
-        const permissionError = new FirestorePermissionError({
-            path: editingInsight ? `insights/${editingInsight.id}` : collectionRef.path,
-            operation: editingInsight ? 'update' : 'create',
-            requestResourceData: data
-        });
-        errorEmitter.emit('permission-error', permissionError);
+      console.error('Error saving insight:', err);
+      toast({ title: 'Error', description: 'Failed to save insight.', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (insightId: string) => {
-    const docRef = doc(firestore, 'insights', insightId);
     try {
-        await deleteDoc(docRef);
-        toast({ title: 'Insight Deleted', description: 'The article has been successfully deleted.' });
+      const { error } = await supabase.from('CulturalInsight').delete().eq('id', insightId);
+      if (error) throw error;
+
+      toast({ title: 'Insight Deleted', description: 'The article has been successfully deleted.' });
+      fetchInsights();
     } catch (err: any) {
-        const permissionError = new FirestorePermissionError({
-            path: docRef.path,
-            operation: 'delete'
-        });
-        errorEmitter.emit('permission-error', permissionError);
+      console.error('Error deleting insight:', err);
+      toast({ title: 'Error', description: 'Failed to delete insight.', variant: 'destructive' });
     }
   };
 
@@ -138,7 +166,7 @@ export default function AdminInsightsPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input {...register('title')} placeholder="Article Title" className="text-lg font-semibold" />
               {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-              
+
               <ImageUpload value={watch('imageUrl')} onChange={(url) => setValue('imageUrl', url)} />
 
               <ReactQuill
@@ -185,7 +213,7 @@ export default function AdminInsightsPage() {
               {insights?.map((insight) => (
                 <TableRow key={insight.id}>
                   <TableCell className="font-medium">{insight.title}</TableCell>
-                  <TableCell>{insight.createdAt?.seconds ? new Date(insight.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</TableCell>
+                  <TableCell>{insight.createdAt ? new Date(insight.createdAt).toLocaleDateString() : 'N/A'}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button asChild variant="ghost" size="icon"><Link href={`/cultural-insight/${insight.id}`} target="_blank"><Edit className="h-4 w-4" /></Link></Button>
                     <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(insight)}><Edit className="h-4 w-4" /></Button>
