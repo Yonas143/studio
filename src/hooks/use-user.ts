@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { User as SupabaseUser, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 // Define the shape of UserProfile based on Prisma User model
 export interface UserProfile {
@@ -16,7 +16,7 @@ export interface UserProfile {
 }
 
 export function useUser() {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<SupabaseUser | null>(null);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
@@ -44,7 +44,7 @@ export function useUser() {
         getSession();
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: AuthChangeEvent, session: Session | null) => {
             if (session?.user) {
                 setUser(session.user);
                 // Only fetch profile if not already set or if email changed

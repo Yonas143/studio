@@ -6,7 +6,7 @@ import { requireAdmin } from '@/lib/auth-helpers';
 
 export async function GET(request: NextRequest) {
     try {
-        const supabase = createClient();
+        const supabase = await createClient();
         const { data: categories, error } = await supabase
             .from('categories')
             .select('*')
@@ -34,17 +34,17 @@ export async function POST(request: NextRequest) {
             .replace(/ /g, '-')
             .replace(/[^\w-]+/g, '');
 
-        const supabase = createClient();
+        const supabase = await createClient();
 
         const { data, error } = await supabase
             .from('categories')
-            .insert([{ 
-                name, 
-                slug, 
-                description, 
-                imageUrl, 
-                isActive: true, 
-                order: 99 
+            .insert([{
+                name,
+                slug,
+                description,
+                imageUrl,
+                isActive: true,
+                order: 99
             }])
             .select();
 

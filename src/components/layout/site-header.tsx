@@ -41,7 +41,7 @@ export function SiteHeader() {
   const { toast } = useToast();
 
   const handleSignOut = async () => {
-    await supabase.signOut();
+    await supabase.auth.signOut();
     // document.cookie = "is-logged-in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; // Supabase handles this via middleware mostly, but good to clean up if needed.
     toast({ title: 'Signed Out', description: 'You have been successfully signed out.' });
     router.push('/');

@@ -1,25 +1,30 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { createClient } from '@/lib/supabase/server';
+import prisma from '@/lib/prisma';
 
 /**
  * Check if the current user is an admin
- * Assumes 'admin' role is set in publicMetadata
  */
 export async function isAdmin(): Promise<boolean> {
-    const { userId } = await auth();
-    if (!userId) return false;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    const user = await currentUser();
-    return user?.publicMetadata?.role === 'admin';
+    if (!user) return false;
+
+    // Check Prisma User table for role
+    const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+    });
+
+    return dbUser?.role === 'admin';
 }
 
 /**
  * Check if the current user is a participant
  */
 export async function isParticipant(): Promise<boolean> {
-    const { userId } = await auth();
-    if (!userId) return false;
-    // Default to true if logged in, or check metadata
-    return true;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return !!user;
 }
 
 /**
@@ -27,11 +32,13 @@ export async function isParticipant(): Promise<boolean> {
  * Used in server actions or API routes
  */
 export async function requireAuth(): Promise<string> {
-    const { userId } = await auth();
-    if (!userId) {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
         throw new Error('Authentication required');
     }
-    return userId;
+    return user.id;
 }
 
 /**
