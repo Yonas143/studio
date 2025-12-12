@@ -4,7 +4,7 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, FileText, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -35,14 +35,14 @@ export default function UserDashboardLayout({
     return (
       <div className="flex min-h-screen">
         <div className="hidden md:block w-64 border-r p-4 space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
         </div>
         <div className="flex-1 p-8 space-y-4">
-            <Skeleton className="h-12 w-1/3" />
-            <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-12 w-1/3" />
+          <Skeleton className="h-64 w-full" />
         </div>
       </div>
     );
@@ -68,7 +68,7 @@ export default function UserDashboardLayout({
   const dashboardUser = {
     name: userProfile.name,
     email: userProfile.email,
-    avatarUrl: user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`,
+    avatarUrl: userProfile.photoURL || user?.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/100/100`,
   };
 
   return <DashboardLayout user={dashboardUser} sidebarContent={sidebarContent}>{children}</DashboardLayout>;

@@ -1,16 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser, useFirestore } from '@/firebase';
-import { doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+import { useUser } from '@/hooks/use-user';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ShieldCheck } from 'lucide-react';
 
 export default function AdminSetupPage() {
-    const { user, userProfile } = useUser();
-    const firestore = useFirestore();
+    const { user, userProfile, supabase } = useUser();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -19,24 +17,30 @@ export default function AdminSetupPage() {
 
         setIsLoading(true);
         try {
-            const userRef = doc(firestore, 'users', user.uid);
+            // Check if user exists in DB
+            const { data: existingUser } = await supabase
+                .from('User')
+                .select('*')
+                .eq('id', user.id)
+                .single();
 
-            // Check if doc exists first
-            const userDoc = await getDoc(userRef);
-
-            if (userDoc.exists()) {
-                await updateDoc(userRef, {
-                    role: 'admin',
-                    updatedAt: new Date().toISOString()
-                });
+            if (existingUser) {
+                const { error } = await supabase
+                    .from('User')
+                    .update({ role: 'admin' })
+                    .eq('id', user.id);
+                if (error) throw error;
             } else {
-                await setDoc(userRef, {
-                    uid: user.uid,
-                    email: user.email,
-                    name: user.displayName || 'User',
-                    role: 'admin',
-                    createdAt: new Date().toISOString()
-                });
+                // Insert new user
+                const { error } = await supabase
+                    .from('User')
+                    .insert({
+                        id: user.id,
+                        email: user.email!, // Email is required in Supabase Auth usually
+                        name: user.user_metadata?.full_name || 'User',
+                        role: 'admin',
+                    });
+                if (error) throw error;
             }
 
             toast({
@@ -44,7 +48,7 @@ export default function AdminSetupPage() {
                 description: "You are now an Admin. You can manage categories and nominees.",
             });
 
-            // Force reload to update claims/profile context if needed
+            // Force reload to update context
             window.location.reload();
 
         } catch (error: any) {
@@ -76,7 +80,7 @@ export default function AdminSetupPage() {
                         <div className="p-4 bg-muted rounded-lg">
                             <p className="text-sm font-medium">Current Status:</p>
                             <p className="text-lg">{userProfile?.role || 'Guest'}</p>
-                            <p className="text-xs text-muted-foreground mt-1">User ID: {user?.uid}</p>
+                            <p className="text-xs text-muted-foreground mt-1">User ID: {user?.id}</p>
                         </div>
 
                         <Button

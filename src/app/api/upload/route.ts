@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,59 +14,42 @@ export async function POST(request: NextRequest) {
         }
 
         // Validate file type (MIME type)
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm']; // Added video types as seen in usage
         if (!validTypes.includes(file.type)) {
             return NextResponse.json(
-                { error: 'Invalid file type. Only JPG, PNG, WEBP, and GIF are allowed.' },
+                { error: 'Invalid file type.' },
                 { status: 400 }
             );
         }
 
-        // Validate file extension
+        const supabase = await createClient();
+
+        // Generate unique path
         const extension = file.name.split('.').pop()?.toLowerCase();
-        const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-        if (!extension || !validExtensions.includes(extension)) {
-            return NextResponse.json(
-                { error: 'Invalid file extension. Only .jpg, .jpeg, .png, .webp, and .gif are allowed.' },
-                { status: 400 }
-            );
-        }
-
-        // Validate file size (5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        if (file.size > maxSize) {
-            return NextResponse.json(
-                { error: 'File too large. Maximum size is 5MB.' },
-                { status: 400 }
-            );
-        }
-
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // Ensure directory exists
-        const uploadDir = join(process.cwd(), 'public/files');
-
-        if (!existsSync(uploadDir)) {
-            mkdirSync(uploadDir, { recursive: true });
-        }
-
-        // Create unique filename (extension already validated above)
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
         const filename = `upload-${uniqueSuffix}.${extension}`;
-        const filepath = join(uploadDir, filename);
 
-        // Write file
-        await writeFile(filepath, buffer);
+        const { data, error } = await supabase
+            .storage
+            .from('uploads') // Bucket name
+            .upload(filename, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
 
-        // Return public URL
-        const url = `/files/${filename}`;
+        if (error) throw error;
 
-        return NextResponse.json({ url, success: true });
-    } catch (error) {
+        // Get Public URL
+        const { data: { publicUrl } } = supabase
+            .storage
+            .from('uploads')
+            .getPublicUrl(filename);
+
+        return NextResponse.json({ url: publicUrl, success: true });
+    } catch (error: any) {
         console.error('Upload error:', error);
         return NextResponse.json(
-            { error: 'Error uploading file' },
+            { error: error.message || 'Error uploading file' },
             { status: 500 }
         );
     }

@@ -15,7 +15,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.36.1",
     "@fingerprintjs/fingerprintjs": "^5.0.1",
     "@genkit-ai/google-genai": "^1.20.0",
     "@genkit-ai/next": "^1.20.0",

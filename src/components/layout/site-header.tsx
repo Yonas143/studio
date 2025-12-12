@@ -9,8 +9,7 @@ import type { NavItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
+import { useUser } from '@/hooks/use-user';
 import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
@@ -38,15 +37,15 @@ const mainNav: NavItem[] = [
 export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, userProfile, loading } = useUser();
-  const auth = useAuth();
+  const { user, userProfile, loading, supabase } = useUser();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
-    await signOut(auth);
-    document.cookie = "is-logged-in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    await supabase.signOut();
+    // document.cookie = "is-logged-in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"; // Supabase handles this via middleware mostly, but good to clean up if needed.
     toast({ title: 'Signed Out', description: 'You have been successfully signed out.' });
     router.push('/');
+    router.refresh();
   };
 
   const getDashboardUrl = () => {
@@ -107,7 +106,7 @@ export function SiteHeader() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/100/100`} alt={userProfile.name} />
+                      <AvatarImage src={userProfile.photoURL || user.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/100/100`} alt={userProfile.name} />
                       <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -117,7 +116,7 @@ export function SiteHeader() {
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">{userProfile.name}</p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {userProfile.email}
+                        {user.email}
                       </p>
                     </div>
                   </DropdownMenuLabel>

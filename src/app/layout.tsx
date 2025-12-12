@@ -7,7 +7,7 @@ import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { SideAd } from '@/components/ads/side-ad';
 import { ContactPopup } from '@/components/contact-popup';
-import { ClerkProvider } from '@clerk/nextjs';
+
 
 const lemonMilk = localFont({
   src: [
@@ -66,29 +66,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={cn(
-            'min-h-screen bg-background font-body text-foreground antialiased',
-            lemonMilk.variable
-          )}
-        >
-          <div className="relative flex min-h-dvh flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-body text-foreground antialiased',
+          lemonMilk.variable
+        )}
+      >
+        <div className="relative flex min-h-dvh flex-col">
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
 
-            {/* Side Ads - Visible only on large screens */}
-            <SideAd side="left" />
-            <SideAd side="right" />
+          {/* Side Ads - Visible only on large screens */}
+          <SideAd side="left" />
+          <SideAd side="right" />
 
-            <ContactPopup />
-          </div>
-          <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+          <ContactPopup />
+        </div>
+        <Toaster />
+      </body>
+    </html>
   );
 }
 

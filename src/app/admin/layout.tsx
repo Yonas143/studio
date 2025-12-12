@@ -4,12 +4,11 @@ import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import { LayoutDashboard, Users, List, BarChart2, Settings, FileText, UserPlus, BookOpen, Megaphone } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useUser } from '@/hooks/use-user';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -77,5 +76,5 @@ export default function AdminDashboardLayout({
     </SidebarMenu>
   );
 
-  return <DashboardLayout user={{ name: userProfile.name, email: userProfile.email, avatarUrl: user?.photoURL || `https://picsum.photos/seed/${user.uid}/100/100` }} sidebarContent={sidebarContent}><FirebaseErrorListener />{children}</DashboardLayout>;
+  return <DashboardLayout user={{ name: userProfile.name, email: userProfile.email, avatarUrl: userProfile.photoURL || user?.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/100/100` }} sidebarContent={sidebarContent}>{children}</DashboardLayout>;
 }
