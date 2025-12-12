@@ -116,3 +116,13 @@ export type Vote = {
   nomineeId: string;
   createdAt: string;
 }
+
+export type Insight = {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt?: string;
+};

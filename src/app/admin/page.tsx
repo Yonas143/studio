@@ -1,4 +1,3 @@
-'''
 'use client';
 
 import {
@@ -60,12 +59,12 @@ export default function AdminDashboardPage() {
 
         const submissionsData = await submissionsRes.json();
         if (submissionsData.success) {
-            setRecentSubmissions(submissionsData.data);
+          setRecentSubmissions(submissionsData.data);
         }
 
         const categoriesData = await categoriesRes.json();
         if (categoriesData.success) {
-            setCategories(categoriesData.data);
+          setCategories(categoriesData.data);
         }
 
       } catch (error) {
@@ -124,7 +123,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <Card className="lg:col-span-.tsx">
+        <Card className="lg:col-span-3">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -179,4 +178,3 @@ export default function AdminDashboardPage() {
     </div >
   );
 }
-'''
