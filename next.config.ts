@@ -1,4 +1,4 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -29,6 +29,14 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'process.version': JSON.stringify('v18.17.0'),
+      })
+    );
+    return config;
   },
 };
 
