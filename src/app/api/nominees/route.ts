@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
             return {
                 id: nomineeWithRelations.id,
                 name: nomineeWithRelations.name,
+                categoryId: nomineeWithRelations.categoryId, // Added for editing
                 category: nomineeWithRelations.category.name,
                 region: 'Ethiopia', // Default for now
                 scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
