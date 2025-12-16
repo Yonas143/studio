@@ -11,7 +11,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "seed": "tsx scripts/seed-data.ts",
-    "seed:local": "tsx scripts/seed-local.ts",
+    "seed": "tsx scripts/seed-data.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
