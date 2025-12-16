@@ -22,6 +22,7 @@ const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
   const [featuredNominees, setFeaturedNominees] = useState<Nominee[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [popups, setPopups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,23 +34,34 @@ export default function Home() {
         const [popupsRes, nomineesRes, timelineRes] = await Promise.all([
           fetch('/api/popups?isActive=true'),
           fetch('/api/nominees?featured=true'),
-          fetch('/api/timeline')
+          fetch('/api/nominees?featured=true'),
+          fetch('/api/timeline'),
+          fetch('/api/categories')
         ]);
 
         const popupsData = await popupsRes.json();
         if (popupsData.success) {
-          setPopups(popupsData.data.data);
+          setPopups(popupsData.data.data); // data.data is weird but matches checking fetch
+        } else {
+          // Fallback if needed or just empty array
+          if (Array.isArray(popupsData)) setPopups(popupsData);
         }
 
         const nomineesData = await nomineesRes.json();
         if (Array.isArray(nomineesData)) {
           setFeaturedNominees(nomineesData);
+        } else if (nomineesData.data) {
+          setFeaturedNominees(nomineesData.data);
         }
 
         const timelineData = await timelineRes.json();
         if (Array.isArray(timelineData)) {
           setTimelineEvents(timelineData);
         }
+
+        const categoriesData = await categoriesRes.json();
+        const cats = Array.isArray(categoriesData) ? categoriesData : (categoriesData.data || []);
+        setCategories(cats);
 
       } catch (error) {
         console.error('Failed to fetch home page data:', error);
@@ -306,70 +318,28 @@ export default function Home() {
               </p>
             </div>
             <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
-              <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
-                    <video
-                      src="/files/DANCE.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Dance</h3>
-                  <p className="text-muted-foreground">This category celebrates performers who bring Ethiopia’s traditional dances to life with authenticity, skill, and emotional power.</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
-                    <video
-                      src="/files/music.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Music</h3>
-                  <p className="text-muted-foreground">This award honors outstanding musicians who preserve and elevate Ethiopia’s cultural soundscape through traditional melodies, rhythms, and vocal styles.</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
-                    <video
-                      src="/files/instrument.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Instruments</h3>
-                  <p className="text-muted-foreground">This category recognizes mastery of Ethiopia’s iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero.</p>
-                </CardContent>
-              </Card>
-              <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
-                    <video
-                      src="/files/poem.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <h3 className="font-headline text-xl font-semibold mb-2">Traditional Poetry</h3>
-                  <p className="text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” to folk storytelling.</p>
-                </CardContent>
-              </Card>
+              {categories.map((category) => (
+                <Card key={category.id} className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
+                  <CardContent className="p-6">
+                    <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
+                      {category.imageUrl ? (
+                        <Image
+                          src={category.imageUrl}
+                          alt={category.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                          No Image
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-headline text-xl font-semibold mb-2">{category.name}</h3>
+                    <p className="text-muted-foreground">{category.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
