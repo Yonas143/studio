@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Heart, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { PaymentModal } from './payment-modal';
 
 interface VoteButtonProps {
     nomineeId: string;
