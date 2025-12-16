@@ -213,7 +213,7 @@ export default function NomineesPage() {
           return (
             <Card key={nominee.id} className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader className="p-0">
-                <div className="relative h-60 w-full">
+                <Link href={`/nominees/${nominee.id}`} className="block relative h-60 w-full cursor-pointer">
                   {nominee.imageUrl ? (
                     <Image
                       src={nominee.imageUrl}
@@ -230,10 +230,12 @@ export default function NomineesPage() {
                       data-ai-hint={nomineeImage.imageHint}
                     />
                   ) : null}
-                </div>
+                </Link>
               </CardHeader>
               <CardContent className="p-4">
-                <h3 className="font-headline text-lg font-semibold truncate">{nominee.name}</h3>
+                <Link href={`/nominees/${nominee.id}`} className="hover:underline">
+                  <h3 className="font-headline text-lg font-semibold truncate">{nominee.name}</h3>
+                </Link>
                 <p className="text-sm text-muted-foreground">{nominee.category}</p>
                 <Button asChild variant="link" className="p-0 mt-2">
                   <Link href={`/nominees/${nominee.id}`}>View Profile <ArrowRight className="ml-1 h-4 w-4" /></Link>
