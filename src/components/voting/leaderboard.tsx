@@ -23,7 +23,6 @@ interface LeaderboardProps {
 export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProps) {
     const [leaders, setLeaders] = useState<LeaderboardEntry[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const firestore = useFirestore();
 
     useEffect(() => {
         const fetchLeaderboard = async () => {

@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
@@ -32,7 +32,7 @@ interface Category {
   slug: string;
 }
 
-export default function NomineesPage() {
+function NomineesPageContent() {
   const [nominees, setNominees] = useState<Nominee[]>([]);
   const [nomineesLoading, setNomineesLoading] = useState(true);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -95,9 +95,6 @@ export default function NomineesPage() {
     }
 
     if (selectedCategory !== 'all') {
-      // Match by ID or Slug or Name depending on what's stored in nominee.category
-      // Assuming nominee.category stores the category NAME currently based on previous code
-      // But ideally it should store ID. Let's check if we can match by name for now to be safe with existing data
       const category = categories.find(c => c.id === selectedCategory || c.slug === selectedCategory);
       if (category) {
         filtered = filtered.filter(n => n.category === category.name);
@@ -246,5 +243,31 @@ export default function NomineesPage() {
         })}
       </div>
     </div>
+  );
+}
+
+export default function NomineesPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-12 md:py-20">
+        <div className="text-center mb-12">
+          <Skeleton className="h-12 w-64 mx-auto mb-4" />
+          <Skeleton className="h-6 w-96 mx-auto" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <Card key={i} className="overflow-hidden">
+              <Skeleton className="h-60 w-full" />
+              <CardContent className="p-4 space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    }>
+      <NomineesPageContent />
+    </Suspense>
   );
 }
