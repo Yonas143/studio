@@ -190,4 +190,10 @@ Schema validation for incoming request bodies:
 - **Dependencies:** Regular scans using `npm audit` and Sentry alerting for runtime vulnerabilities.
 
 ---
+## Contact Information
+
+For technical inquiries or security audit coordination:
+- **Project Lead & Developer**: Yonas Mulugeta - [yoni.win.yw@gmail.com](mailto:yoni.win.yw@gmail.com)
+
+---
 **End of Technical Documentation**

@@ -112,5 +112,11 @@ The project is optimized for **Vercel**.
 - **Environment**: Requires `DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`.
 
 ---
+## 9. Contact Information
+
+For technical inquiries or project management:
+- **Project Lead & Developer**: Yonas Mulugeta - [yoni.win.yw@gmail.com](mailto:yoni.win.yw@gmail.com)
+
+---
 *Document Version: 1.0.0*
 *Last Updated: December 2025*
