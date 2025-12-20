@@ -19,7 +19,6 @@ const navItems = [
   { href: '/admin/categories', label: 'Categories', icon: List },
   { href: '/admin/nominees', label: 'Nominees', icon: UserPlus },
   { href: '/admin/insights', label: 'Insights', icon: BookOpen },
-  { href: '/admin/insights', label: 'Insights', icon: BookOpen },
   { href: '/admin/popups', label: 'Popups', icon: Megaphone },
   { href: '/admin/ads', label: 'Ads', icon: LayoutDashboard }, // Reusing LayoutDashboard or another icon if available
   { href: '/admin/settings', label: 'Settings', icon: Settings },
