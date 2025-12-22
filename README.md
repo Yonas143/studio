@@ -2,7 +2,8 @@
 
 Welcome to the official repository for the **Cultural Ambassador Award** platform. This project is a comprehensive web application designed to recognize and celebrate Ethiopian cultural excellence through a secure voting and nomination system.
 
-This document serves as both the **Project Master Guide** and the **Technical Documentation for Web Application Security Testing**, as required by the Information Network Security Administration (INSA).
+This document serves as the **Project Master Guide**. For a formal software requirements and security specification, please refer to the:
+- **[SRS Security Specification](file:///Users/gdmac/Desktop/studio/docs/SRS_Security_Specification.md)**
 
 ---
 
