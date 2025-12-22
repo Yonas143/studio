@@ -204,7 +204,7 @@ The project is optimized for deployment on Vercel:
 ## 9. Contact Information
 
 For technical inquiries or security audit coordination:
-- **Project Lead & Developer**: Yonas Mulugeta - [yoni.win.yw@gmail.com](mailto:yoni.win.yw@gmail.com)
+- **Project Lead & Developer**: Yonas Mulugeta - [yoniwin.yw@gmail.com](mailto:yoniwin.yw@gmail.com)
 
 ---
 > [!TIP]
