@@ -15,7 +15,7 @@ export async function isAdmin(): Promise<boolean> {
         where: { id: user.id },
     });
 
-    return dbUser?.role === 'admin';
+    return dbUser?.role === 'admin' || dbUser?.role === 'superadmin';
 }
 
 /**

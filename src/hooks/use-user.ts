@@ -9,7 +9,7 @@ export interface UserProfile {
     id: string;
     email: string;
     name: string;
-    role: 'admin' | 'judge' | 'participant';
+    role: 'admin' | 'judge' | 'participant' | 'superadmin';
     photoURL?: string | null;
     createdAt: string;
     updatedAt: string;
