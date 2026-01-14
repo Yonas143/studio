@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import NextImage from 'next/image';
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
-import { Logo } from '@/components/icons';
+
 
 export function SiteFooter() {
   return (
