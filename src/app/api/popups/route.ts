@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
             const defaultPopup = await prisma.popup.create({
                 data: {
                     type: 'video',
-                    title: 'Welcome to ABN Awards',
+                    title: 'Welcome to Cultural Ambassador Award',
                     description: 'Discover the talent.',
                     videoUrl: '/files/All%20Talent%20Final%20%20(2)hand.mp4',
                     isActive: true,

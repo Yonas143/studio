@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, Trophy, MessageCircle, Send } from 'lucide-react';
 
@@ -66,7 +67,7 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center">
         <div className="mr-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <Logo className="h-8 w-8 text-primary" />
+            <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain rounded-full" />
             <span className="font-headline font-bold sm:inline-block">
               Cultural Ambassador Award
             </span>
@@ -143,8 +144,8 @@ export function SiteHeader() {
               <div className="flex flex-col h-full">
                 <div className="flex items-center mb-4">
                   <Link href="/" className="flex items-center space-x-2">
-                    <Logo className="h-8 w-8 text-primary" />
-                    <span className="font-headline font-bold">ABN Awards</span>
+                    <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain rounded-full" />
+                    <span className="font-headline font-bold">Cultural Ambassador Award</span>
                   </Link>
                 </div>
                 <div className="flex flex-col gap-4 mt-4">

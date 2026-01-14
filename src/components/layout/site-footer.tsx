@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import { Logo } from '@/components/icons';
 
@@ -9,7 +10,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <Logo className="h-8 w-8 text-primary" />
+              <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain rounded-full" />
               <span className="font-headline text-xl font-bold">Cultural Ambassador Award</span>
             </Link>
             <p className="text-sm">

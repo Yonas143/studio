@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
         <p className="text-muted-foreground">
-          A real-time overview of the ABN Cultural Awards.
+          A real-time overview of the Cultural Ambassador Award.
         </p>
       </div>
 

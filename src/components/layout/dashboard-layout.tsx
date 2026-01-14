@@ -10,6 +10,7 @@ import {
 import { Logo } from '@/components/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { Separator } from '../ui/separator';
@@ -39,9 +40,9 @@ export function DashboardLayout({
         >
           <SidebarHeader>
             <Link href="/" className="flex items-center gap-2 font-headline font-bold text-lg">
-              <Logo className="size-8" />
-              <span className="group-data-[collapsible=icon]:hidden">
-                ABN Awards
+              <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="size-8 object-contain rounded-full" />
+              <span className="group-data-[collapsible=icon]:hidden text-sm">
+                Cultural Ambassador Award
               </span>
             </Link>
           </SidebarHeader>
