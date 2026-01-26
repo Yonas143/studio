@@ -34,9 +34,9 @@ The system is built on a modern **Next.js 15** architecture, leveraging **Supaba
   - **Constraint:** Validation must check `IP Address` and `userId` (if logged in) against the `Vote` table for records created since `00:00:00` of the current day.
 - **FR-V-03 (Anti-Fraud):** The system shall record a browser fingerprint and IP address for every vote to detect patterns of abuse (e.g., bot farms, VPN cycling).
 - **FR-V-04 (Eligibility):** Votes must only be accepted for Nominees marked as `isActive: true`.
-- **FR-V-05 (Payment Gate):** (Feature Flagged) The system shall support a payment flow ("Pay to Vote") integration with **Chapa**, **Telebirr**, and **CBE Birr**.
-  - *Current State:* Client-side simulation implemented.
-  - *Future State:* Server-side transaction verification required before recording vote.
+- **FR-V-05 (Payment Gate):** The system shall integrate with the **CBEBirr API** for payment processing.
+  - **Constraint:** Votes must **only** be counted after a successful "Job Done" / "Payment Received" confirmation from CBEBirr.
+  - **Flow:** User funds vote -> CBEBirr processes -> Success Callback -> Vote Recorded.
 
 ### 3.2 Content Management (CMS)
 - **FR-C-01 (Nominees):** Admins can Create, Read, Update, and Delete (CRUD) nominees.
@@ -111,19 +111,16 @@ graph TD
 ## 7. Business Logic & Process Flows
 
 ### 7.1 Voting Logic (Pseudo-code)
-1. **Receive Request:** `POST /api/votes` with `{ nomineeId, fingerprint }`.
-2. **Identify Voter:** Extract IP address from `x-forwarded-for` and User ID from Session.
-3. **Validate Nominee:** 
-   - Check `Nominee` exists.
-   - Check `Nominee.isActive === true`.
-4. **Check Constraints (Rate Limit):**
-   - Query `Vote` table: `WHERE (ipAddress == CurrentIP OR userId == CurrentUser) AND createdAt >= StartOfToday`.
-   - **IF** record found: Return `429 Too Many Requests`.
-5. **Execute Vote:**
+1. **Receive Request:** `POST /api/votes` with `{ nomineeId, fingerprint, paymentToken }`.
+2. **Identify Voter:** Extract IP address to prevent abuse (though payment acts as primary Sybil resistance).
+3. **Process Payment (CBEBirr):**
+   - Call **CBEBirr API** to verify transaction status.
+   - **IF** status != "Payment Received/Job Done": Return `402 Payment Required`.
+4. **Execute Vote:**
    - Transaction:
-     - `INSERT INTO Vote`
-     - `UPDATE Nominee SET voteCount = voteCount + 1`
-6. **Return:** `201 Created` with updated vote count.
+     - `INSERT INTO Vote` (with payment reference).
+     - `UPDATE Nominee SET voteCount = voteCount + 1`.
+5. **Return:** `201 Created` with updated vote count.
 
 ### 7.2 Submission Lifecycle
 1. User submits form -> `POST /api/submissions`.
