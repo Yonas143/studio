@@ -66,6 +66,7 @@ model Nominee {
   // Relations
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   votes       Vote[]
+  payments    Payment[]
   media       NomineeMedia[]
   
   @@index([categoryId])
@@ -92,23 +93,51 @@ model NomineeMedia {
   @@index([nomineeId])
 }
 
-// Vote model
+// Vote model - Now linked to verified payments
 model Vote {
-  id         String   @id @default(uuid())
-  nomineeId  String
-  userId     String   // Link to Clerk/User ID
-  ipAddress  String?  // Keep for additional rate limiting if needed
-  fingerprint String? // Browser fingerprint
-  createdAt  DateTime @default(now())
+  id          String   @id @default(uuid())
+  nomineeId   String
+  paymentId   String   @unique  // Link to verified payment
+  ipAddress   String?  // Keep for additional rate limiting if needed
+  fingerprint String?  // Browser fingerprint
+  createdAt   DateTime @default(now())
   
   // Relations
-  nominee    Nominee  @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
+  nominee     Nominee  @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
+  payment     Payment  @relation(fields: [paymentId], references: [id])
   
-  // Ensure one vote per USER per nominee
-  @@unique([userId, nomineeId])
   @@index([ipAddress])
   @@index([nomineeId])
   @@index([createdAt])
+}
+
+// Payment model - Tracks Chapa transactions
+model Payment {
+  id            String    @id @default(uuid())
+  txRef         String    @unique  // Unique transaction reference
+  chapaRef      String?   // Chapa's reference ID (from verification)
+  nomineeId     String
+  amount        Float     @default(10.0)
+  currency      String    @default("ETB")
+  status        String    @default("pending") // pending, success, failed
+  email         String?
+  firstName     String?
+  lastName      String?
+  phone         String?
+  fingerprint   String?
+  ipAddress     String?
+  checkoutUrl   String?   // Chapa checkout URL
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  verifiedAt    DateTime?
+
+  // Relations
+  nominee       Nominee   @relation(fields: [nomineeId], references: [id], onDelete: Cascade)
+  vote          Vote?     // One-to-one with Vote (created after successful payment)
+
+  @@index([status])
+  @@index([nomineeId])
+  @@index([txRef])
 }
 
 

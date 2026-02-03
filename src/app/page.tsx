@@ -453,24 +453,34 @@ export default function Home() {
           </div>
         </section> */}
 
-        <section id="sponsors" className="py-12 md:py-20">
+        <section id="partners" className="py-16 md:py-24 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className="mb-10 text-center font-headline text-3xl font-bold md:text-4xl">
-              Our Partners
-            </h2>
-            {/* <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-              {sponsors.map((sponsor) => (
-                <div key={sponsor.id} className="relative h-16 w-32 grayscale opacity-60 transition-all hover:opacity-100 hover:grayscale-0">
+            <div className="mx-auto max-w-4xl text-center mb-12">
+              <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">
+                Our Partners
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                Proudly supported by Ethiopia's leading institutions.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+              {[
+                { name: 'Ministry of Innovation and Technology', logo: '/partners/mint.jpg', width: 200 },
+                { name: 'Ministry of Culture and Sport', logo: '/partners/ministry-culture.jpg', width: 200 },
+                { name: 'Ethiopian Airlines', logo: '/partners/ethiopian-airlines.jpg', width: 180 },
+                { name: 'Commercial Bank of Ethiopia', logo: '/partners/cbe.jpg', width: 180 },
+              ].map((partner) => (
+                <div key={partner.name} className="relative h-32 w-48 md:h-40 md:w-64 grayscale opacity-80 transition-all hover:opacity-100 hover:grayscale-0 hover:scale-105 duration-300">
                   <Image
-                    src={sponsor.imageUrl}
-                    alt={sponsor.description}
+                    src={partner.logo}
+                    alt={partner.name}
                     fill
                     className="object-contain"
-                    data-ai-hint={sponsor.imageHint}
                   />
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
         </section>
       </main>

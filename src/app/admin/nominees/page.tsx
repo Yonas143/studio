@@ -390,17 +390,7 @@ export default function AdminNomineesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
-                [...Array(5)].map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-5 w-12" /></TableCell>
-                    <TableCell className="text-right"><Skeleton className="h-8 w-20 ml-auto" /></TableCell>
-                  </TableRow>
-                ))
-              ) : nominees && nominees.length > 0 ? (
+              {nominees && nominees.length > 0 ? (
                 nominees.map((nominee) => (
                   <TableRow key={nominee.id}>
                     <TableCell className="font-medium">{nominee.name}</TableCell>

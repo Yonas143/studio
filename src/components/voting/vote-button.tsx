@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Heart, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -20,8 +19,8 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
     const [hasVoted, setHasVoted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
-    const [showThankYou, setShowThankYou] = useState(false);
     const [currentVoteCount, setCurrentVoteCount] = useState(voteCount);
+    const [fingerprint, setFingerprint] = useState<string | undefined>();
     const { toast } = useToast();
 
     useEffect(() => {
@@ -30,64 +29,52 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
         if (votedNominees.includes(nomineeId)) {
             setHasVoted(true);
         }
+
+        // Initialize fingerprint
+        const initFingerprint = async () => {
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                setFingerprint(result.visitorId);
+            } catch (error) {
+                console.error('Fingerprint error:', error);
+            }
+        };
+        initFingerprint();
     }, [nomineeId]);
 
-    const handleVoteClick = () => {
-        if (hasVoted) return;
-        setShowPayment(true);
-    };
+    // Check for successful payment return
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentSuccess = urlParams.get('payment_success');
+        const votedFor = urlParams.get('voted_for');
 
-    const handlePaymentSuccess = async (transactionId: string) => {
-        setIsLoading(true);
-
-        try {
-            // Initialize fingerprint
-            const fp = await FingerprintJS.load();
-            const result = await fp.get();
-            const fingerprint = result.visitorId;
-
-            const response = await fetch('/api/votes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    nomineeId,
-                    fingerprint,
-                    transactionId, // Send the transaction ID
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to vote');
-            }
-
-            // Update local state
+        if (paymentSuccess === 'true' && votedFor === nomineeId) {
             setHasVoted(true);
             setCurrentVoteCount(prev => prev + 1);
 
-            // Update local storage
-            const votedNominees = JSON.parse(localStorage.getItem('votedNominees') || '[]');
-            if (!votedNominees.includes(nomineeId)) {
-                votedNominees.push(nomineeId);
-                localStorage.setItem('votedNominees', JSON.stringify(votedNominees));
-            }
+            // Clean up URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('payment_success');
+            url.searchParams.delete('voted_for');
+            window.history.replaceState({}, '', url.toString());
 
-            // Show Thank You Modal instead of Toast
-            setShowThankYou(true);
-
-        } catch (error: any) {
-            console.error('Error voting:', error);
             toast({
-                variant: 'destructive',
-                title: 'Vote Failed',
-                description: error.message || 'Failed to record your vote. Please try again.',
+                title: 'Vote Recorded!',
+                description: `Thank you for voting for ${nomineeName}!`,
             });
-        } finally {
-            setIsLoading(false);
         }
+    }, [nomineeId, nomineeName, toast]);
+
+    const handleVoteClick = () => {
+        if (hasVoted) {
+            toast({
+                title: 'Already Voted',
+                description: `You have already voted for ${nomineeName}.`,
+            });
+            return;
+        }
+        setShowPayment(true);
     };
 
     return (
@@ -95,17 +82,17 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
             <div className={cn("flex flex-col gap-2", className)}>
                 <Button
                     onClick={handleVoteClick}
-                    disabled={isLoading || hasVoted}
+                    disabled={isLoading}
                     variant={hasVoted ? 'default' : 'outline'}
                     className={cn(
                         "font-bold transition-all",
-                        hasVoted && "bg-primary text-primary-foreground hover:bg-primary/90 cursor-default"
+                        hasVoted && "bg-primary text-primary-foreground hover:bg-primary/90"
                     )}
                 >
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Voting...
+                            Processing...
                         </>
                     ) : hasVoted ? (
                         <>
@@ -127,30 +114,10 @@ export function VoteButton({ nomineeId, nomineeName, voteCount = 0, className }:
             <PaymentModal
                 isOpen={showPayment}
                 onClose={() => setShowPayment(false)}
-                onSuccess={handlePaymentSuccess}
+                nomineeId={nomineeId}
                 nomineeName={nomineeName}
+                fingerprint={fingerprint}
             />
-
-            <Dialog open={showThankYou} onOpenChange={setShowThankYou}>
-                <DialogContent className="sm:max-w-md text-center">
-                    <DialogHeader>
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 mb-4">
-                            <Heart className="h-6 w-6 text-green-600 fill-current" />
-                        </div>
-                        <DialogTitle className="text-xl">Thank You!</DialogTitle>
-                        <DialogDescription className="text-center pt-2">
-                            Your vote for <strong>{nomineeName}</strong> has been recorded.
-                            <br />
-                            Thank you for your contribution to preserving our culture.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter className="sm:justify-center mt-4">
-                        <Button onClick={() => setShowThankYou(false)} className="w-full sm:w-auto">
-                            Close
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </>
     );
 }

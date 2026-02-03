@@ -3,40 +3,67 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, Smartphone } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Loader2, CreditCard, Mail, User, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PaymentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: (transactionId: string) => void;
+    nomineeId: string;
     nomineeName: string;
+    fingerprint?: string;
 }
 
-export function PaymentModal({ isOpen, onClose, onSuccess, nomineeName }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, nomineeId, nomineeName, fingerprint }: PaymentModalProps) {
     const [processing, setProcessing] = useState(false);
+    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phone, setPhone] = useState('');
     const { toast } = useToast();
 
-    const handlePayment = async (method: 'chapa' | 'telebirr' | 'cbebirr') => {
+    const handlePayment = async () => {
         setProcessing(true);
 
-        // Simulate payment processing delay
-        setTimeout(() => {
-            setProcessing(false);
-            onClose();
-
-            // Generate a mock transaction ID
-            const mockTransactionId = `tx-${Math.random().toString(36).substring(2, 15)}`;
-
-            const paymentMethodName = method === 'chapa' ? 'Chapa' : method === 'telebirr' ? 'Telebirr' : 'CBE Birr';
-
-            toast({
-                title: "Payment Successful",
-                description: `Your payment via ${paymentMethodName} was successful.`,
+        try {
+            const response = await fetch('/api/payments/initialize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nomineeId,
+                    email: email || undefined,
+                    firstName: firstName || undefined,
+                    lastName: lastName || undefined,
+                    phone: phone || undefined,
+                    fingerprint,
+                }),
             });
 
-            onSuccess(mockTransactionId);
-        }, 2000);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to initialize payment');
+            }
+
+            // Redirect to Chapa checkout
+            if (data.checkoutUrl) {
+                window.location.href = data.checkoutUrl;
+            } else {
+                throw new Error('No checkout URL received');
+            }
+        } catch (error: any) {
+            console.error('Payment initialization error:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Payment Failed',
+                description: error.message || 'Failed to initialize payment. Please try again.',
+            });
+            setProcessing(false);
+        }
     };
 
     return (
@@ -45,63 +72,90 @@ export function PaymentModal({ isOpen, onClose, onSuccess, nomineeName }: Paymen
                 <DialogHeader>
                     <DialogTitle>Cast Your Vote</DialogTitle>
                     <DialogDescription>
-                        To vote for <strong>{nomineeName}</strong>, a small fee is required.
-                        Please select your preferred payment method.
+                        Vote for <strong>{nomineeName}</strong> for just <strong>10 ETB</strong>.
+                        Fill in your details below (optional) and proceed to payment.
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="grid gap-4 py-4">
-                    <Button
-                        variant="outline"
-                        className="h-16 justify-start px-4 gap-4 hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition-all"
-                        onClick={() => handlePayment('chapa')}
-                        disabled={processing}
-                    >
-                        <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                            <CreditCard className="h-5 w-5 text-green-600" />
+                    <div className="grid gap-2">
+                        <Label htmlFor="email" className="flex items-center gap-2">
+                            <Mail className="h-4 w-4" />
+                            Email (optional)
+                        </Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="your@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            disabled={processing}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="firstName" className="flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                First Name
+                            </Label>
+                            <Input
+                                id="firstName"
+                                placeholder="First name"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                disabled={processing}
+                            />
                         </div>
-                        <div className="flex flex-col items-start">
-                            <span className="font-semibold">Pay with Chapa</span>
-                            <span className="text-xs text-muted-foreground">Credit/Debit Cards, Banks</span>
+                        <div className="grid gap-2">
+                            <Label htmlFor="lastName">Last Name</Label>
+                            <Input
+                                id="lastName"
+                                placeholder="Last name"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                disabled={processing}
+                            />
                         </div>
-                        {processing && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
-                    </Button>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="phone" className="flex items-center gap-2">
+                            <Phone className="h-4 w-4" />
+                            Phone (optional)
+                        </Label>
+                        <Input
+                            id="phone"
+                            type="tel"
+                            placeholder="09xxxxxxxx"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            disabled={processing}
+                        />
+                    </div>
 
                     <Button
-                        variant="outline"
-                        className="h-16 justify-start px-4 gap-4 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all"
-                        onClick={() => handlePayment('telebirr')}
+                        onClick={handlePayment}
                         disabled={processing}
+                        className="w-full h-12 text-base font-semibold bg-green-600 hover:bg-green-700"
                     >
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <Smartphone className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div className="flex flex-col items-start">
-                            <span className="font-semibold">Pay with Telebirr</span>
-                            <span className="text-xs text-muted-foreground">Mobile Money</span>
-                        </div>
-                        {processing && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
-                    </Button>
-
-                    <Button
-                        variant="outline"
-                        className="h-16 justify-start px-4 gap-4 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-all"
-                        onClick={() => handlePayment('cbebirr')}
-                        disabled={processing}
-                    >
-                        <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                            <Smartphone className="h-5 w-5 text-purple-600" />
-                        </div>
-                        <div className="flex flex-col items-start">
-                            <span className="font-semibold">Pay with CBE Birr</span>
-                            <span className="text-xs text-muted-foreground">Commercial Bank of Ethiopia</span>
-                        </div>
-                        {processing && <Loader2 className="ml-auto h-4 w-4 animate-spin" />}
+                        {processing ? (
+                            <>
+                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                Processing...
+                            </>
+                        ) : (
+                            <>
+                                <CreditCard className="mr-2 h-5 w-5" />
+                                Pay 10 ETB with Chapa
+                            </>
+                        )}
                     </Button>
                 </div>
 
-                <div className="text-xs text-center text-muted-foreground mt-2">
-                    Secured by Chapa & Telebirr. No login required.
+                <div className="text-xs text-center text-muted-foreground">
+                    <p>Secure payment powered by Chapa</p>
+                    <p className="mt-1">Supports Telebirr, CBE Birr, M-Pesa, Banks & Cards</p>
                 </div>
             </DialogContent>
         </Dialog>
