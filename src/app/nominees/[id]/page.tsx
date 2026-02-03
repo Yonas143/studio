@@ -6,7 +6,8 @@ import placeholderImagesData from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VoteButton } from '@/components/voting/vote-button';
-import { Share2, MapPin, PlayCircle, Music, Image as ImageIcon } from 'lucide-react';
+import { Share2, MapPin, PlayCircle, Music, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -94,8 +95,15 @@ export default function NomineeProfilePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
           <Card className="overflow-hidden sticky top-24">
-            {nomineeImage && (
-              <div className="relative aspect-square w-full">
+            <div className="relative aspect-square w-full bg-muted">
+              {nominee.imageUrl ? (
+                <Image
+                  src={nominee.imageUrl}
+                  alt={`Portrait of ${nominee.name}`}
+                  fill
+                  className="object-cover"
+                />
+              ) : nomineeImage ? (
                 <Image
                   src={nomineeImage.imageUrl}
                   alt={`Portrait of ${nominee.name}`}
@@ -103,12 +111,18 @@ export default function NomineeProfilePage() {
                   className="object-cover"
                   data-ai-hint={nomineeImage.imageHint}
                 />
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground bg-secondary/30">
+                  <ImageIcon className="h-16 w-16 opacity-20" />
+                </div>
+              )}
+            </div>
+            <CardContent className="p-6 text-center">
+              <h1 className="font-headline text-3xl font-bold mb-2">{nominee.name}</h1>
+              <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
+                {nominee.category}
               </div>
-            )}
-            <CardContent className="p-4 text-center">
-              <h1 className="font-headline text-2xl font-bold">{nominee.name}</h1>
-              <p className="text-md text-muted-foreground">{nominee.category}</p>
-              <div className="flex items-center justify-center gap-2 mt-2 text-sm text-muted-foreground">
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
                 <span>{nominee.region}</span>
               </div>
@@ -127,17 +141,23 @@ export default function NomineeProfilePage() {
           </div>
         </div>
 
-        <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">About {nominee.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-base leading-relaxed">{nominee.bio}</p>
-            </CardContent>
-          </Card>
-
-          <Separator className="my-8" />
+        <div className="md:col-span-2 space-y-8">
+          <div>
+            <Link href="/nominees" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4 transition-colors">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Nominees
+            </Link>
+            <Card className="border-none shadow-none bg-transparent sm:bg-card sm:border sm:shadow-sm">
+              <CardHeader className="px-0 sm:px-6">
+                <CardTitle className="font-headline text-3xl font-bold">About {nominee.name}</CardTitle>
+                <Separator className="mt-4" />
+              </CardHeader>
+              <CardContent className="px-0 sm:px-6">
+                <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line">
+                  {nominee.bio || "No biography available for this nominee."}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
           <h2 className="font-headline text-2xl font-bold mb-4">Media Gallery</h2>
 
