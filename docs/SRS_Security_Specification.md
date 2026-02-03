@@ -25,7 +25,7 @@ The scope of this security audit covers:
 - **Public Submissions**: Users can submit nominations including text descriptions and media files.
 - **Submission Tracking**: Submitters can view the status of their nomination (Pending, Approved, Rejected).
 
-### 2.3 Admin/Judge Module
+### 2.3 Admin Module
 - **Content Management**: Full CRUD operations for Categories, Nominees, and Media.
 - **Review Workflow**: Administrators review public submissions and either reject them or promote them to official nominees.
 - **Security Management**: Management of user roles and access controls.
@@ -41,7 +41,7 @@ The scope of this security audit covers:
 | Role | Responsibilities | Access Level |
 | :--- | :--- | :--- |
 | **Participant** | Browse, Vote, and submit nominations. | Authenticated User |
-| **Judge** | Review submissions, evaluate nominees (Score 30%). | Restricted Admin |
+
 | **Administrator** | Full system control, role management, analytics, content moderation. | Full Admin (RBAC) |
 | **Public User** | Browse nominees and categories. | Anonymous/ReadOnly |
 

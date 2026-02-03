@@ -41,7 +41,6 @@ The system has shifted from a free-voting model to a **Payment-Gated Voting Syst
 - **NFR-SEC-02 (Auditability):** Every vote must be traceable to a specific, verified content provider transaction reference (`txRef`).
 - **NFR-REL-01 (Webhook Reliability):** The system must handle payment gateway timeouts and retries gracefully.
 - **NFR-PERF-01 (Latency):** Voting API endpoints should respond within **200ms** (excluding payment gateway latency).
-- **NFR-COM-01 (Scoring Rules):** The final winner calculation must support a weighted average: **70% Public Vote** + **30% Jury Score**.
 
 ---
 

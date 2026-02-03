@@ -11,7 +11,7 @@ export interface UserProfile {
   uid: string;
   email: string;
   name: string;
-  role: 'participant' | 'admin' | 'superadmin' | 'judge';
+  role: 'participant' | 'admin' | 'superadmin';
 }
 
 export type Category = {

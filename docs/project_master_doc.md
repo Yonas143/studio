@@ -7,7 +7,7 @@ Welcome to the official technical documentation for the **Cultural Ambassador Aw
 The Cultural Ambassador Award platform serves three primary roles:
 - **Participants**: View nominees, learn about cultural heritage, and cast votes.
 - **Submitters**: Public users who can nominate themselves or others for various award categories.
-- **Administrators/Judges**: Manage the entire lifecycle of categories, nominees, votes, and submissions through a secure admin dashboard.
+- **Administrators**: Manage the entire lifecycle of categories, nominees, votes, and submissions through a secure admin dashboard.
 
 ## 2. Technical Stack
 
@@ -47,7 +47,7 @@ The Cultural Ambassador Award platform serves three primary roles:
 The application uses a relational PostgreSQL database managed through Prisma.
 
 ### Core Models:
-- **User**: Stores profile metadata and roles (`admin`, `judge`, `participant`).
+- **User**: Stores profile metadata and roles (`admin`, `participant`).
 - **Category**: Defines award categories (e.g., Traditional Dance, Cultural Music).
 - **Nominee**: The entities eligible for voting, linked to a Category.
 - **Vote**: Records a single relationship between a User and a Nominee. Enforces unique voting constraints.

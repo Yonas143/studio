@@ -57,7 +57,7 @@ const lemonMilk = localFont({
 
 export const metadata: Metadata = {
   title: 'Cultural Ambassador Award',
-  description: 'Promoting, judging, and celebrating Ethiopian cultural excellence.',
+  description: 'Promoting and celebrating Ethiopian cultural excellence.',
 };
 
 export default function RootLayout({
