@@ -147,7 +147,7 @@ export function PaymentModal({ isOpen, onClose, nomineeId, nomineeName, fingerpr
                         ) : (
                             <>
                                 <CreditCard className="mr-2 h-5 w-5" />
-                                Pay 10 ETB with Chapa
+                                Pay 10 ETB (CBE Birr / Telebirr)
                             </>
                         )}
                     </Button>
@@ -155,7 +155,7 @@ export function PaymentModal({ isOpen, onClose, nomineeId, nomineeName, fingerpr
 
                 <div className="text-xs text-center text-muted-foreground">
                     <p>Secure payment powered by Chapa</p>
-                    <p className="mt-1">Supports Telebirr, CBE Birr, M-Pesa, Banks & Cards</p>
+                    <p className="mt-1 font-medium text-primary">Supports: CBE Birr • Telebirr • M-Pesa • Cards</p>
                 </div>
             </DialogContent>
         </Dialog>
