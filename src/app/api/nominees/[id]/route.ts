@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/auth-helpers';
+import { apiResponse, handleApiError } from '@/lib/api-utils';
 import prisma from '@/lib/prisma';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    params: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params.params;
         const nominee = await prisma.nominee.findUnique({
             where: {
-                id: params.id,
+                id: id,
                 isActive: true,
             },
             include: {
@@ -34,7 +37,7 @@ export async function GET(
         const transformed = {
             id: nomineeWithRelations.id,
             name: nomineeWithRelations.name,
-            category: nomineeWithRelations.category.name,
+            categoryId: nomineeWithRelations.categoryId,
             category: nomineeWithRelations.category.name,
             region: nomineeWithRelations.region || 'Ethiopia',
             scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
@@ -52,23 +55,24 @@ export async function GET(
             featured: nomineeWithRelations.featured,
         };
 
-        return NextResponse.json(transformed);
+        return apiResponse(transformed);
     } catch (error) {
-        console.error('Error fetching nominee:', error);
-        return NextResponse.json({ error: 'Failed to fetch nominee' }, { status: 500 });
+        return handleApiError(error);
     }
 }
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    params: { params: Promise<{ id: string }> }
 ) {
     try {
+        await requireAdmin();
+        const { id } = await params.params;
         const body = await request.json();
         const { name, bio, imageUrl, categoryId, scope, featured } = body;
 
         const nominee = await prisma.nominee.update({
-            where: { id: params.id },
+            where: { id: id },
             data: {
                 name,
                 bio,
@@ -83,25 +87,26 @@ export async function PUT(
             },
         });
 
-        return NextResponse.json({ success: true, nominee });
+        return apiResponse({ success: true, nominee });
     } catch (error) {
-        console.error('Error updating nominee:', error);
-        return NextResponse.json({ error: 'Failed to update nominee' }, { status: 500 });
+        return handleApiError(error);
     }
 }
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    params: { params: Promise<{ id: string }> }
 ) {
     try {
+        await requireAdmin();
+        const { id } = await params.params;
+        
         await prisma.nominee.delete({
-            where: { id: params.id },
+            where: { id: id },
         });
 
-        return NextResponse.json({ success: true });
+        return apiResponse({ success: true });
     } catch (error) {
-        console.error('Error deleting nominee:', error);
-        return NextResponse.json({ error: 'Failed to delete nominee' }, { status: 500 });
+        return handleApiError(error);
     }
 }

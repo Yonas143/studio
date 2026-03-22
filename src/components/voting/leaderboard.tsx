@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import { Trophy, TrendingUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
@@ -26,60 +25,20 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
-            const supabase = createClient();
+            setIsLoading(true);
             try {
-                // Fetch votes and nominees (eager loading for simplicity, could be optimized with join)
-                const { data: votes, error: votesError } = await supabase.from('Vote').select('*');
-                if (votesError) throw votesError;
+                const url = new URL('/api/leaderboard', window.location.origin);
+                if (categoryFilter) url.searchParams.append('categoryId', categoryFilter);
+                url.searchParams.append('limit', maxEntries.toString());
 
-                const { data: nominees, error: nomineesError } = await supabase.from('Nominee').select('*');
-                if (nomineesError) throw nomineesError;
+                const response = await fetch(url.toString());
+                const result = await response.json();
 
-                // Count votes per nominee
-                const voteCounts = new Map<string, number>();
-                votes?.forEach((vote: any) => {
-                    const count = voteCounts.get(vote.nomineeId) || 0;
-                    voteCounts.set(vote.nomineeId, count + 1);
-                });
-
-                // Build leaderboard entries
-                const entries: LeaderboardEntry[] = [];
-                nominees?.forEach((nominee: any) => {
-                    const voteCount = voteCounts.get(nominee.id) || 0;
-                    // Apply category filter if provided
-                    // Need to resolve category name if categoryFilter is name, or ID if filter is ID. 
-                    // Assuming filter is name based on usages. Nominee has categoryId, need to fetch categories to map??
-                    // Or nominee.category might be stored denormalized? In Prisma schema I see 'categoryId' on Nominee but logic elsewhere used 'category'.
-                    // Let's check Prisma schema again. Nominee has 'categoryId'. 
-                    // However, my previous refactors assumed fetching 'category' property. 
-                    // Wait, Prisma schema `Nominee` model: `category Category @relation...`
-                    // So `nominee` object returned by basic select won't have `category` name, just `categoryId`.
-                    // I need to include category in fetch or fetch categories.
-
-                    // Actually, let's fetch categories too to be safe/correct.
-                });
-
-                // Let's refetch with relation
-                const { data: nomineesWithCat, error: nomError } = await supabase.from('Nominee').select('*, category:Category(name)');
-                if (nomError) throw nomError;
-
-                nomineesWithCat.forEach((nom: any) => {
-                    const voteCount = voteCounts.get(nom.id) || 0;
-                    const categoryName = nom.category?.name || 'Unknown';
-
-                    if (!categoryFilter || categoryName === categoryFilter) {
-                        entries.push({
-                            nomineeId: nom.id, // Supabase returns 'id'
-                            nomineeName: nom.name,
-                            category: categoryName,
-                            voteCount,
-                        });
-                    }
-                });
-
-                // Sort by vote count and limit
-                entries.sort((a, b) => b.voteCount - a.voteCount);
-                setLeaders(entries.slice(0, maxEntries));
+                if (result.success) {
+                    setLeaders(result.data);
+                } else {
+                    throw new Error(result.error || 'Failed to fetch leaderboard');
+                }
             } catch (error) {
                 console.error('Error fetching leaderboard:', error);
             } finally {

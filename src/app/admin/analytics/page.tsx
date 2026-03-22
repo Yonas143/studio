@@ -4,10 +4,9 @@ import { useMemo, useState, useEffect } from 'react';
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
-import { createClient } from '@/lib/supabase/client';
-import type { Nominee, Vote, Category } from '@/lib/types';
 import { format, startOfDay } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Nominee, Vote, Category } from '@/lib/types';
 
 const chartConfig = {
   votes: {
@@ -22,22 +21,21 @@ export default function AdminAnalyticsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const supabase = createClient();
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [nomineesRes, votesRes, categoriesRes] = await Promise.all([
-          supabase.from('Nominee').select('*'),
-          supabase.from('Vote').select('*'),
-          supabase.from('Category').select('*')
-        ]);
+        const response = await fetch('/api/admin/analytics');
+        const result = await response.json();
 
-        if (nomineesRes.data) setNominees(nomineesRes.data as unknown as Nominee[]);
-        if (votesRes.data) setVotes(votesRes.data as unknown as Vote[]);
-        if (categoriesRes.data) setCategories(categoriesRes.data as unknown as Category[]);
-
+        if (result.success) {
+          const { nominees, votes, categories } = result.data;
+          setNominees(nominees);
+          setVotes(votes);
+          setCategories(categories);
+        } else {
+          throw new Error(result.error || 'Failed to fetch analytics');
+        }
       } catch (error) {
         console.error('Error fetching analytics data:', error);
       } finally {

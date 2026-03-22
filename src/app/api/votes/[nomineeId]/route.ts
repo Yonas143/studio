@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
-import { requireAuth } from '@/lib/auth-helpers';
+import { requireAdmin } from '@/lib/auth-helpers';
 import { apiResponse, handleApiError } from '@/lib/api-utils';
 
 /**
@@ -12,19 +12,18 @@ export async function DELETE(
     params: { params: Promise<{ nomineeId: string }> }
 ) {
     try {
-        // Verify authentication
-        const userId = await requireAuth();
+        // Verify admin authentication
+        await requireAdmin();
         const { nomineeId } = await params.params;
 
-        // Delete vote where user and nominee match
+        // Delete votes for this nominee (Admin only action)
         await prisma.vote.deleteMany({
             where: {
-                userId: userId,
                 nomineeId: nomineeId
             }
         });
 
-        return apiResponse({ message: 'Vote removed successfully' });
+        return apiResponse({ message: 'Votes removed successfully' });
     } catch (error) {
         return handleApiError(error);
     }

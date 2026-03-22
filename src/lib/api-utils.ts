@@ -33,18 +33,28 @@ export function handleApiError(error: unknown) {
     }
 
     if (error instanceof Error) {
-        // Prisma errors
+        // Safe errors to reveal
+        if (error.message === 'Authentication required') {
+            return apiError('Authentication required', 401);
+        }
+        if (error.message === 'Admin access required') {
+            return apiError('Admin access required', 403);
+        }
+        
+        // Prisma errors - return generic messages
         if (error.message.includes('Unique constraint')) {
             return apiError('Resource already exists', 409);
         }
         if (error.message.includes('Foreign key constraint')) {
             return apiError('Related resource not found', 404);
         }
-        if (error.message.includes('Record to update not found')) {
+        if (error.message.includes('Record to update not found') || error.message.includes('Record to delete not found')) {
             return apiError('Resource not found', 404);
         }
 
-        return apiError(error.message, 500);
+        // Catch-all for other errors - hide Details in production-like environment
+        // In a real production app, we would check process.env.NODE_ENV
+        return apiError('An internal server error occurred', 500);
     }
 
     return apiError('An unexpected error occurred', 500);
