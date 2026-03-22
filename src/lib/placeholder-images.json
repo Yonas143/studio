@@ -31,54 +31,6 @@
       "imageHint": "ethiopian poetry"
     },
     {
-      "id": "nominee-1",
-      "description": "Profile picture of nominee Abebe Bikila.",
-      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjMzNzc5Mjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man portrait"
-    },
-    {
-      "id": "nominee-2",
-      "description": "Profile picture of nominee Aster Aweke.",
-      "imageUrl": "https://images.unsplash.com/photo-1557053908-4793c484d06f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MzQ0NDY2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman portrait"
-    },
-    {
-      "id": "nominee-3",
-      "description": "Profile picture of nominee Haile Gebrselassie.",
-      "imageUrl": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBzbWlsaW5nfGVufDB8fHx8MTc2MzM3ODkzMXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man smiling"
-    },
-    {
-      "id": "nominee-4",
-      "description": "Profile picture of nominee Liya Kebede.",
-      "imageUrl": "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzYzMzk3NDM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman smiling"
-    },
-    {
-      "id": "nominee-5",
-      "description": "Profile picture of nominee Mahlet Zeleke.",
-      "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3b21hbiUyMGZhY2V8ZW58MHx8fHwxNzYzMzczNjYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman face"
-    },
-    {
-      "id": "nominee-6",
-      "description": "Profile picture of nominee Dawit Getahun.",
-      "imageUrl": "https://images.unsplash.com/photo-1599834562135-b6fc90e642ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBmYWNlfGVufDB8fHx8MTc2MzQ0MDU3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man face"
-    },
-    {
-      "id": "nominee-7",
-      "description": "Profile picture of nominee Sara Abera.",
-      "imageUrl": "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3b21hbiUyMG1vZGVsfGVufDB8fHx8MTc2MzQxODQ5OHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "woman model"
-    },
-    {
-      "id": "nominee-8",
-      "description": "Profile picture of nominee Henok Abebe.",
-      "imageUrl": "https://images.unsplash.com/photo-1604138946535-91d37353d052?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW4lMjBhcnRpc3R8ZW58MHx8fHwxNzYzNDU2NDc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "man artist"
-    },
-    {
       "id": "sponsor-logo-1",
       "description": "Logo for Sponsor 1",
       "imageUrl": "https://images.unsplash.com/photo-1496200186974-4293800e2c20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb21wYW55JTIwbG9nb3xlbnwwfHx8fDE3NjMzNTU2NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
