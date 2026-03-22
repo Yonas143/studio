@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * Chapa Payment Service
  * Handles all interactions with the Chapa payment gateway API

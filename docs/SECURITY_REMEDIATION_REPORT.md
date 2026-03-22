@@ -12,6 +12,17 @@ This report documents the remediation of security vulnerabilities identified in 
 
 ## 🛡️ Vulnerabilities Resolved
 
+| Ref | Vulnerability | Risk | Status |
+| --- | --- | --- | --- |
+| V-01 | Broken Function Level Authorization (BFLA) | HIGH | ✅ Fixed |
+| V-02 | Insecure Direct Object Reference (IDOR) | HIGH | ✅ Fixed |
+| V-03 | Sensitive Information Disclosure (Hardcoded Secrets) | HIGH | ✅ Fixed |
+| V-04 | Broken Access Control (Supabase RLS Disabled) | HIGH | ✅ Mitigated |
+| V-05 | Critical Voting Logic Failure (Schema Mismatch) | HIGH | ✅ Fixed |
+| V-06 | Verbose Error Message Disclosure | MEDIUM | ✅ Fixed |
+| V-07 | Infrastructure and Business Logic Failure | MEDIUM | ✅ Fixed |
+| V-08 | Hardcoded Mock Profiles (Data Integrity) | MEDIUM | ✅ Removed |
+
 ### V-01: Broken Function Level Authorization (BFLA)
 *   **Risk:** HIGH (Unauthorized Data Destruction)
 *   **Issue:** sensitive API endpoints (`DELETE`, `PUT`) lacked admin verification.
@@ -52,6 +63,15 @@ This report documents the remediation of security vulnerabilities identified in 
 *   **Remediation:** Refactored the global `handleApiError` utility to genericize error messages for the client while maintaining detailed logs for server-side debugging.
 *   **Affected File:** [src/lib/api-utils.ts](file:///Users/gdmac/Desktop/studio/src/lib/api-utils.ts)
 
+### V-08: Hardcoded Mock Profiles (Data Integrity)
+*   **Risk:** MEDIUM (User Confusion / Audit Evidence)
+*   **Issue:** The project contained hardcoded nominee profiles ("Mulatu Astatke", etc.) in seed data and frontend JSON files which were flagged in the audit as vulnerable to defacement.
+*   **Remediation:** Removed all hardcoded nominee `INSERT` statements from database seeds and purged placeholder profiles from the frontend assets.
+*   **Affected Files:**
+    *   [supabase/migrations/seed_data.sql](file:///Users/gdmac/Desktop/studio/supabase/migrations/seed_data.sql)
+    *   [src/lib/placeholder-images.json](file:///Users/gdmac/Desktop/studio/src/lib/placeholder-images.json)
+    *   Deleted `scripts/test-vote-api.ts`
+
 ---
 
 ## 🛠️ Changes at a Glance
@@ -84,6 +104,23 @@ Once RLS is enabled, please rotate your **Supabase Anon Key** via the Supabase D
 
 ### 3. Verify Storage
 Ensure the `uploads` bucket in Supabase Storage is configured with proper RLS policies (e.g., `(role() == 'authenticated')` for uploads and `ALL` for public reading if profile photos are public).
+
+---
+
+## 🏗️ Implementation Phases Progress
+
+### Phase 1: Authentication & Authorization (V-01, V-02)
+- [x] Add `requireAdmin()` check to `src/app/api/nominees/[id]/route.ts` for `PUT` and `DELETE` methods.
+- [x] Verify other sensitive endpoints for similar missing checks.
+
+### Phase 2: Secrets & Data Access (V-03, V-04)
+- [x] Enable Supabase Row-Level Security (RLS) via `enable_rls.sql`.
+- [x] Refactored Frontend to use Server-side API Routes (Leaderboard & Analytics) to eliminate direct client-side database access via public keys.
+
+### Phase 3: Business Logic & Data Integrity (V-05, V-07, V-08)
+- [x] Fix `src/app/api/votes/[nomineeId]/route.ts`: Removed `userId` dependency and secured for admin use.
+- [x] Secured all data modification paths via `requireAdmin()` and server-side validation.
+- [x] **Cleanup**: Removed all hardcoded nominee data from seeds and frontend placeholder files.
 
 ---
 
