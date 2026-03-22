@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ interface VerificationResult {
     voteId?: string;
 }
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [status, setStatus] = useState<VerificationStatus>('loading');
@@ -146,5 +146,19 @@ export default function PaymentCallbackPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function PaymentCallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted mb-4">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            </div>
+        }>
+            <PaymentCallbackContent />
+        </Suspense>
     );
 }
