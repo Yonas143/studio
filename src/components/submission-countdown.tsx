@@ -15,12 +15,9 @@ export function SubmissionCountdown() {
     const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const [mounted, setMounted] = useState(false);
 
-    // Calculate end date (2 months from now)
+    // Calculate end date (April 14, 2026)
     const getEndDate = () => {
-        const now = new Date();
-        const endDate = new Date(now);
-        endDate.setMonth(endDate.getMonth() + 2);
-        return endDate;
+        return new Date('2026-04-14T23:59:59');
     };
 
     useEffect(() => {

@@ -194,7 +194,7 @@ export default function Home() {
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center">
               <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl text-primary">
-                Cultural Ambassador Award 2025/26
+                Cultural Ambassador Award 2026
               </h2>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
                 A national creative initiative designed to recognize and elevate Ethiopia's young talents in music, performance, poetry, traditional instruments, and digital expression.
@@ -468,7 +468,11 @@ export default function Home() {
               {[
                 { name: 'Ministry of Innovation and Technology', logo: '/partners/mint.jpg', width: 200 },
                 { name: 'Ministry of Culture and Sport', logo: '/partners/ministry-culture.jpg', width: 200 },
+                { name: 'PACCI', logo: '/partners/pacci.jpg', width: 200 },
+                { name: 'Adiu Communication Service Plc', logo: '/partners/adiu.jpg', width: 200 },
+                { name: 'Ker Ezhi Ethiopia', logo: '/partners/ker-ezhi.jpg', width: 180 },
                 { name: 'Ethiopian Airlines', logo: '/partners/ethiopian-airlines.jpg', width: 180 },
+                { name: 'Mastercard', logo: '/partners/mastercard.jpg', width: 180 },
                 { name: 'Commercial Bank of Ethiopia', logo: '/partners/cbe.jpg', width: 180 },
               ].map((partner) => (
                 <div key={partner.name} className="relative h-32 w-48 md:h-40 md:w-64 grayscale opacity-80 transition-all hover:opacity-100 hover:grayscale-0 hover:scale-105 duration-300">
