@@ -29,7 +29,7 @@ const STATIC_INSIGHTS = [
   {
     id: 'danakil-depression',
     title: 'Danakil Depression',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
+    imageUrl: '/Danakil /d.jpg',
     content: 'Dallol in the Danakil Desert is one of the lowest places on earth at 116 meters below sea level, where lakes of acid form colorful sulfur formations. Volcano Erta Ale is globally recognized as one of the most alluring natural attractions, with dramatic boiling lava erupting from its summit.',
     createdAt: '2026-03-28',
   },

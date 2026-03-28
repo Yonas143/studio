@@ -84,6 +84,9 @@ export function SiteFooter() {
                 <a href="tel:+251945443450" className="text-sm hover:text-primary">
                   +251 945 44 34 50
                 </a>
+                <a href="tel:+251 115 58 1829" className="text-sm hover:text-primary">
+                  +251 115 58 1829
+                </a>
               </li>
               <li className="pt-2">
                 <iframe

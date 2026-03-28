@@ -18,6 +18,15 @@ const BALE_IMAGES = [
   '/bale/IMAGE 2026-03-28 17:28:59.jpg',
 ];
 
+
+const DANAKIL_IMAGES = [
+  '/Danakil /d.jpg',
+  '/Danakil /d2.jpg',
+  '/Danakil /dd4.jpg',
+  '/Danakil /dddd.jpg',
+  '/Danakil /ethiopia-afar-volcano.jpg',
+  '/Danakil /salt-mines-danakil-1024x683.jpg',
+];
 const STATIC_ARTICLES: Record<string, any> = {
   'bale-mountains': {
     id: 'bale-mountains',
@@ -44,7 +53,7 @@ const STATIC_ARTICLES: Record<string, any> = {
   'danakil-depression': {
     id: 'danakil-depression',
     title: 'Danakil Depression',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
+    imageUrl: JSON.stringify(DANAKIL_IMAGES),
     content: `<h2>The Hottest Place on Earth</h2>
 <p>Dallol in the Danakil Desert is one of the lowest places on earth at <strong>116 meters below sea level</strong> — the hottest and most otherworldly landscape on the planet. Here, lakes of acid form vivid, colorful sulfur formations that look more like an alien world than anything found on earth.</p>
 <h2>Salt Caravans</h2>
@@ -57,7 +66,7 @@ const STATIC_ARTICLES: Record<string, any> = {
   'danakil-depression': {
     id: 'danakil-depression',
     title: 'Danakil Depression',
-    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
+    imageUrl: JSON.stringify(DANAKIL_IMAGES),
     content: '<h2>By Ethio Holidays</h2><p>Dallol in the Danakil Desert is one of the lowest places on earth at 116 meters below sea level, where lakes of acid form colorful sulfur formations in the hottest and deepest part of the Danakil Depression where salt is excavated, cut into slabs and loaded onto caravans of camels.</p><h2>Erta Ale Volcano</h2><p>Volcano Erta Ale is globally recognized as one of the most alluring and yet physically challenging natural attractions. Its base is 30 kms in diameter and 1 km square caldera at its summit. Watching the dramatic boiling lava erupting from the Volcano is a spectacular sight.</p><hr/><p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline">Danakil Depression Tour — Ethiopian Holidays</a></p>',
     createdAt: '2026-03-28',
   },
