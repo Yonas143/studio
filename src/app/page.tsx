@@ -437,7 +437,7 @@ export default function Home() {
 
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
               {[
-                { name: 'Ministry of Innovation and Technology', logo: '/partners/mint.jpg', width: 200 },
+                { name: 'Ministry of Innovation and Technology', logo: '/partners/1.jpg', width: 200 },
                 { name: 'Ministry of Culture and Sport', logo: '/partners/ministry-culture.jpg', width: 200 },
                 { name: 'PACCI', logo: '/partners/pacci.jpg', width: 200 },
                 { name: 'Adiu Communication Service Plc', logo: '/partners/adiu.jpg', width: 200 },
@@ -446,7 +446,7 @@ export default function Home() {
                 { name: 'Mastercard', logo: '/partners/mastercard.jpg', width: 180 },
                 { name: 'Commercial Bank of Ethiopia', logo: '/partners/cbe.jpg', width: 180 },
               ].map((partner) => (
-                <div key={partner.name} className="relative h-32 w-48 md:h-40 md:w-64 grayscale opacity-80 transition-all hover:opacity-100 hover:grayscale-0 hover:scale-105 duration-300">
+                <div key={partner.name} className="relative h-32 w-48 md:h-40 md:w-64 transition-all hover:scale-105 duration-300">
                   <Image
                     src={partner.logo}
                     alt={partner.name}
