@@ -16,6 +16,37 @@ import { SubmissionCountdown } from '@/components/submission-countdown';
 import { AWARD_CATEGORIES } from '@/lib/categories-data';
 import { useEffect, useState } from 'react';
 
+function VideoSlider({ videos }: { videos: { id: string; title: string }[] }) {
+  const [current, setCurrent] = useState(0);
+  return (
+    <div className="mx-auto max-w-2xl">
+      <div className="relative w-full rounded-xl overflow-hidden shadow-xl" style={{ paddingBottom: '56.25%' }}>
+        <iframe
+          key={videos[current].id}
+          className="absolute inset-0 w-full h-full"
+          src={`https://www.youtube.com/embed/${videos[current].id}`}
+          title={videos[current].title}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      </div>
+      {videos.length > 1 && (
+        <div className="flex justify-center gap-3 mt-4">
+          {videos.map((v, i) => (
+            <button
+              key={v.id}
+              onClick={() => setCurrent(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/40'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
@@ -193,19 +224,10 @@ export default function Home() {
               <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">Watch Our Story</h2>
               <p className="mt-3 text-muted-foreground text-lg">See what the Cultural Ambassador Award is all about.</p>
             </div>
-            <div className="mx-auto max-w-4xl">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  className="absolute inset-0 w-full h-full rounded-xl shadow-xl"
-                  src="https://www.youtube.com/embed/CJmYj63Kalc"
-                  title="CAA"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
-            </div>
+            <VideoSlider videos={[
+              { id: 'CJmYj63Kalc', title: 'CAA' },
+              { id: 'GHXY_OruvAE', title: 'CAA Tibebu Belete' },
+            ]} />
           </div>
         </section>
 
