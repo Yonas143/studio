@@ -25,8 +25,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 const mainNav: NavItem[] = [
 
   { title: 'Categories', href: '/categories' },
+   { title: 'Submit', href: '/submit' },
   { title: 'Nominees', href: '/nominees' },
-  { title: 'Submit', href: '/submit' },
   { title: 'Vote', href: '/nominees' },
 
   { title: 'Cultural Insight', href: '/cultural-insight' },
