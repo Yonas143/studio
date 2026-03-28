@@ -425,28 +425,51 @@ export default function Home() {
         </section> */}
 
         <section id="partners" className="py-16 md:py-24 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl text-center mb-12">
-              <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">
-                Our Partners
-              </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Proudly supported by Ethiopia's leading institutions.
-              </p>
+          <div className="container mx-auto px-4 space-y-16">
+
+            {/* Partners — 1 to 3 */}
+            <div>
+              <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary text-center mb-2">Our Partners</h2>
+              <p className="text-center text-lg text-muted-foreground mb-10">Proudly supported by Ethiopia's leading institutions.</p>
+              <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="relative h-28 w-44 md:h-36 md:w-56 transition-all hover:scale-105 duration-300">
+                    <Image src={`/partners/${n}.jpg`} alt={`Partner ${n}`} fill className="object-contain" />
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-              {Array.from({ length: 15 }, (_, i) => i + 1).map((n) => (
-                <div key={n} className="relative h-32 w-48 md:h-40 md:w-64 transition-all hover:scale-105 duration-300">
-                  <Image
-                    src={`/partners/${n}.jpg`}
-                    alt={`Partner ${n}`}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              ))}
+            {/* Platinum Sponsors — 4 to 7 */}
+            <div>
+              <div className="text-center mb-10">
+                <span className="inline-block px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold tracking-wide uppercase mb-3">Platinum Sponsors</span>
+                <h3 className="font-headline text-2xl font-bold">Our Platinum Sponsors</h3>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
+                {[4, 5, 6, 7].map((n) => (
+                  <div key={n} className="relative h-24 w-40 md:h-32 md:w-52 transition-all hover:scale-105 duration-300 ring-2 ring-yellow-400 rounded-xl p-2 bg-white shadow-md">
+                    <Image src={`/partners/${n}.jpg`} alt={`Platinum Sponsor ${n}`} fill className="object-contain p-1" />
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Sponsors — 8 to 15 */}
+            <div>
+              <div className="text-center mb-10">
+                <span className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-semibold tracking-wide uppercase mb-3">Sponsors</span>
+                <h3 className="font-headline text-2xl font-bold">Our Sponsors</h3>
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+                {[8, 9, 10, 11, 12, 13, 14, 15].map((n) => (
+                  <div key={n} className="relative h-20 w-32 md:h-28 md:w-44 transition-all hover:scale-105 duration-300">
+                    <Image src={`/partners/${n}.jpg`} alt={`Sponsor ${n}`} fill className="object-contain" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         </section>
       </main>
