@@ -67,10 +67,10 @@ export function SubmissionCountdown() {
                     <div className="text-center mb-6">
                         <div className="flex items-center justify-center gap-2 mb-2">
                             <Calendar className="h-5 w-5 text-primary" />
-                            <h3 className="font-headline text-2xl font-bold text-primary">Submission Deadline</h3>
+                            <h3 className="font-headline text-2xl font-bold text-primary">Award Launching Date</h3>
                         </div>
                         <p className="text-muted-foreground">
-                            Submit your work before <span className="font-semibold text-foreground">{formattedEndDate}</span>
+                            The award ceremony launches on <span className="font-semibold text-foreground">{formattedEndDate}</span>
                         </p>
                     </div>
 
@@ -106,7 +106,7 @@ export function SubmissionCountdown() {
 
                     <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                         <Clock className="h-4 w-4" />
-                        <span>Time remaining to submit your cultural masterpiece</span>
+                        <span>Countdown to the Cultural Ambassador Award launch</span>
                     </div>
                 </CardContent>
             </Card>
