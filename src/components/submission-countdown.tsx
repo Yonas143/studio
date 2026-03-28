@@ -67,7 +67,7 @@ export function SubmissionCountdown() {
                     <div className="text-center mb-6">
                         <div className="flex items-center justify-center gap-2 mb-2">
                             <Calendar className="h-5 w-5 text-primary" />
-                            <h3 className="font-headline text-2xl font-bold text-primary">Award Launching Date</h3>
+                            <h3 className="font-headline text-2xl font-bold text-primary">Launching Date</h3>
                         </div>
                         <p className="text-muted-foreground">
                             The award ceremony launches on <span className="font-semibold text-foreground">{formattedEndDate}</span>
