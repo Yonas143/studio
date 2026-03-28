@@ -166,13 +166,9 @@ export default function Home() {
         <section className="py-10 bg-background">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl">
-              <video
-                src="/ads/ad.3gp"
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
+              <img
+                src="/ads/new.gif"
+                alt="Advertisement"
                 className="w-full rounded-xl shadow-lg"
               />
             </div>
