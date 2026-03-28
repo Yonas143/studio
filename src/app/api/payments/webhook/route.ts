@@ -56,7 +56,16 @@ export async function POST(request: NextRequest) {
                 fingerprint: payment.fingerprint,
             }]);
 
-            await adminAuthClient.rpc('increment_vote_count', { nominee_id: payment.nomineeId });
+            const { data: currentNominee } = await adminAuthClient
+                .from('Nominee')
+                .select('voteCount')
+                .eq('id', payment.nomineeId)
+                .single();
+
+            await adminAuthClient
+                .from('Nominee')
+                .update({ voteCount: (currentNominee?.voteCount || 0) + 1 })
+                .eq('id', payment.nomineeId);
         }
 
         console.log('Payment processed successfully:', txRef);

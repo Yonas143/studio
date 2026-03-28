@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { handleApiError } from '@/lib/api-utils';
+import { handleApiError, apiResponse } from '@/lib/api-utils';
+import { requireAdmin } from '@/lib/auth-helpers';
 
 export async function GET(request: NextRequest) {
     try {
@@ -22,6 +23,26 @@ export async function GET(request: NextRequest) {
         }));
 
         return NextResponse.json(transformed);
+    } catch (error) {
+        return handleApiError(error);
+    }
+}
+
+export async function POST(request: NextRequest) {
+    try {
+        await requireAdmin();
+        const body = await request.json();
+        const { title, description, date, order } = body;
+
+        const supabase = await createClient();
+        const { data, error } = await supabase
+            .from('TimelineEvent')
+            .insert([{ title, description, date, order: order || 0, isActive: true }])
+            .select()
+            .single();
+
+        if (error) throw error;
+        return apiResponse(data, 201);
     } catch (error) {
         return handleApiError(error);
     }

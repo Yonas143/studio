@@ -68,8 +68,17 @@ export async function GET(request: NextRequest) {
 
         if (voteError) throw voteError;
 
-        // Increment vote count
-        await adminAuthClient.rpc('increment_vote_count', { nominee_id: payment.nomineeId });
+        // Increment vote count directly
+        const { data: currentNominee } = await adminAuthClient
+            .from('Nominee')
+            .select('voteCount')
+            .eq('id', payment.nomineeId)
+            .single();
+
+        await adminAuthClient
+            .from('Nominee')
+            .update({ voteCount: (currentNominee?.voteCount || 0) + 1 })
+            .eq('id', payment.nomineeId);
 
         return apiResponse({
             message: 'Payment verified and vote recorded successfully',

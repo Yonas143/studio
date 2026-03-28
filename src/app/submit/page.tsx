@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/ui/image-upload";
 
@@ -30,6 +31,14 @@ export default function SubmitPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(r => r.json())
+      .then(d => setCategories(d.data || []))
+      .catch(() => {});
+  }, []);
 
   const form = useForm<SubmissionFormValues>({
     resolver: zodResolver(submissionSchema),
@@ -192,10 +201,18 @@ export default function SubmitPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category of Nomination</FormLabel>
-                      <FormControl>
-                        {/* In a real app, this would likely be a select dropdown populated from a list of categories */}
-                        <Input placeholder="e.g., Traditional Music, Culinary Arts" {...field} />
-                      </FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map(c => (
+                            <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

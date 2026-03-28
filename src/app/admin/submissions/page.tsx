@@ -68,20 +68,35 @@ export default function SubmissionsPage() {
             const data = await response.json();
 
             if (data.success) {
-                toast({
-                    title: 'Success',
-                    description: 'Submission approved and nominee created',
-                });
-                fetchSubmissions(); // Refresh list
+                toast({ title: 'Success', description: 'Submission approved and nominee created' });
+                fetchSubmissions();
             } else {
                 throw new Error(data.error || 'Failed to approve');
             }
         } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: error.message,
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    const handleReject = async (id: string) => {
+        setProcessingId(id);
+        try {
+            const response = await fetch(`/api/submissions/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Rejected' }),
             });
+            const data = await response.json();
+            if (data.success) {
+                toast({ title: 'Rejected', description: 'Submission has been rejected.' });
+                fetchSubmissions();
+            } else {
+                throw new Error(data.error || 'Failed to reject');
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
         } finally {
             setProcessingId(null);
         }
@@ -162,10 +177,16 @@ export default function SubmissionsPage() {
                                                         {processingId === submission.id ? (
                                                             <Loader2 className="h-4 w-4 animate-spin" />
                                                         ) : (
-                                                            <>
-                                                                <Check className="mr-1 h-4 w-4" /> Approve
-                                                            </>
+                                                            <><Check className="mr-1 h-4 w-4" /> Approve</>
                                                         )}
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="destructive"
+                                                        onClick={() => handleReject(submission.id)}
+                                                        disabled={!!processingId}
+                                                    >
+                                                        <X className="mr-1 h-4 w-4" /> Reject
                                                     </Button>
                                                 </div>
                                             )}

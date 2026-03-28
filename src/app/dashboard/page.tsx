@@ -130,7 +130,7 @@ export default function DashboardPage() {
                 submissions.map((submission) => (
                   <TableRow key={submission.id}>
                     <TableCell className="font-medium">{submission.title}</TableCell>
-                    <TableCell>{submission.categoryId}</TableCell>
+                    <TableCell>{submission.category || submission.categoryId}</TableCell>
                     <TableCell>
                       {submission.createdAt ? format(new Date(submission.createdAt), 'yyyy-MM-dd') : 'N/A'}
                     </TableCell>
