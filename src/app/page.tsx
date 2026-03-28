@@ -83,6 +83,30 @@ export default function Home() {
 
   const heroVideos = [
     {
+      id: 'dance',
+      src: '/files/DANCE.mp4',
+      title: 'Traditional Dance',
+      subtitle: "Rhythms of our ancestors bringing history to life.",
+    },
+    {
+      id: 'music',
+      src: '/files/music.mp4',
+      title: 'Traditional Music',
+      subtitle: 'Melodies that define us, echoing through generations.',
+    },
+    {
+      id: 'instrument',
+      src: '/files/instrument.mp4',
+      title: 'Traditional Instruments',
+      subtitle: 'Mastery of sound with Masinko, Kirar, and Begena.',
+    },
+    {
+      id: 'poem',
+      src: '/files/poem.mp4',
+      title: 'Traditional Poetry',
+      subtitle: "Words that paint pictures of our rich cultural tapestry.",
+    },
+    {
       id: 'product-design',
       src: '/files/creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
