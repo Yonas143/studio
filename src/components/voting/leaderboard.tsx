@@ -117,11 +117,7 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
                             </Link>
                         ))}
                     </div>
-                ) : (
-                    <div className="text-center py-4 text-muted-foreground">
-                        <p>Coming soon.</p>
-                    </div>
-                )}
+                ) : null}
                 {!isLoading && leaders.length > 0 && (
                     <div className="mt-4 text-center">
                         <Button asChild variant="outline" size="sm">
