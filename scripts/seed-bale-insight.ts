@@ -9,9 +9,12 @@ const supabase = createClient(
 
 async function main() {
     const images = JSON.stringify([
-        '/files/bale-1.jpg',
-        '/files/bale-2.jpg',
-        '/files/bale-3.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:33.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:41.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:46.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:51.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:55.jpg',
+        '/bale/IMAGE 2026-03-28 17:28:59.jpg',
     ]);
 
     const content = `
