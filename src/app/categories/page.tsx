@@ -10,26 +10,38 @@ const categories = [
   {
     id: 'traditional-dance',
     name: 'Traditional Dance',
-    description: 'This category celebrates performers who bring Ethiopia’s traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia’s diverse dance heritage.',
+    description: "This category celebrates performers who bring Ethiopia's traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia's diverse dance heritage.",
     imageUrl: '/files/dance-category.png',
   },
   {
     id: 'traditional-music',
     name: 'Traditional Music',
-    description: 'This award honors outstanding musicians who preserve and elevate Ethiopia’s cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music.',
+    description: "This award honors outstanding musicians who preserve and elevate Ethiopia's cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music.",
     imageUrl: '/files/vocal-category.png',
   },
   {
     id: 'traditional-instruments',
     name: 'Traditional Instruments',
-    description: 'This category recognizes mastery of Ethiopia’s iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument’s ability to communicate emotion and heritage.',
+    description: "This category recognizes mastery of Ethiopia's iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument's ability to communicate emotion and heritage.",
     imageUrl: '/files/instruments-category.png',
   },
   {
     id: 'traditional-poetry',
     name: 'Traditional Poetry (Qiné, Wax & Gold, Spoken Traditions)',
-    description: 'This award celebrates the poetic voices who carry forward Ethiopia’s oral traditions — from Qiné and “Wax & Gold” (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.',
+    description: 'This award celebrates the poetic voices who carry forward Ethiopia\'s oral traditions — from Qiné and "Wax & Gold" (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.',
     imageUrl: '/files/poetry-category.png',
+  },
+  {
+    id: 'product-design',
+    name: 'Ethiopian Product Design & Presentation Award',
+    description: 'This category celebrates outstanding excellence in the design, development, and presentation of Ethiopian-made products that embody the nation\'s rich cultural heritage, creativity, and innovation. It recognizes visionary designers, skilled artisans, entrepreneurs, and companies that transform traditional inspiration into modern, high-quality products capable of competing in today\'s dynamic marketplace. The award highlights exceptional achievement in product aesthetics, functionality, packaging, branding, and overall presentation, with strong emphasis on originality, cultural authenticity, market readiness, and the ability to communicate a compelling story through design. By honoring excellence in this field, the award promotes the advancement of "Made in Ethiopia," encouraging innovation and positioning Ethiopian products as distinctive, desirable, and globally relevant.',
+    imageUrl: '/files/music-category.png',
+  },
+  {
+    id: 'cultural-acting',
+    name: 'Cultural Discovery Acting Award',
+    description: 'Dedicated to recognizing actors and performers who bring Ethiopia\'s rich cultural heritage, traditions, and stories to life. This award honors those who skillfully combine creativity, emotional depth, and technical excellence to portray characters that reflect the country\'s diverse cultural identity and historical narratives. Through performances on stage, screen, or other artistic platforms, awardees educate and inspire audiences, offering a window into Ethiopia\'s timeless traditions, folklore, and contemporary cultural expressions. Note: This category is sensitive — contestants are required to submit a signed affidavit from their nearest Government Cultural Institution stating that the act fully aligns with the culture it\'s presenting.',
+    imageUrl: '/files/music-category.png',
   },
 ];
 

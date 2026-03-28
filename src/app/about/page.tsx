@@ -13,7 +13,7 @@ export default function AboutPage() {
                 <div className="container relative z-10">
                     <div className="mx-auto max-w-4xl text-center">
                         <h1 className="font-headline text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl text-yellow-600">
-                            Cultural Ambassador Award 2025/26
+                            Cultural Ambassador Award 2026
                         </h1>
                         <p className="mt-6 text-xl text-muted-foreground md:text-2xl">
                             Celebrating Ethiopia's culture  with   traditional dance,traditional instruments,
@@ -42,12 +42,10 @@ export default function AboutPage() {
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">About the Initiative</h2>
                         <div className="mt-6 space-y-4 text-lg text-muted-foreground">
                             <p>
-                                Ethiopia holds a deep cultural beauty music, dance, poetry, storytelling, traditional instruments and digital creativity. The ABN Studio Cultural Ambassador
-                                Award is a national program designed to identify, elevate, and empower talented young creators, giving them a platform to showcase their art to Ethiopia and the world.
+                                Ethiopia holds a deep cultural beauty — music, dance, poetry, storytelling, traditional instruments, product design, acting, and digital creativity. The ABN Studio Cultural Ambassador Award is a national program designed to identify, elevate, and empower talented creators, giving them a platform to showcase their art to Ethiopia and the world.
                             </p>
                             <p>
-                                We celebrate youth who preserve culture while innovating through digital media, performance, literature and creative expression. The goal is to build a new generation of Cultural Ambassador
-                                who will inspire pride and lead Ethiopia's cultural future.
+                                We celebrate creators who preserve culture while innovating through digital media, performance, literature and creative expression. The goal is to build a new generation of Cultural Ambassadors who will inspire pride and lead Ethiopia's cultural future.
                             </p>
                         </div>
                     </div>
@@ -60,7 +58,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">What We Stand For</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            We empower cultural youth through creativity, mentorship & visibility. Our mission is built on four pillars:
+                            We empower cultural creators through creativity, mentorship & visibility. Our mission is built on four pillars:
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -106,7 +104,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Award Categories</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            Youth creators may compete in four major disciplines:
+                            Youth creators may compete in six major disciplines:
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
@@ -162,6 +160,33 @@ export default function AboutPage() {
                                 </div>
                             </CardContent>
                         </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                                        <Award className="h-6 w-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-headline text-xl font-semibold">Ethiopian Product Design & Presentation Award</h3>
+                                        <p className="mt-2 text-muted-foreground">This category celebrates outstanding excellence in the design, development, and presentation of Ethiopian-made products that embody the nation's rich cultural heritage, creativity, and innovation. It recognizes visionary designers, skilled artisans, entrepreneurs, and companies that transform traditional inspiration into modern, high-quality products capable of competing in today's dynamic marketplace. The award highlights exceptional achievement in product aesthetics, functionality, packaging, branding, and overall presentation. It places strong emphasis on originality, cultural authenticity, market readiness, and the ability to communicate a compelling story through design. From handcrafted creations to industrial and commercial products, this category showcases how thoughtful design can elevate value, attract global attention, and strengthen Ethiopia's creative economy. By honoring excellence in this field, the award promotes the advancement of "Made in Ethiopia," encouraging innovation, enhancing competitiveness, and positioning Ethiopian products as distinctive, desirable, and globally relevant. It stands as a recognition of those who successfully bridge heritage and modernity, turning cultural identity into powerful economic and creative expression.</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-2 transition-all hover:shadow-lg md:col-span-2">
+                            <CardContent className="p-6">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                                        <Lightbulb className="h-6 w-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-headline text-xl font-semibold">Cultural Discovery Acting Award</h3>
+                                        <p className="mt-2 text-muted-foreground">The Cultural Discovery Acting Award is dedicated to recognizing and celebrating the extraordinary talent of actors and performers who bring Ethiopia's rich cultural heritage, traditions, and stories to life. This award honors those who skillfully combine creativity, emotional depth, and technical excellence to portray characters that reflect the country's diverse cultural identity and historical narratives. Through their performances on stage, screen, or other artistic platforms, awardees not only entertain but also educate and inspire audiences, offering a window into Ethiopia's timeless traditions, folklore, and contemporary cultural expressions. By bridging the gap between heritage and modern storytelling, these performers play a crucial role in preserving and promoting Ethiopian culture, ensuring that its stories resonate with audiences both locally and internationally. This award celebrates the transformative power of acting as a medium for cultural exploration, creative expression, and societal impact. It honors performers who not only excel in their craft but also elevate the visibility of Ethiopian culture, contributing to a vibrant and globally recognized arts and entertainment ecosystem. Through this recognition, the Cultural Discovery Acting Award encourages innovation, inspires the next generation of performers, and strengthens Ethiopia's cultural presence on the world stage.</p>
+                                        <p className="mt-3 text-sm font-medium text-primary">Note: This category is sensitive — contestants are required to submit a signed affidavit from their nearest Government Cultural Institution stating that the act fully aligns with the culture it's presenting.</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                     <div className="mt-8 text-center">
                         <Button asChild variant="outline" size="lg">
@@ -182,7 +207,7 @@ export default function AboutPage() {
                         <ul className="mt-6 space-y-3 text-lg">
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Honor young individuals and groups demonstrating creativity, innovation, and social impact.</span>
+                                <span>Honor individuals and groups demonstrating creativity, innovation, and social impact.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
@@ -198,8 +223,7 @@ export default function AboutPage() {
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Establish a community of Cultural Ambassador
-                                    who serve as role models, advocates, and leaders for Ethiopian culture.</span>
+                                <span>Establish a community of Cultural Ambassadors who serve as role models, advocates, and leaders for Ethiopian culture.</span>
                             </li>
                         </ul>
                     </div>
@@ -216,7 +240,7 @@ export default function AboutPage() {
                         <Card className="border-2 transition-all hover:shadow-lg">
                             <CardContent className="p-6">
                                 <h3 className="font-headline text-xl font-semibold mb-3">Recognition of Talent & Creativity</h3>
-                                <p className="text-muted-foreground mb-2">Youth creatives gain formal acknowledgment for their artistic excellence, innovation, and cultural contribution.</p>
+                                <p className="text-muted-foreground mb-2">Creatives gain formal acknowledgment for their artistic excellence, innovation, and cultural contribution.</p>
                                 <p className="text-muted-foreground">Awardees are celebrated nationally and internationally, inspiring peers and emerging artists.</p>
                             </CardContent>
                         </Card>
@@ -245,12 +269,9 @@ export default function AboutPage() {
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
                             <CardContent className="p-6">
-                                <h3 className="font-headline text-xl font-semibold mb-3">Sustainable Network of Ambassador
-
-                                </h3>
-                                <p className="text-muted-foreground mb-2">A lasting community of young leaders is established, fostering collaboration, mentorship, and ongoing cultural initiatives.</p>
-                                <p className="text-muted-foreground">Ambassador
-                                    serve as advocates for Ethiopian culture, inspiring social impact and youth participation in the arts.</p>
+                                <h3 className="font-headline text-xl font-semibold mb-3">Sustainable Network of Ambassadors</h3>
+                                <p className="text-muted-foreground mb-2">A lasting community of cultural leaders is established, fostering collaboration, mentorship, and ongoing cultural initiatives.</p>
+                                <p className="text-muted-foreground">Ambassadors serve as advocates for Ethiopian culture, inspiring social impact and participation in the arts.</p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">

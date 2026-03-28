@@ -7,7 +7,7 @@ export default function TermsPage() {
         <div className="container mx-auto px-4 py-12 max-w-4xl">
             <div className="mb-8 text-center">
                 <h1 className="text-4xl font-bold font-headline mb-4">Terms of Service</h1>
-                <p className="text-muted-foreground">Last Updated: December 2025</p>
+                <p className="text-muted-foreground">Last Updated: 2026</p>
             </div>
 
             <Card className="mb-8">

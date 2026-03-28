@@ -197,7 +197,7 @@ export default function Home() {
                 Cultural Ambassador Award 2026
               </h2>
               <p className="mt-6 text-lg text-muted-foreground md:text-xl">
-                A national creative initiative designed to recognize and elevate Ethiopia's young talents in music, performance, poetry, traditional instruments, and digital expression.
+                A national creative initiative designed to recognize and elevate Ethiopia's cultural talent in traditional dance, traditional music, traditional instruments, poetry, product design, acting, and digital expression.
               </p>
               <p className="mt-4 text-lg text-muted-foreground">
                 The program empowers youth to preserve culture while innovating for the future.

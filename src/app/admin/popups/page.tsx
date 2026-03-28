@@ -388,7 +388,7 @@ export default function PopupsPage() {
                                 <Label htmlFor="storageKey">Storage Key (unique identifier)</Label>
                                 <Input
                                     id="storageKey"
-                                    placeholder="popup-2025-announcement"
+                                    placeholder="popup-2026-announcement"
                                     value={formData.storageKey}
                                     onChange={(e) => setFormData({ ...formData, storageKey: e.target.value })}
                                 />

@@ -34,14 +34,17 @@ export default function RegisterPage() {
 
       if (error) throw error;
 
-      // Sync user profile into User table
+      // Sync user profile via server-side API (bypasses RLS)
       if (data.user) {
-        await supabase.from('User').insert([{
-          id: data.user.id,
-          email: data.user.email,
-          name,
-          role: 'participant',
-        }]);
+        await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: data.user.id,
+            email: data.user.email,
+            name,
+          }),
+        });
       }
 
       toast({

@@ -210,4 +210,4 @@ For technical inquiries or security audit coordination:
 > [!TIP]
 > **Diagram Rendering**: This documentation uses [Mermaid.js](https://mermaid.js.org/) for architecture diagrams. If you are viewing this locally and cannot see the diagrams, please install a "Mermaid Previewer" extension or view the file on GitHub.
 
-*Last Updated: December 2025*
+*Last Updated: 2026*
