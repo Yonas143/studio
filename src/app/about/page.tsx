@@ -177,7 +177,7 @@ export default function AboutPage() {
                             title="Cultural Discovery Acting Award"
                             description="Recognizes actors and performers who bring Ethiopia’s heritage, traditions, and stories to life with creativity, emotional depth, and technical mastery. Honors performances that educate, inspire, and preserve cultural identity across stage, screen, and artistic platforms. Evaluates the ability to bridge heritage and modern storytelling, e                            
                 nd globally."
-                            note="Note: Contestants must submit a signed affidavit from their nearest Government Cultural Institution confirming cultural authenticity."
+                            note="Contestants must provide a government-issued affidavit confirming cultural authenticity."
                         />
                     </div>
                     <div className="mt-8 text-center">
