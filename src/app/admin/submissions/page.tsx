@@ -141,7 +141,11 @@ export default function SubmissionsPage() {
                                 </TableRow>
                             ) : (
                                 submissions.map((submission) => (
-                                    <TableRow key={submission.id}>
+                                    <TableRow
+                                        key={submission.id}
+                                        className="cursor-pointer hover:bg-muted/50"
+                                        onClick={() => router.push(`/admin/submissions/${submission.id}`)}
+                                    >
                                         <TableCell>
                                             {format(new Date(submission.createdAt), 'MMM d, yyyy')}
                                         </TableCell>
@@ -166,7 +170,7 @@ export default function SubmissionsPage() {
                                                 {submission.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                                             {submission.status === 'pending' && (
                                                 <div className="flex justify-end gap-2">
                                                     <Button

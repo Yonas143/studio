@@ -20,7 +20,7 @@ export async function POST(
         if (fetchError || !submission) return apiError('Submission not found', 404);
         if (submission.status === 'approved') return apiError('Submission is already approved', 400);
 
-        // Create nominee from submission
+        // Create nominee from submission — map submission fields to Nominee
         const { data: nominee, error: nomineeError } = await adminAuthClient
             .from('Nominee')
             .insert([{
@@ -30,6 +30,7 @@ export async function POST(
                 isActive: true,
                 voteCount: 0,
                 scope: 'ethiopia',
+                region: 'Ethiopia',
             }])
             .select()
             .single();
