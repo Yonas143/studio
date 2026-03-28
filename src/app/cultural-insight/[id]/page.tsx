@@ -23,7 +23,23 @@ const STATIC_ARTICLES: Record<string, any> = {
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',
     imageUrl: JSON.stringify(BALE_IMAGES),
-    content: `<p>Bale Mountains National Park is located in the south eastern part of Ethiopia 400 km southeast of Addis Ababa. The park stretches over 2400 sq kms primarily featuring the Harenna Escarpment and Forest and the Sanetti Plateau.</p><p>The area is well known for its incredible diversity of wildlife. The most well known animal that calls Bale home is the endangered Red and White Ethiopian Wolf. There are great diversity of other animals, which include the Mountain Nyala, a large horned antelope, Bale Monkey and the Forest Hog allegedly the world's largest swine.</p><p>Bale is also recognized as one of the African continent's top five places to find exotic birds (six endemic species and 11 other geographically unique species). Bale is known to support the only known sub-Saharan birding populations of Golden Eagle, Ruddy Shelduck and Red-billed Chough.</p><p>In addition to its wonderful range of wildlife, Bale Mountains National Park is an extremely important area of biodiversity. The area is also known for its lush evergreen forests and woodland, bamboo groves, moorlands, rivers and waterfalls as well as an abundance of grassland providing the ideal habitat for a range of animals and birds.</p><p>Bale's 1,300-plus plant species include 160 Ethiopian endemics and 23 unique to the park. Bale is an excellent place for hiking and mule or horseback treks as part of a unique and colorful Safari across this beautiful and diverse region.</p>`,
+    content: `<p>Bale Mountains National Park is located in the south eastern part of Ethiopia, 400 km southeast of Addis Ababa. Stretching over 2,400 sq kms, the park primarily features the Harenna Escarpment and Forest and the Sanetti Plateau — one of Africa's most extraordinary highland ecosystems.</p>
+
+<h2>Wildlife</h2>
+<p>The park is renowned for its incredible diversity of wildlife. The most iconic resident is the endangered <strong>Ethiopian Wolf</strong> — the rarest canid in the world. Other notable species include the <strong>Mountain Nyala</strong>, a large and majestic horned antelope found nowhere else on earth, the <strong>Bale Monkey</strong>, and the <strong>Giant Forest Hog</strong>, allegedly the world's largest swine.</p>
+
+<h2>Birdlife</h2>
+<p>Bale is recognized as one of the African continent's top five destinations for exotic birdwatching, with six endemic species and 11 other geographically unique species. It is the only known sub-Saharan location supporting breeding populations of the <strong>Golden Eagle</strong>, <strong>Ruddy Shelduck</strong>, and <strong>Red-billed Chough</strong>.</p>
+
+<h2>Landscape & Biodiversity</h2>
+<p>Beyond its wildlife, Bale Mountains National Park is a globally significant biodiversity hotspot. The landscape encompasses lush evergreen forests, bamboo groves, open moorlands, rivers, waterfalls, and vast grasslands — each providing vital habitat for a remarkable range of flora and fauna.</p>
+<p>Bale's 1,300-plus plant species include <strong>160 Ethiopian endemics</strong> and 23 species unique to the park itself.</p>
+
+<h2>Adventure & Exploration</h2>
+<p>Bale is an exceptional destination for hiking, mule trekking, and horseback safaris. Whether traversing the Sanetti Plateau or descending into the Harenna Forest, visitors are rewarded with landscapes and wildlife encounters found nowhere else on the continent.</p>
+
+<hr/>
+<p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/bale-mountains-national-park-tour-ethn01-aqkwvdno" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:opacity-80">Bale Mountains National Park Tour — Ethiopian Holidays</a></p>`,
     createdAt: '2026-03-28',
   },
 };
