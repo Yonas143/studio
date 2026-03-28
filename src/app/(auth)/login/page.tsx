@@ -23,24 +23,19 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data: { user }, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
 
-      // Check role and redirect accordingly
-      const profileRes = await fetch('/api/auth/profile');
-      const profile = await profileRes.json();
-      const isAdmin = profile?.role === 'admin' || profile?.role === 'superadmin';
-
       toast({
         title: 'Success',
         description: 'You have been logged in.',
       });
 
-      router.push(isAdmin ? '/admin' : '/dashboard');
+      router.push('/dashboard');
       router.refresh();
     } catch (error: any) {
       toast({
