@@ -57,6 +57,10 @@ const lemonMilk = localFont({
 export const metadata: Metadata = {
   title: 'Cultural Ambassador Award',
   description: 'Promoting and celebrating Ethiopian cultural excellence.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
