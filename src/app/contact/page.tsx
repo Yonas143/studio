@@ -9,12 +9,12 @@ export default function ContactPage() {
     <div className="container py-8">
       <PageHeader className="items-center text-center mb-8">
         <PageHeaderHeading>Contact ABN Studio</PageHeaderHeading>
-        <PageHeaderDescription>Empowering Ethiopia's Creative Youth</PageHeaderDescription>
+        <PageHeaderDescription>Empowering Ethiopia's Cultural Creators</PageHeaderDescription>
       </PageHeader>
 
       <div className="prose dark:prose-invert max-w-4xl mx-auto text-center">
         <p className="lead">
-          ABN Studio is a leading creative hub in Ethiopia, dedicated to empowering youth, promoting cultural excellence, and fostering innovation across the arts. As a sister company of Abyssinia Business Network (ABN) Magazine and Africa for Africans, we leverage a strong media and cultural network to provide opportunities for artists and innovators.
+          ABN Studio is a leading creative hub in Ethiopia, dedicated to empowering creators, promoting cultural excellence, and fostering innovation across the arts. As a sister company of Abyssinia Business Network (ABN) Magazine and Africa for Africans, we leverage a strong media and cultural network to provide opportunities for artists and innovators.
         </p>
         <p>
           We operate with the highest standards of professionalism to ensure all creative projects meet international benchmarks.
@@ -85,9 +85,9 @@ export default function ContactPage() {
             </div>
             <div className="border-t pt-6">
               <h3 className="font-semibold text-lg mb-2">2. ABN Studio Cultural Ambassadors Award</h3>
-              <p className="text-muted-foreground mb-4">For inquiries regarding our initiative to identify and empower Ethiopia's creative youth:</p>
+              <p className="text-muted-foreground mb-4">For inquiries regarding our initiative to identify and empower Ethiopia's cultural creators:</p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                <li><strong>Participants:</strong> Youth aged 15–35 interested in Performing Arts, Digital Music, Traditional Instruments, or Literature/Poetry.</li>
+                <li><strong>Participants:</strong> Creators interested in Performing Arts, Digital Music, Traditional Instruments, or Literature/Poetry.</li>
                 <li><strong>Sponsors & Partners:</strong> Government agencies, NGOs, and private sector organizations.</li>
                 <li><strong>Media:</strong> National and international media platforms interested in covering the initiative.</li>
               </ul>
@@ -98,7 +98,7 @@ export default function ContactPage() {
       
       <footer className="text-center mt-16 max-w-3xl mx-auto">
         <p className="text-lg font-semibold text-foreground">ABN Studio</p>
-        <p className="text-muted-foreground">Identifying, celebrating, and empowering Ethiopia’s creative youth as ambassadors of culture, innovation, and social impact.</p>
+        <p className="text-muted-foreground">Identifying, celebrating, and empowering Ethiopia’s creators as ambassadors of culture, innovation, and social impact.</p>
       </footer>
     </div>
   );

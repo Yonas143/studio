@@ -221,7 +221,7 @@ export default function Home() {
                 A national creative initiative designed to recognize and elevate Ethiopia's cultural talent in traditional dance, traditional music, traditional instruments, poetry, product design, acting, and digital expression.
               </p>
               <p className="mt-4 text-lg text-muted-foreground">
-                The program empowers youth to preserve culture while innovating for the future.
+                The program empowers creators to preserve culture while innovating for the future.
               </p>
             </div>
           </div>

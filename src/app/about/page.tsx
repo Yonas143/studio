@@ -3,7 +3,46 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Trophy, Users, Globe, Lightbulb, Award, Megaphone, GraduationCap, Handshake, Music, Mic, Guitar, BookOpen } from 'lucide-react';
+import { Trophy, Users, Globe, Lightbulb, Award, Megaphone, GraduationCap, Handshake, Music, Mic, Guitar, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
+
+function ExpandableCard({ icon, title, description, note }: {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    note?: string;
+}) {
+    const [expanded, setExpanded] = useState(false);
+    const isLong = description.length > 300;
+    const preview = isLong && !expanded ? description.slice(0, 300) + '…' : description;
+
+    return (
+        <Card className="border-2 transition-all hover:shadow-lg h-full flex flex-col">
+            <CardContent className="p-6 flex flex-col flex-1">
+                <div className="flex items-start gap-4 flex-1">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                        {icon}
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-headline text-xl font-semibold">{title}</h3>
+                        <p className="mt-2 text-muted-foreground">{preview}</p>
+                        {note && expanded && (
+                            <p className="mt-3 text-sm font-medium text-primary">{note}</p>
+                        )}
+                        {isLong && (
+                            <button
+                                onClick={() => setExpanded(!expanded)}
+                                className="mt-3 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                            >
+                                {expanded ? <><ChevronUp className="h-4 w-4" /> Show less</> : <><ChevronDown className="h-4 w-4" /> Read more</>}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function AboutPage() {
     return (
@@ -202,7 +241,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Objectives</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            The ABN Studio Cultural Ambassador initiative is designed to empower Ethiopia’s youth by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of young leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
+                            The ABN Studio Cultural Ambassador initiative is designed to empower Ethiopia’s cultural creators by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of cultural leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
                         </p>
                         <ul className="mt-6 space-y-3 text-lg">
                             <li className="flex items-start gap-3">
@@ -211,7 +250,7 @@ export default function AboutPage() {
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Amplify the voices of Ethiopia’s creative youth through media, digital platforms, and public engagement.</span>
+                                <span>Amplify the voices of Ethiopia’s cultural creators through media, digital platforms, and public engagement.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
@@ -263,8 +302,7 @@ export default function AboutPage() {
                             <CardContent className="p-6">
                                 <h3 className="font-headline text-xl font-semibold mb-3">National & International Visibility</h3>
                                 <p className="text-muted-foreground mb-2">Participants’ work is amplified through ABN Studio platforms, media coverage, cultural events, and digital channels.</p>
-                                <p className="text-muted-foreground">Ethiopia’s creative youth gain recognition as ambassador
-                                    of the nation’s artistic and cultural excellence.</p>
+                                <p className="text-muted-foreground">Ethiopia’s creators gain recognition as ambassadors of the nation’s artistic and cultural excellence.</p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
@@ -365,7 +403,7 @@ export default function AboutPage() {
                             Award, the
                             studio blends traditional Ethiopian heritage with modern digital technologies,
                             creating platforms that celebrate culture, encourage innovation, and amplify
-                            the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
+                            the voices of Ethiopia’s creators. ABN Studio is committed to nurturing
                             cultural leaders and ambassadors,
                             , inspiring creativity, innovation, and pride in
                             Ethiopia’s rich artistic legacy.
