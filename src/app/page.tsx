@@ -5,8 +5,6 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import placeholderImagesData from '@/lib/placeholder-images.json';
 import { ArrowRight, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -67,16 +65,15 @@ export default function Home() {
     },
   ];
 
-  // Placeholder removed
-
-  // Get the first active popup
+  const [heroIndex, setHeroIndex] = useState(0);
   const activePopup = popups && popups.length > 0 ? popups[0] : null;
 
-  // Debug logging
   useEffect(() => {
-    console.log('Popups from API:', popups);
-    console.log('Active popup:', activePopup);
-  }, [popups, activePopup]);
+    const timer = setInterval(() => {
+      setHeroIndex(i => (i + 1) % heroVideos.length);
+    }, 9000);
+    return () => clearInterval(timer);
+  }, [heroVideos.length]);
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -98,55 +95,52 @@ export default function Home() {
       )}
 
       <main className="flex-1">
-        <section className="relative h-dvh w-full overflow-hidden">
-          <Carousel
-            opts={{
-              loop: true,
-              duration: 60,
-            }}
-            plugins={[
-              Autoplay({
-                delay: 8000,
-              }),
-            ]}
-            className="h-full w-full"
-          >
-            <CarouselContent className="h-full ml-0">
-              {heroVideos.map((video) => (
-                <CarouselItem key={video.id} className="relative h-full w-full pl-0">
-                  <video
-                    src={video.src}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/10" />
-
-                  {/* Sliding Content Layer */}
-                  <div className="absolute inset-0 z-10 flex h-full flex-col items-start justify-center text-left text-white px-8 md:px-16 lg:px-24">
-                    <div className="max-w-2xl">
-                      <h1 className="font-headline text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl drop-shadow-lg">
-                        {video.title}
-                      </h1>
-                      <p className="mt-4 text-base md:text-xl drop-shadow-md text-gray-200">
-                        {video.subtitle}
-                      </p>
-                      <div className="mt-8 flex flex-wrap gap-3">
-                        <Button asChild size="lg" className="font-bold shadow-lg">
-                          <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
-                        </Button>
-                        <Button asChild size="lg" variant="secondary" className="font-bold shadow-lg">
-                          <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
-                        </Button>
-                      </div>
-                    </div>
+        {/* Hero Section — custom auto-rotating, fully responsive */}
+        <section className="relative w-full overflow-hidden" style={{ height: '100dvh' }}>
+          {heroVideos.map((video, i) => (
+            <div
+              key={video.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${i === heroIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+              <video
+                src={video.src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
+              <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-12 md:px-20 lg:px-28">
+                <div className="max-w-xl">
+                  <h1 className="font-headline text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl md:text-5xl lg:text-6xl drop-shadow-lg">
+                    {video.title}
+                  </h1>
+                  <p className="mt-3 text-sm text-gray-200 sm:text-base md:text-xl drop-shadow-md">
+                    {video.subtitle}
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Button asChild size="default" className="font-bold shadow-lg text-sm sm:text-base">
+                      <Link href="/nominees">Vote Now <Trophy className="ml-2 h-4 w-4" /></Link>
+                    </Button>
+                    <Button asChild size="default" variant="secondary" className="font-bold shadow-lg text-sm sm:text-base">
+                      <Link href="/submit">Submit Your Work <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    </Button>
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+                </div>
+              </div>
+            </div>
+          ))}
+          {/* Dot indicators */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            {heroVideos.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setHeroIndex(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${i === heroIndex ? 'w-6 bg-white' : 'w-2 bg-white/50'}`}
+              />
+            ))}
+          </div>
         </section>
 
         {/* Short Intro Section */}
