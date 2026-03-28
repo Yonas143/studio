@@ -23,10 +23,15 @@ const STATIC_INSIGHTS = [
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',
     imageUrl: BALE_IMAGES[0],
-    images: BALE_IMAGES,
-    content: `Bale Mountains National Park is located in the south eastern part of Ethiopia 400 km southeast of Addis Ababa. The park stretches over 2400 sq kms primarily featuring the Harenna Escarpment and Forest and the Sanetti Plateau. The area is well known for its incredible diversity of wildlife. The most well known animal that calls Bale home is the endangered Red and White Ethiopian Wolf. There are great diversity of other animals, which include the Mountain Nyala, a large horned antelope, Bale Monkey and the Forest Hog allegedly the world's largest swine. Bale is also recognized as one of the African continent's top five places to find exotic birds (six endemic species and 11 other geographically unique species). Bale is known to support the only known sub-Saharan birding populations of Golden Eagle, Ruddy Shelduck and Red-billed Chough. In addition to its wonderful range of wildlife, Bale Mountains National Park is an extremely important area of biodiversity. The area is also known for its lush evergreen forests and woodland, bamboo groves, moorlands, rivers and waterfalls as well as an abundance of grassland providing the ideal habitat for a range of animals and birds. Bale's 1,300-plus plant species include 160 Ethiopian endemics and 23 unique to the park. Bale is an excellent place for hiking and mule or horseback treks as part of a unique and colorful Safari across this beautiful and diverse region.`,
+    content: 'Bale Mountains National Park is located in the south eastern part of Ethiopia 400 km southeast of Addis Ababa. The park stretches over 2400 sq kms primarily featuring the Harenna Escarpment and Forest and the Sanetti Plateau. Home to the endangered Ethiopian Wolf, Mountain Nyala, Bale Monkey and the Giant Forest Hog.',
     createdAt: '2026-03-28',
-    isPublished: true,
+  },
+  {
+    id: 'danakil-depression',
+    title: 'Danakil Depression',
+    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
+    content: 'Dallol in the Danakil Desert is one of the lowest places on earth at 116 meters below sea level, where lakes of acid form colorful sulfur formations. Volcano Erta Ale is globally recognized as one of the most alluring natural attractions, with dramatic boiling lava erupting from its summit.',
+    createdAt: '2026-03-28',
   },
 ];
 
@@ -53,7 +58,8 @@ export default function CulturalInsightPage() {
     fetchInsights();
   }, []);
 
-  const allInsights = [...STATIC_INSIGHTS, ...insights.filter(i => i.id !== 'bale-mountains')];
+  const staticIds = STATIC_INSIGHTS.map(s => s.id);
+  const allInsights = [...STATIC_INSIGHTS, ...insights.filter(i => !staticIds.includes(i.id))];
 
   return (
     <div className="container py-8">
@@ -74,15 +80,15 @@ export default function CulturalInsightPage() {
             </CardContent>
           </Card>
         ))}
-        {allInsights.map((insight) => (
-          <Link key={insight.id} href={`/cultural-insight/${insight.id}`} passHref>
+        {allInsights.map((item) => (
+          <Link key={item.id} href={`/cultural-insight/${item.id}`} passHref>
             <Card className="group overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
               <CardHeader className="p-0">
                 <div className="relative h-48 w-full bg-muted">
-                  {insight.imageUrl && (
+                  {item.imageUrl && (
                     <Image
-                      src={insight.imageUrl}
-                      alt={insight.title}
+                      src={item.imageUrl}
+                      alt={item.title}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"
                     />
@@ -90,8 +96,8 @@ export default function CulturalInsightPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-4">
-                <h3 className="font-headline text-lg font-semibold">{insight.title}</h3>
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{insight.content}</p>
+                <h3 className="font-headline text-lg font-semibold">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{item.content}</p>
               </CardContent>
             </Card>
           </Link>

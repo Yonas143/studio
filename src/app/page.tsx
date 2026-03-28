@@ -217,10 +217,11 @@ export default function Home() {
               <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">Watch Our Story</h2>
               <p className="mt-3 text-muted-foreground text-lg">See what the Cultural Ambassador Award is all about.</p>
             </div>
-            <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
                 { id: 'CJmYj63Kalc', title: 'CAA' },
                 { id: 'GHXY_OruvAE', title: 'CAA Tibebu Belete' },
+                { id: 'rXaXv0rZHjA', title: 'CAA Henoke Seyuome Hagere' },
               ].map(v => (
                 <div key={v.id} className="relative w-full rounded-xl overflow-hidden shadow-xl" style={{ paddingBottom: '56.25%' }}>
                   <iframe

@@ -41,6 +41,19 @@ const STATIC_ARTICLES: Record<string, any> = {
 <hr/>
 <p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/bale-mountains-national-park-tour-ethn01-aqkwvdno" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:opacity-80">Bale Mountains National Park Tour — Ethiopian Holidays</a></p>`,
     createdAt: '2026-03-28',
+  'danakil-depression': {
+    id: 'danakil-depression',
+    title: 'Danakil Depression',
+    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
+    content: `<h2>The Hottest Place on Earth</h2>
+<p>Dallol in the Danakil Desert is one of the lowest places on earth at <strong>116 meters below sea level</strong> — the hottest and most otherworldly landscape on the planet. Here, lakes of acid form vivid, colorful sulfur formations that look more like an alien world than anything found on earth.</p>
+<h2>Salt Caravans</h2>
+<p>In the deepest part of the Danakil Depression, salt is excavated by hand, cut into slabs, and loaded onto caravans of camels — a tradition that has continued for centuries and remains one of Ethiopia's most iconic cultural and economic practices.</p>
+<h2>Erta Ale Volcano</h2>
+<p>Volcano <strong>Erta Ale</strong> is globally recognized as one of the most alluring and yet physically challenging natural attractions on earth. Its base spans 30 km in diameter, with a 1 km square caldera at its summit. Watching the dramatic boiling lava erupting from the volcano is a truly spectacular and humbling sight.</p>
+<hr/><p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:opacity-80">Danakil Depression Tour — Ethiopian Holidays</a></p>`,
+    createdAt: '2026-03-28',
+  },
   },
 };
 
