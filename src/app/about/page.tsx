@@ -318,11 +318,7 @@ export default function AboutPage() {
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="mt-12 text-center">
-                        <Button asChild size="lg">
-                            <Link href="/register">Register for the Award</Link>
-                        </Button>
-                    </div>
+
                 </div>
             </section>
 
