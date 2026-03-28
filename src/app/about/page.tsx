@@ -147,85 +147,38 @@ export default function AboutPage() {
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
-                        <Card className="border-2 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <Music className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Traditional Dance</h3>
-                                        <p className="mt-2 text-muted-foreground">This category celebrates performers who bring Ethiopia's traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia's diverse dance heritage.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-2 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <Mic className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Traditional Music</h3>
-                                        <p className="mt-2 text-muted-foreground">This award honors outstanding musicians who preserve and elevate Ethiopia's cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-2 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <Guitar className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Traditional Instruments</h3>
-                                        <p className="mt-2 text-muted-foreground">This category recognizes mastery of Ethiopia's iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument's ability to communicate emotion and heritage.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-2 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <BookOpen className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Traditional Poetry (Qiné, Wax & Gold, Spoken Traditions)</h3>
-                                        <p className="mt-2 text-muted-foreground">This award celebrates the poetic voices who carry forward Ethiopia's oral traditions — from Qiné and "Wax & Gold" (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-2 transition-all hover:shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <Award className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Ethiopian Product Design & Presentation Award</h3>
-                                        <p className="mt-2 text-muted-foreground">This category celebrates outstanding excellence in the design, development, and presentation of Ethiopian-made products that embody the nation's rich cultural heritage, creativity, and innovation. It recognizes visionary designers, skilled artisans, entrepreneurs, and companies that transform traditional inspiration into modern, high-quality products capable of competing in today's dynamic marketplace. The award highlights exceptional achievement in product aesthetics, functionality, packaging, branding, and overall presentation. It places strong emphasis on originality, cultural authenticity, market readiness, and the ability to communicate a compelling story through design. From handcrafted creations to industrial and commercial products, this category showcases how thoughtful design can elevate value, attract global attention, and strengthen Ethiopia's creative economy. By honoring excellence in this field, the award promotes the advancement of "Made in Ethiopia," encouraging innovation, enhancing competitiveness, and positioning Ethiopian products as distinctive, desirable, and globally relevant. It stands as a recognition of those who successfully bridge heritage and modernity, turning cultural identity into powerful economic and creative expression.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card className="border-2 transition-all hover:shadow-lg md:col-span-2">
-                            <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                                        <Lightbulb className="h-6 w-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-headline text-xl font-semibold">Cultural Discovery Acting Award</h3>
-                                        <p className="mt-2 text-muted-foreground">The Cultural Discovery Acting Award is dedicated to recognizing and celebrating the extraordinary talent of actors and performers who bring Ethiopia's rich cultural heritage, traditions, and stories to life. This award honors those who skillfully combine creativity, emotional depth, and technical excellence to portray characters that reflect the country's diverse cultural identity and historical narratives. Through their performances on stage, screen, or other artistic platforms, awardees not only entertain but also educate and inspire audiences, offering a window into Ethiopia's timeless traditions, folklore, and contemporary cultural expressions. By bridging the gap between heritage and modern storytelling, these performers play a crucial role in preserving and promoting Ethiopian culture, ensuring that its stories resonate with audiences both locally and internationally. This award celebrates the transformative power of acting as a medium for cultural exploration, creative expression, and societal impact. It honors performers who not only excel in their craft but also elevate the visibility of Ethiopian culture, contributing to a vibrant and globally recognized arts and entertainment ecosystem. Through this recognition, the Cultural Discovery Acting Award encourages innovation, inspires the next generation of performers, and strengthens Ethiopia's cultural presence on the world stage.</p>
-                                        <p className="mt-3 text-sm font-medium text-primary">Note: This category is sensitive — contestants are required to submit a signed affidavit from their nearest Government Cultural Institution stating that the act fully aligns with the culture it's presenting.</p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <ExpandableCard
+                            icon={<Music className="h-6 w-6 text-primary" />}
+                            title="Traditional Dance"
+                            description="This category celebrates performers who bring Ethiopia's traditional dances to life with authenticity, skill, and emotional power. Entries should reflect the unique movement styles, cultural expressions, and regional identities embedded in Ethiopia's diverse dance heritage."
+                        />
+                        <ExpandableCard
+                            icon={<Mic className="h-6 w-6 text-primary" />}
+                            title="Traditional Music"
+                            description="This award honors outstanding musicians who preserve and elevate Ethiopia's cultural soundscape through traditional melodies, rhythms, and vocal styles. Performances should showcase cultural authenticity, strong musicality, and a deep respect for the roots of Ethiopian music."
+                        />
+                        <ExpandableCard
+                            icon={<Guitar className="h-6 w-6 text-primary" />}
+                            title="Traditional Instruments"
+                            description="This category recognizes mastery of Ethiopia's iconic traditional instruments — such as the Masinko, Begena, Washint, Kirar, and Kebero and others. Entries should highlight technical skill, tone quality, cultural accuracy, and the instrument's ability to communicate emotion and heritage."
+                        />
+                        <ExpandableCard
+                            icon={<BookOpen className="h-6 w-6 text-primary" />}
+                            title="Traditional Poetry (Qiné, Wax & Gold, Spoken Traditions)"
+                            description="This award celebrates the poetic voices who carry forward Ethiopia's oral traditions — from Qiné and &quot;Wax &amp; Gold&quot; (Sem Ena Werq) to folk storytelling and rhythmic spoken art. Entries must reflect linguistic creativity, cultural depth, layered meaning, and strong delivery."
+                        />
+                        <ExpandableCard
+                            icon={<Award className="h-6 w-6 text-primary" />}
+                            title="Ethiopian Product Design & Presentation Award"
+                            description="This category celebrates outstanding excellence in the design, development, and presentation of Ethiopian-made products that embody the nation's rich cultural heritage, creativity, and innovation. It recognizes visionary designers, skilled artisans, entrepreneurs, and companies that transform traditional inspiration into modern, high-quality products capable of competing in today's dynamic marketplace. The award highlights exceptional achievement in product aesthetics, functionality, packaging, branding, and overall presentation. It places strong emphasis on originality, cultural authenticity, market readiness, and the ability to communicate a compelling story through design. From handcrafted creations to industrial and commercial products, this category showcases how thoughtful design can elevate value, attract global attention, and strengthen Ethiopia's creative economy. By honoring excellence in this field, the award promotes the advancement of Made in Ethiopia, encouraging innovation, enhancing competitiveness, and positioning Ethiopian products as distinctive, desirable, and globally relevant."
+                        />
+                        <ExpandableCard
+                            icon={<Lightbulb className="h-6 w-6 text-primary" />}
+                            title="Cultural Discovery Acting Award"
+                            description="Recognizes actors and performers who bring Ethiopia’s heritage, traditions, and stories to life with creativity, emotional depth, and technical mastery. Honors performances that educate, inspire, and preserve cultural identity across stage, screen, and artistic platforms. Evaluates the ability to bridge heritage and modern storytelling, e                            
+                nd globally."
+                            note="Note: Contestants must submit a signed affidavit from their nearest Government Cultural Institution confirming cultural authenticity."
+                        />
                     </div>
                     <div className="mt-8 text-center">
                         <Button asChild variant="outline" size="lg">
@@ -241,7 +194,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Objectives</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            The ABN Studio Cultural Ambassador initiative is designed to empower Ethiopia’s cultural creators by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of cultural leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
+                            The ABN Studio Cultural Ambassador initiative is designed to empower Ethiopians by providing a platform that recognizes creativity, innovation, cultural excellence and support. The objectives focus on celebrating talent, promoting national and international visibility, building capacity, and fostering the integration of traditional arts with modern digital technologies. Through these objectives, the program aims to create a sustainable network of young leaders who serve as advocates and role models for Ethiopia’s rich cultural heritage.
                         </p>
                         <ul className="mt-6 space-y-3 text-lg">
                             <li className="flex items-start gap-3">
@@ -250,7 +203,7 @@ export default function AboutPage() {
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
-                                <span>Amplify the voices of Ethiopia’s cultural creators through media, digital platforms, and public engagement.</span>
+                                <span>Amplify the voices of Ethiopia’s creative youth through media, digital platforms, and public engagement.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <span className="mt-1 text-primary">✔</span>
@@ -302,7 +255,8 @@ export default function AboutPage() {
                             <CardContent className="p-6">
                                 <h3 className="font-headline text-xl font-semibold mb-3">National & International Visibility</h3>
                                 <p className="text-muted-foreground mb-2">Participants’ work is amplified through ABN Studio platforms, media coverage, cultural events, and digital channels.</p>
-                                <p className="text-muted-foreground">Ethiopia’s creators gain recognition as ambassadors of the nation’s artistic and cultural excellence.</p>
+                                <p className="text-muted-foreground">Ethiopia’s creative youth gain recognition as ambassador
+                                    of the nation’s artistic and cultural excellence.</p>
                             </CardContent>
                         </Card>
                         <Card className="border-2 transition-all hover:shadow-lg">
@@ -403,7 +357,7 @@ export default function AboutPage() {
                             Award, the
                             studio blends traditional Ethiopian heritage with modern digital technologies,
                             creating platforms that celebrate culture, encourage innovation, and amplify
-                            the voices of Ethiopia’s creators. ABN Studio is committed to nurturing
+                            the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
                             cultural leaders and ambassadors,
                             , inspiring creativity, innovation, and pride in
                             Ethiopia’s rich artistic legacy.

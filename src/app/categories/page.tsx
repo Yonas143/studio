@@ -35,6 +35,7 @@ const categories = [
     id: 'product-design',
     name: 'Ethiopian Product Design & Presentation Award',
     description: 'Honors excellence in Ethiopian-made products that blend heritage with innovation. Recognizes designers, artisans, and companies turning tradition into high-quality, market-ready creations. Rewards originality, cultural authenticity, and global appeal while boosting value, competitiveness, and Ethiopia’s creative profile.',
+    imageUrl: '/files/design.png'
   },
   {
     id: 'cultural-acting',
