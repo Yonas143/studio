@@ -162,6 +162,25 @@ export default function Home() {
 
         <Separator />
 
+        {/* Ad Video */}
+        <section className="py-10 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-4xl">
+              <video
+                src="/ads/ad.3gp"
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+                className="w-full rounded-xl shadow-lg"
+              />
+            </div>
+          </div>
+        </section>
+
+        <Separator />
+
         {/* Submission Countdown Section */}
         <section className="py-16 md:py-24 bg-secondary/30">
           <div className="container mx-auto px-4">
