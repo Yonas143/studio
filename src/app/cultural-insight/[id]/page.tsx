@@ -27,6 +27,11 @@ const DANAKIL_IMAGES = [
   '/Danakil /salt-mines-danakil-1024x683.jpg',
 ];
 
+const COFFEE_IMAGES = [
+  '/coffee/ethiopian-coffee.jpg',
+  '/coffee/5348888b3542c098d80e0a1e5e4e7cf8_ethiopian_coffee_ceremony_the_coffee.jpg',
+];
+
 const BALE_CONTENT = `<p>Bale Mountains National Park is located in the south eastern part of Ethiopia, 400 km southeast of Addis Ababa. Stretching over 2,400 sq kms, the park primarily features the Harenna Escarpment and Forest and the Sanetti Plateau.</p>
 <h2>Wildlife</h2>
 <p>The most iconic resident is the endangered <strong>Ethiopian Wolf</strong> — the rarest canid in the world. Other notable species include the <strong>Mountain Nyala</strong>, the <strong>Bale Monkey</strong>, and the <strong>Giant Forest Hog</strong>, allegedly the world's largest swine.</p>
@@ -46,7 +51,23 @@ const DANAKIL_CONTENT = `<h2>By Ethio Holidays</h2>
 <hr/>
 <p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline">Danakil Depression Tour — Ethiopian Holidays</a></p>`;
 
+const COFFEE_CONTENT = `<h2>By Ethio Holidays</h2>
+<p>Ethiopian coffee is more than just a drink, it's a cultural treasure and a warm welcome to visitors passing through Addis Ababa. As the birthplace of coffee, Ethiopia offers travelers a chance to experience the rich aromas, bold flavors, and centuries-old traditions that define its coffee heritage.</p>
+<h2>The Ethiopian Coffee Ceremony</h2>
+<p>Even during a short stopover, visitors can immerse themselves in the famous <strong>Ethiopian coffee ceremony</strong>, where freshly roasted beans are ground, brewed, and served with a sense of ritual and hospitality that reflects the heart of the nation.</p>
+<h2>Coffee Culture in Addis Ababa</h2>
+<p>Addis Ababa, with its vibrant cafés and traditional coffee houses, makes it easy for travelers to savor this experience between flights. From modern coffee lounges serving single-origin brews to bustling local spots where the air is filled with the scent of roasting beans, the city offers a perfect taste of Ethiopia's coffee culture.</p>
+<p>A stopover here isn't just a pause in your journey, it's an opportunity to sip history, connect with locals, and carry a piece of Ethiopia's warmth with you.</p>`;
+
 const STATIC_ARTICLES: Record<string, any> = {
+  'ethiopian-coffee-stopover': {
+    id: 'ethiopian-coffee-stopover',
+    title: 'Ethiopian Coffee as a Stopover Experience in Addis Ababa',
+    author: 'Ethio Holidays',
+    imageUrl: JSON.stringify(COFFEE_IMAGES),
+    content: COFFEE_CONTENT,
+    createdAt: '2026-03-28',
+  },
   'bale-mountains': {
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',

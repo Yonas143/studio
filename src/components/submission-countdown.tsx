@@ -67,10 +67,11 @@ export function SubmissionCountdown() {
                     <div className="text-center mb-6">
                         <div className="flex items-center justify-center gap-2 mb-2">
                             <Calendar className="h-5 w-5 text-primary" />
-                            <h3 className="font-headline text-2xl font-bold text-primary">Launching Date</h3>
+                            <h3 className="font-headline text-2xl font-bold text-primary">We launch on April 14, 2026</h3>
                         </div>
-                        <p className="text-muted-foreground">
-                            The award ceremony launches on <span className="font-bold text-foreground text-xl">{formattedEndDate}</span>
+                        <p className="text-muted-foreground space-y-1">
+                            <span className="block">📍 Venue: Ethiopian Skylight Hotel</span>
+                            <span className="block">📅 Date: April 14, 2026</span>
                         </p>
                     </div>
 

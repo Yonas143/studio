@@ -20,6 +20,13 @@ const BALE_IMAGES = [
 
 const STATIC_INSIGHTS = [
   {
+    id: 'ethiopian-coffee-stopover',
+    title: 'Ethiopian Coffee as a Stopover Experience in Addis Ababa',
+    imageUrl: '/coffee/ethiopian-coffee.jpg',
+    content: 'Ethiopian coffee is more than just a drink, it\'s a cultural treasure and a warm welcome to visitors passing through Addis Ababa. As the birthplace of coffee, Ethiopia offers travelers a chance to experience the rich aromas, bold flavors, and centuries-old traditions that define its coffee heritage.',
+    createdAt: '2026-03-28',
+  },
+  {
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',
     imageUrl: BALE_IMAGES[0],
