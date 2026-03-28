@@ -433,8 +433,8 @@ export default function Home() {
               <p className="text-center text-lg text-muted-foreground mb-10">Proudly supported by Ethiopia's leading institutions.</p>
               <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="relative h-28 w-44 md:h-36 md:w-56 transition-all hover:scale-105 duration-300">
-                    <Image src={`/partners/${n}.jpg`} alt={`Partner ${n}`} fill className="object-contain" />
+                  <div key={n} className="relative h-28 w-44 md:h-36 md:w-56 transition-all hover:scale-105 duration-300 ring-2 ring-primary rounded-xl p-2 bg-white shadow-md">
+                    <Image src={`/partners/${n}.jpg`} alt={`Partner ${n}`} fill className="object-contain p-1" />
                   </div>
                 ))}
               </div>
@@ -443,8 +443,8 @@ export default function Home() {
             {/* Platinum Sponsors — 4 to 7 */}
             <div>
               <div className="text-center mb-10">
-                <span className="inline-block px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-semibold tracking-wide uppercase mb-3">Platinum Sponsors</span>
-                <h3 className="font-headline text-2xl font-bold">Our Platinum Sponsors</h3>
+                <span className="inline-block px-4 py-1 rounded-full bg-yellow-400 text-yellow-900 text-sm font-semibold tracking-wide uppercase mb-3">Platinum Sponsors</span>
+                <h3 className="font-headline text-2xl font-bold text-primary">Our Platinum Sponsors</h3>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
                 {[4, 5, 6, 7].map((n) => (
@@ -458,13 +458,13 @@ export default function Home() {
             {/* Sponsors — 8 to 15 */}
             <div>
               <div className="text-center mb-10">
-                <span className="inline-block px-4 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-semibold tracking-wide uppercase mb-3">Sponsors</span>
-                <h3 className="font-headline text-2xl font-bold">Our Sponsors</h3>
+                <span className="inline-block px-4 py-1 rounded-full bg-primary text-primary-foreground text-sm font-semibold tracking-wide uppercase mb-3">Sponsors</span>
+                <h3 className="font-headline text-2xl font-bold text-primary">Our Sponsors</h3>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
                 {[8, 9, 10, 11, 12, 13, 14, 15].map((n) => (
-                  <div key={n} className="relative h-20 w-32 md:h-28 md:w-44 transition-all hover:scale-105 duration-300">
-                    <Image src={`/partners/${n}.jpg`} alt={`Sponsor ${n}`} fill className="object-contain" />
+                  <div key={n} className="relative h-20 w-32 md:h-28 md:w-44 transition-all hover:scale-105 duration-300 ring-2 ring-primary/40 rounded-xl p-2 bg-white shadow-md">
+                    <Image src={`/partners/${n}.jpg`} alt={`Sponsor ${n}`} fill className="object-contain p-1" />
                   </div>
                 ))}
               </div>
