@@ -70,7 +70,7 @@ export function SubmissionCountdown() {
                             <h3 className="font-headline text-2xl font-bold text-primary">Launching Date</h3>
                         </div>
                         <p className="text-muted-foreground">
-                            The award ceremony launches on <span className="font-semibold text-foreground">{formattedEndDate}</span>
+                            The award ceremony launches on <span className="font-bold text-foreground text-xl">{formattedEndDate}</span>
                         </p>
                     </div>
 
