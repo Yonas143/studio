@@ -9,8 +9,8 @@ const supabase = createClient(
 );
 
 async function main() {
-    const email = 'yoniwin.yw@gmail.com';
-    const password = 'abulu1184';
+    const email = 'admin@admin.com';
+    const password = 'adminpass';
 
     // Create auth user
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
