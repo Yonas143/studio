@@ -61,6 +61,17 @@ export function Leaderboard({ categoryFilter, maxEntries = 10 }: LeaderboardProp
                 </CardDescription>
             </CardHeader>
             <CardContent>
+                {/* Award promo video */}
+                <div className="mb-4 rounded-lg overflow-hidden">
+                    <video
+                        src="/ads/award.mp4"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full"
+                    />
+                </div>
                 {isLoading ? (
                     <div className="space-y-3">
                         {[...Array(5)].map((_, i) => (
