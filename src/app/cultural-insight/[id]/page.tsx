@@ -18,7 +18,6 @@ const BALE_IMAGES = [
   '/bale/IMAGE 2026-03-28 17:28:59.jpg',
 ];
 
-
 const DANAKIL_IMAGES = [
   '/Danakil /d.jpg',
   '/Danakil /d2.jpg',
@@ -27,49 +26,40 @@ const DANAKIL_IMAGES = [
   '/Danakil /ethiopia-afar-volcano.jpg',
   '/Danakil /salt-mines-danakil-1024x683.jpg',
 ];
+
+const BALE_CONTENT = `<p>Bale Mountains National Park is located in the south eastern part of Ethiopia, 400 km southeast of Addis Ababa. Stretching over 2,400 sq kms, the park primarily features the Harenna Escarpment and Forest and the Sanetti Plateau.</p>
+<h2>Wildlife</h2>
+<p>The most iconic resident is the endangered <strong>Ethiopian Wolf</strong> — the rarest canid in the world. Other notable species include the <strong>Mountain Nyala</strong>, the <strong>Bale Monkey</strong>, and the <strong>Giant Forest Hog</strong>, allegedly the world's largest swine.</p>
+<h2>Birdlife</h2>
+<p>Bale is recognized as one of Africa's top five birdwatching destinations, with six endemic species and 11 geographically unique species. It is the only known sub-Saharan location supporting breeding populations of the <strong>Golden Eagle</strong>, <strong>Ruddy Shelduck</strong>, and <strong>Red-billed Chough</strong>.</p>
+<h2>Landscape and Biodiversity</h2>
+<p>The landscape encompasses lush evergreen forests, bamboo groves, open moorlands, rivers, waterfalls, and vast grasslands. Bale's 1,300-plus plant species include <strong>160 Ethiopian endemics</strong> and 23 species unique to the park.</p>
+<h2>Adventure and Exploration</h2>
+<p>Bale is an exceptional destination for hiking, mule trekking, and horseback safaris across this beautiful and diverse region.</p>
+<hr/>
+<p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/bale-mountains-national-park-tour-ethn01-aqkwvdno" target="_blank" rel="noopener noreferrer" class="text-primary underline">Bale Mountains National Park Tour — Ethiopian Holidays</a></p>`;
+
+const DANAKIL_CONTENT = `<h2>By Ethio Holidays</h2>
+<p>Dallol in the Danakil Desert is one of the lowest places on earth at <strong>116 meters below sea level</strong>, where lakes of acid form colorful sulfur formations in the hottest and deepest part of the Danakil Depression where salt is excavated, cut into slabs and loaded onto caravans of camels.</p>
+<h2>Erta Ale Volcano</h2>
+<p>Volcano <strong>Erta Ale</strong> is globally recognized as one of the most alluring and yet physically challenging natural attractions. Its base is 30 kms in diameter and 1 km square caldera at its summit. Watching the dramatic boiling lava erupting from the Volcano is a spectacular sight.</p>
+<hr/>
+<p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline">Danakil Depression Tour — Ethiopian Holidays</a></p>`;
+
 const STATIC_ARTICLES: Record<string, any> = {
   'bale-mountains': {
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',
     imageUrl: JSON.stringify(BALE_IMAGES),
-    content: `<p>Bale Mountains National Park is located in the south eastern part of Ethiopia, 400 km southeast of Addis Ababa. Stretching over 2,400 sq kms, the park primarily features the Harenna Escarpment and Forest and the Sanetti Plateau — one of Africa's most extraordinary highland ecosystems.</p>
-
-<h2>Wildlife</h2>
-<p>The park is renowned for its incredible diversity of wildlife. The most iconic resident is the endangered <strong>Ethiopian Wolf</strong> — the rarest canid in the world. Other notable species include the <strong>Mountain Nyala</strong>, a large and majestic horned antelope found nowhere else on earth, the <strong>Bale Monkey</strong>, and the <strong>Giant Forest Hog</strong>, allegedly the world's largest swine.</p>
-
-<h2>Birdlife</h2>
-<p>Bale is recognized as one of the African continent's top five destinations for exotic birdwatching, with six endemic species and 11 other geographically unique species. It is the only known sub-Saharan location supporting breeding populations of the <strong>Golden Eagle</strong>, <strong>Ruddy Shelduck</strong>, and <strong>Red-billed Chough</strong>.</p>
-
-<h2>Landscape & Biodiversity</h2>
-<p>Beyond its wildlife, Bale Mountains National Park is a globally significant biodiversity hotspot. The landscape encompasses lush evergreen forests, bamboo groves, open moorlands, rivers, waterfalls, and vast grasslands — each providing vital habitat for a remarkable range of flora and fauna.</p>
-<p>Bale's 1,300-plus plant species include <strong>160 Ethiopian endemics</strong> and 23 species unique to the park itself.</p>
-
-<h2>Adventure & Exploration</h2>
-<p>Bale is an exceptional destination for hiking, mule trekking, and horseback safaris. Whether traversing the Sanetti Plateau or descending into the Harenna Forest, visitors are rewarded with landscapes and wildlife encounters found nowhere else on the continent.</p>
-
-<hr/>
-<p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/bale-mountains-national-park-tour-ethn01-aqkwvdno" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:opacity-80">Bale Mountains National Park Tour — Ethiopian Holidays</a></p>`,
-    createdAt: '2026-03-28',
-  'danakil-depression': {
-    id: 'danakil-depression',
-    title: 'Danakil Depression',
-    imageUrl: JSON.stringify(DANAKIL_IMAGES),
-    content: `<h2>The Hottest Place on Earth</h2>
-<p>Dallol in the Danakil Desert is one of the lowest places on earth at <strong>116 meters below sea level</strong> — the hottest and most otherworldly landscape on the planet. Here, lakes of acid form vivid, colorful sulfur formations that look more like an alien world than anything found on earth.</p>
-<h2>Salt Caravans</h2>
-<p>In the deepest part of the Danakil Depression, salt is excavated by hand, cut into slabs, and loaded onto caravans of camels — a tradition that has continued for centuries and remains one of Ethiopia's most iconic cultural and economic practices.</p>
-<h2>Erta Ale Volcano</h2>
-<p>Volcano <strong>Erta Ale</strong> is globally recognized as one of the most alluring and yet physically challenging natural attractions on earth. Its base spans 30 km in diameter, with a 1 km square caldera at its summit. Watching the dramatic boiling lava erupting from the volcano is a truly spectacular and humbling sight.</p>
-<hr/><p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:opacity-80">Danakil Depression Tour — Ethiopian Holidays</a></p>`,
+    content: BALE_CONTENT,
     createdAt: '2026-03-28',
   },
   'danakil-depression': {
     id: 'danakil-depression',
     title: 'Danakil Depression',
     imageUrl: JSON.stringify(DANAKIL_IMAGES),
-    content: '<h2>By Ethio Holidays</h2><p>Dallol in the Danakil Desert is one of the lowest places on earth at 116 meters below sea level, where lakes of acid form colorful sulfur formations in the hottest and deepest part of the Danakil Depression where salt is excavated, cut into slabs and loaded onto caravans of camels.</p><h2>Erta Ale Volcano</h2><p>Volcano Erta Ale is globally recognized as one of the most alluring and yet physically challenging natural attractions. Its base is 30 kms in diameter and 1 km square caldera at its summit. Watching the dramatic boiling lava erupting from the Volcano is a spectacular sight.</p><hr/><p><strong>Plan your visit:</strong> <a href="https://www.ethiopianholidays.com/packages/package-details/danakil-depression-tour-ethn03-vwnj73nq" target="_blank" rel="noopener noreferrer" class="text-primary underline">Danakil Depression Tour — Ethiopian Holidays</a></p>',
+    content: DANAKIL_CONTENT,
     createdAt: '2026-03-28',
-  },
   },
 };
 
@@ -99,7 +89,7 @@ function ImageSlider({ images }: { images: string[] }) {
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`h-2 w-2 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'bg-white/50'}`}
+                className={`h-2 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'w-2 bg-white/50'}`}
               />
             ))}
           </div>
@@ -120,7 +110,6 @@ export default function InsightDetailPage() {
       if (!id) return;
       setLoading(true);
       try {
-        // Check static articles first
         if (STATIC_ARTICLES[id as string]) {
           setInsight(STATIC_ARTICLES[id as string]);
           setLoading(false);
@@ -162,7 +151,6 @@ export default function InsightDetailPage() {
     );
   }
 
-  // Support single imageUrl or JSON array of images
   let images: string[] = [];
   if (insight.imageUrl) {
     try {
@@ -184,9 +172,7 @@ export default function InsightDetailPage() {
             </p>
           )}
         </PageHeader>
-
         <ImageSlider images={images} />
-
         <div className="prose dark:prose-invert max-w-none mx-auto" dangerouslySetInnerHTML={{ __html: insight.content }} />
       </article>
     </div>
