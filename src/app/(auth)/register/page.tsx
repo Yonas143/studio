@@ -36,15 +36,19 @@ export default function RegisterPage() {
 
       // Sync user profile via server-side API (bypasses RLS)
       if (data.user) {
-        await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: data.user.id,
-            email: data.user.email,
-            name,
-          }),
-        });
+        try {
+          await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: data.user.id,
+              email: data.user.email,
+              name,
+            }),
+          });
+        } catch {
+          // Non-blocking — auth succeeded even if profile sync fails
+        }
       }
 
       toast({

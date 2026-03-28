@@ -66,7 +66,7 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center">
         <div className="mr-6 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <NextImage src="/logo.png" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
+            <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
             <span className="font-headline font-bold sm:inline-block">
               Cultural Ambassador Award
             </span>
@@ -143,7 +143,7 @@ export function SiteHeader() {
               <div className="flex flex-col h-full">
                 <div className="flex items-center mb-4">
                   <Link href="/" className="flex items-center space-x-2">
-                    <NextImage src="/logo.png" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
+                    <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
                     <span className="font-headline font-bold">Cultural Ambassador Award</span>
                   </Link>
                 </div>

@@ -25,7 +25,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="flex flex-col space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <NextImage src="/logo.png" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
+              <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="h-8 w-8 object-contain" />
               <span className="font-headline text-xl font-bold">Cultural Ambassador Award</span>
             </Link>
             <p className="text-sm">

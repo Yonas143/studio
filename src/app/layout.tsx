@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   description: 'Promoting and celebrating Ethiopian cultural excellence.',
   icons: {
     icon: '/favicon.ico',
-    apple: '/logo.png',
+    apple: '/logo.jpg',
   },
 };
 

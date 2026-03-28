@@ -39,7 +39,7 @@ export function DashboardLayout({
         >
           <SidebarHeader>
             <Link href="/" className="flex items-center gap-2 font-headline font-bold text-lg">
-              <NextImage src="/logo.png" alt="Cultural Ambassador Award" width={32} height={32} className="size-8 object-contain" />
+              <NextImage src="/logo.jpg" alt="Cultural Ambassador Award" width={32} height={32} className="size-8 object-contain" />
               <span className="group-data-[collapsible=icon]:hidden text-sm">
                 Cultural Ambassador Award
               </span>
