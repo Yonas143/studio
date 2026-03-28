@@ -436,20 +436,11 @@ export default function Home() {
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-              {[
-                { name: 'Ministry of Innovation and Technology', logo: '/partners/1.jpg', width: 200 },
-                { name: 'Ministry of Culture and Sport', logo: '/partners/ministry-culture.jpg', width: 200 },
-                { name: 'PACCI', logo: '/partners/pacci.jpg', width: 200 },
-                { name: 'Adiu Communication Service Plc', logo: '/partners/adiu.jpg', width: 200 },
-                { name: 'Ker Ezhi Ethiopia', logo: '/partners/ker-ezhi.jpg', width: 180 },
-                { name: 'Ethiopian Airlines', logo: '/partners/ethiopian-airlines.jpg', width: 180 },
-                { name: 'Mastercard', logo: '/partners/mastercard.jpg', width: 180 },
-                { name: 'Commercial Bank of Ethiopia', logo: '/partners/cbe.jpg', width: 180 },
-              ].map((partner) => (
-                <div key={partner.name} className="relative h-32 w-48 md:h-40 md:w-64 transition-all hover:scale-105 duration-300">
+              {Array.from({ length: 15 }, (_, i) => i + 1).map((n) => (
+                <div key={n} className="relative h-32 w-48 md:h-40 md:w-64 transition-all hover:scale-105 duration-300">
                   <Image
-                    src={partner.logo}
-                    alt={partner.name}
+                    src={`/partners/${n}.jpg`}
+                    alt={`Partner ${n}`}
                     fill
                     className="object-contain"
                   />
