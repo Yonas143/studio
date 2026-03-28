@@ -35,13 +35,13 @@ const categories = [
     id: 'product-design',
     name: 'Ethiopian Product Design & Presentation Award',
     description: 'Honoring excellence in the design, development, and presentation of Ethiopian-made products that fuse cultural heritage with innovation. Recognizes designers, artisans, entrepreneurs, and companies transforming tradition into modern, high-quality, market-ready products. Evaluates aesthetics, functionality, packaging, branding, and storytelling, emphasizing originality, cultural authenticity, and global appeal. Celebrates products that elevate value, boost competitiveness, and position Ethiopia as a hub of distinctive, innovative, and internationally relevant creativity.',
-    imageUrl: '/files/music-category.png',
+    imageUrl: '/files/design.png',
   },
   {
     id: 'cultural-acting',
     name: 'Cultural Discovery Acting Award',
     description: ' Recognizes actors and performers who bring Ethiopia’s heritage, traditions, and stories to life with creativity, emotional depth, and technical mastery. Honors performances that educate, inspire, and preserve cultural identity across stage, screen, and artistic platforms. Evaluates the ability to bridge heritage and modern storytelling, enhancing Ethiopia’s visibility locally and globally. Contestants must submit a signed affidavit from their nearest Government Cultural Institution confirming cultural authenticity. This award celebrates acting as a tool for cultural exploration, societal impact, and the elevation of Ethiopia’s arts on the world stage.',
-    imageUrl: '/files/music-category.png',
+    imageUrl: '/files/acting.png',
   },
 ];
 
