@@ -101,7 +101,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} ABN Studio. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} EYUDAN MEDIA PLC ( ABN STUDIO ). All Rights Reserved.</p>
         </div>
       </div>
     </footer>
