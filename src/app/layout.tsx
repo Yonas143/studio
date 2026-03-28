@@ -6,7 +6,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { ContactPopup } from '@/components/contact-popup';
-import { BottomAdBanner } from '@/components/ads/bottom-ad-banner';
 
 
 const lemonMilk = localFont({
@@ -79,7 +78,6 @@ export default function RootLayout({
           <SiteFooter />
 
           <ContactPopup />
-          <BottomAdBanner />
         </div>
         <Toaster />
       </body>

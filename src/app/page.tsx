@@ -81,13 +81,7 @@ export default function Home() {
       subtitle: 'Rhythms of our ancestors bringing history to life.',
       cta: 'View Performances'
     },
-    {
-      id: 'final',
-      src: '/files/All Talent Final  (2)hand.mp4',
-      title: 'Cultural Ambassador Award',
-      subtitle: 'Celebrating the best of Ethiopian cultural excellence.',
-      cta: 'Meet the Nominees'
-    },
+   
     {
       id: 'music',
       src: '/files/music.mp4',
@@ -111,14 +105,14 @@ export default function Home() {
     },
     {
       id: 'product-design',
-      src: '/files/F_final creativity.mp4',
+      src: '/files/creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
       subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
       cta: 'Explore Category'
     },
     {
       id: 'acting',
-      src: '/files/F_final acting.mp4',
+      src: '/files/acting.mp4',
       title: 'Cultural Discovery Acting Award',
       subtitle: 'Extraordinary performers bringing Ethiopia\'s cultural stories to life.',
       cta: 'Explore Category'
