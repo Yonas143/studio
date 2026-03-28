@@ -82,6 +82,13 @@ export default function Home() {
       cta: 'View Performances'
     },
     {
+      id: 'final',
+      src: '/files/All Talent Final  (2)hand.mp4',
+      title: 'Cultural Ambassador Award',
+      subtitle: 'Celebrating the best of Ethiopian cultural excellence.',
+      cta: 'Meet the Nominees'
+    },
+    {
       id: 'music',
       src: '/files/music.mp4',
       title: 'Cultural Music',
