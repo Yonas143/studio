@@ -150,7 +150,7 @@ export default function Home() {
       )}
 
       <main className="flex-1">
-        <section className="relative h-screen w-full overflow-hidden">
+        <section className="relative h-dvh w-full overflow-hidden">
           <Carousel
             opts={{
               loop: true,
@@ -205,7 +205,7 @@ export default function Home() {
         </section>
 
         {/* Short Intro Section */}
-        <section className="py-16 md:py-24 bg-gradient-to-br from-primary/5 via-background to-primary/10">
+        <section className="py-10 md:py-24 bg-gradient-to-br from-primary/5 via-background to-primary/10">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl text-center">
               <h2 className="font-headline text-3xl font-bold md:text-4xl lg:text-5xl text-primary">
