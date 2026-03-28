@@ -111,14 +111,14 @@ export default function Home() {
     },
     {
       id: 'product-design',
-      src: '/files/All Talent Final  (2)hand.mp4',
+      src: '/files/F_final creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
       subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
       cta: 'Explore Category'
     },
     {
       id: 'acting',
-      src: '/files/DANCE.mp4',
+      src: '/files/F_final acting.mp4',
       title: 'Cultural Discovery Acting Award',
       subtitle: 'Extraordinary performers bringing Ethiopia\'s cultural stories to life.',
       cta: 'Explore Category'
