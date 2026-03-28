@@ -1,9 +1,9 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
+import { requireAdmin } from '@/lib/auth-helpers';
 
-// Validation schema for updates
 const popupUpdateSchema = z.object({
     type: z.enum(['video', 'image', 'text']).optional(),
     title: z.string().min(1).optional(),
@@ -16,65 +16,56 @@ const popupUpdateSchema = z.object({
     storageKey: z.string().min(1).optional(),
 });
 
-/**
- * GET /api/popups/[id]
- * Get a single popup by ID
- */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const popup = await prisma.popup.findUnique({
-            where: { id: params.id },
-        });
-
-        if (!popup) {
-            return apiError('Popup not found', 404);
-        }
-
-        return apiResponse(popup);
+        const { id } = await params;
+        const supabase = await createClient();
+        const { data, error } = await supabase.from('Popup').select('*').eq('id', id).single();
+        if (error || !data) return apiError('Popup not found', 404);
+        return apiResponse(data);
     } catch (error) {
         return handleApiError(error);
     }
 }
 
-/**
- * PUT /api/popups/[id]
- * Update a popup
- */
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        await requireAdmin();
+        const { id } = await params;
         const body = await request.json();
         const validatedData = popupUpdateSchema.parse(body);
 
-        const popup = await prisma.popup.update({
-            where: { id: params.id },
-            data: validatedData,
-        });
+        const supabase = await createClient();
+        const { data, error } = await supabase
+            .from('Popup')
+            .update(validatedData)
+            .eq('id', id)
+            .select()
+            .single();
 
-        return apiResponse(popup);
+        if (error) throw error;
+        return apiResponse(data);
     } catch (error) {
         return handleApiError(error);
     }
 }
 
-/**
- * DELETE /api/popups/[id]
- * Delete a popup
- */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        await prisma.popup.delete({
-            where: { id: params.id },
-        });
-
+        await requireAdmin();
+        const { id } = await params;
+        const supabase = await createClient();
+        const { error } = await supabase.from('Popup').delete().eq('id', id);
+        if (error) throw error;
         return apiResponse({ message: 'Popup deleted successfully' });
     } catch (error) {
         return handleApiError(error);

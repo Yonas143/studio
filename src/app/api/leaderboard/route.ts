@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { apiResponse, handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
@@ -8,25 +8,25 @@ export async function GET(request: NextRequest) {
         const categoryId = searchParams.get('categoryId');
         const limit = parseInt(searchParams.get('limit') || '10');
 
-        const nominees = await prisma.nominee.findMany({
-            where: {
-                isActive: true,
-                ...(categoryId && { categoryId }),
-            },
-            include: {
-                category: true,
-            },
-            orderBy: {
-                voteCount: 'desc',
-            },
-            take: limit,
-        });
+        const supabase = await createClient();
 
-        const leaders = nominees.map((nominee) => ({
-            nomineeId: nominee.id,
-            nomineeName: nominee.name,
-            category: nominee.category.name,
-            voteCount: nominee.voteCount,
+        let query = supabase
+            .from('Nominee')
+            .select('id, name, voteCount, category:Category(name)')
+            .eq('isActive', true)
+            .order('voteCount', { ascending: false })
+            .limit(limit);
+
+        if (categoryId) query = query.eq('categoryId', categoryId);
+
+        const { data: nominees, error } = await query;
+        if (error) throw error;
+
+        const leaders = (nominees || []).map((n: any) => ({
+            nomineeId: n.id,
+            nomineeName: n.name,
+            category: n.category?.name || '',
+            voteCount: n.voteCount,
         }));
 
         return apiResponse(leaders);

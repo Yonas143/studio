@@ -1,31 +1,28 @@
-
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { adminAuthClient } from '@/lib/supabase/admin';
 import { isAdmin } from '@/lib/auth-helpers';
 
 export async function GET(request: Request) {
   try {
-    const isUserAdmin = await isAdmin();
-
-    if (!isUserAdmin) {
+    if (!(await isAdmin())) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const [participantCount, submissionCount, voteCount, categoryCount] = await Promise.all([
-      prisma.user.count({ where: { role: 'participant' } }),
-      prisma.submission.count(),
-      prisma.vote.count(),
-      prisma.category.count(),
+    const [
+      { count: participants },
+      { count: submissions },
+      { count: votes },
+      { count: categories },
+    ] = await Promise.all([
+      adminAuthClient.from('User').select('*', { count: 'exact', head: true }).eq('role', 'participant'),
+      adminAuthClient.from('Submission').select('*', { count: 'exact', head: true }),
+      adminAuthClient.from('Vote').select('*', { count: 'exact', head: true }),
+      adminAuthClient.from('Category').select('*', { count: 'exact', head: true }),
     ]);
 
     return NextResponse.json({
       success: true,
-      data: {
-        participants: participantCount,
-        submissions: submissionCount,
-        votes: voteCount,
-        categories: categoryCount,
-      },
+      data: { participants, submissions, votes, categories },
     });
   } catch (error) {
     console.error('[ADMIN_STATS_GET]', error);

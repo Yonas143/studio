@@ -1,28 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { apiResponse, handleApiError } from '@/lib/api-utils';
+import { createClient } from '@/lib/supabase/server';
+import { handleApiError } from '@/lib/api-utils';
 
 export async function GET(request: NextRequest) {
     try {
-        const events = await prisma.timelineEvent.findMany({
-            where: {
-                isActive: true,
-            },
-            orderBy: {
-                order: 'asc',
-            },
-        });
+        const supabase = await createClient();
+        const { data: events, error } = await supabase
+            .from('TimelineEvent')
+            .select('*')
+            .eq('isActive', true)
+            .order('order', { ascending: true });
 
-        // Transform if necessary to match frontend type
-        const transformedEvents = events.map(event => ({
-            id: event.id,
-            title: event.title,
-            description: event.description || '',
-            date: event.date.toISOString().split('T')[0], // YYYY-MM-DD
-            order: event.order,
+        if (error) throw error;
+
+        const transformed = (events || []).map((e: any) => ({
+            id: e.id,
+            title: e.title,
+            description: e.description || '',
+            date: new Date(e.date).toISOString().split('T')[0],
+            order: e.order,
         }));
 
-        return NextResponse.json(transformedEvents);
+        return NextResponse.json(transformed);
     } catch (error) {
         return handleApiError(error);
     }

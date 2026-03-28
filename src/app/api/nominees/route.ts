@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { apiResponse, handleApiError } from '@/lib/api-utils';
 import { requireAdmin } from '@/lib/auth-helpers';
 
@@ -8,57 +8,47 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const categoryId = searchParams.get('categoryId');
         const scope = searchParams.get('scope');
+        const featured = searchParams.get('featured');
 
-        const nominees = await prisma.nominee.findMany({
-            where: {
-                isActive: true,
-                ...(categoryId && { categoryId }),
-                ...(scope && scope !== 'all' && { scope }),
-                ...(searchParams.get('featured') === 'true' && { featured: true }),
-            },
-            include: {
-                category: true,
-                media: {
-                    orderBy: {
-                        order: 'asc',
-                    },
-                },
-            },
-            orderBy: {
-                voteCount: 'desc',
-            },
-        });
+        const supabase = await createClient();
 
-        // Transform to match frontend Nominee type
-        const transformedNominees = nominees.map(nominee => {
-            const nomineeWithRelations = nominee as typeof nominee & {
-                category: { name: string };
-                media: Array<{ type: string; url: string; thumbnail: string; description: string; hint: string | null }>;
-            };
+        let query = supabase
+            .from('Nominee')
+            .select('*, category:Category(name), media:NomineeMedia(*)')
+            .eq('isActive', true)
+            .order('voteCount', { ascending: false });
 
-            return {
-                id: nomineeWithRelations.id,
-                name: nomineeWithRelations.name,
-                categoryId: nomineeWithRelations.categoryId, // Added for editing
-                category: nomineeWithRelations.category.name,
-                region: 'Ethiopia', // Default for now
-                scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
-                bio: nomineeWithRelations.bio || '',
-                imageId: '', // Not used anymore
-                imageUrl: nomineeWithRelations.imageUrl,
-                media: nomineeWithRelations.media.map((m) => ({
+        if (categoryId) query = query.eq('categoryId', categoryId);
+        if (scope && scope !== 'all') query = query.eq('scope', scope);
+        if (featured === 'true') query = query.eq('featured', true);
+
+        const { data: nominees, error } = await query;
+        if (error) throw error;
+
+        const transformed = (nominees || []).map((n: any) => ({
+            id: n.id,
+            name: n.name,
+            categoryId: n.categoryId,
+            category: n.category?.name || '',
+            region: n.region || 'Ethiopia',
+            scope: n.scope as 'ethiopia' | 'worldwide',
+            bio: n.bio || '',
+            imageId: '',
+            imageUrl: n.imageUrl,
+            media: (n.media || [])
+                .sort((a: any, b: any) => a.order - b.order)
+                .map((m: any) => ({
                     type: m.type as 'image' | 'video' | 'audio',
                     url: m.url,
                     thumbnail: m.thumbnail,
                     description: m.description,
                     hint: m.hint || '',
                 })),
-                votes: nomineeWithRelations.voteCount,
-                featured: nomineeWithRelations.featured,
-            };
-        });
+            votes: n.voteCount,
+            featured: n.featured,
+        }));
 
-        return apiResponse(transformedNominees);
+        return apiResponse(transformed);
     } catch (error) {
         return handleApiError(error);
     }
@@ -67,37 +57,34 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         await requireAdmin();
-
         const body = await request.json();
         const { name, bio, imageUrl, categoryId, scope, media } = body;
 
-        const nominee = await prisma.nominee.create({
-            data: {
-                name,
-                bio,
-                imageUrl,
-                categoryId,
-                scope: scope || 'ethiopia',
-                media: {
-                    create: media?.map((m: any, index: number) => ({
-                        type: m.type,
-                        url: m.url,
-                        thumbnail: m.thumbnail,
-                        description: m.description,
-                        hint: m.hint,
-                        order: index,
-                    })) || [],
-                },
-            },
-            include: {
-                category: true,
-                media: true,
-            },
-        });
+        const supabase = await createClient();
+
+        const { data: nominee, error } = await supabase
+            .from('Nominee')
+            .insert([{ name, bio, imageUrl, categoryId, scope: scope || 'ethiopia' }])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        if (media && media.length > 0) {
+            const mediaRows = media.map((m: any, index: number) => ({
+                nomineeId: nominee.id,
+                type: m.type,
+                url: m.url,
+                thumbnail: m.thumbnail,
+                description: m.description,
+                hint: m.hint || null,
+                order: index,
+            }));
+            await supabase.from('NomineeMedia').insert(mediaRows);
+        }
 
         return apiResponse(nominee, 201);
     } catch (error) {
         return handleApiError(error);
     }
 }
-

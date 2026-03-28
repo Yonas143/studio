@@ -1,58 +1,46 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { requireAdmin } from '@/lib/auth-helpers';
-import { apiResponse, handleApiError } from '@/lib/api-utils';
-import prisma from '@/lib/prisma';
+import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
 
 export async function GET(
     request: NextRequest,
-    params: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await params.params;
-        const nominee = await prisma.nominee.findUnique({
-            where: {
-                id: id,
-                isActive: true,
-            },
-            include: {
-                category: true,
-                media: {
-                    orderBy: {
-                        order: 'asc',
-                    },
-                },
-            },
-        });
+        const { id } = await params;
+        const supabase = await createClient();
 
-        if (!nominee) {
-            return NextResponse.json({ error: 'Nominee not found' }, { status: 404 });
-        }
+        const { data: n, error } = await supabase
+            .from('Nominee')
+            .select('*, category:Category(name), media:NomineeMedia(*)')
+            .eq('id', id)
+            .eq('isActive', true)
+            .single();
 
-        // Transform to match frontend Nominee type
-        const nomineeWithRelations = nominee as typeof nominee & {
-            category: { name: string };
-            media: Array<{ type: string; url: string; thumbnail: string; description: string; hint: string | null }>;
-        };
+        if (error || !n) return apiError('Nominee not found', 404);
 
         const transformed = {
-            id: nomineeWithRelations.id,
-            name: nomineeWithRelations.name,
-            categoryId: nomineeWithRelations.categoryId,
-            category: nomineeWithRelations.category.name,
-            region: nomineeWithRelations.region || 'Ethiopia',
-            scope: nomineeWithRelations.scope as 'ethiopia' | 'worldwide',
-            bio: nomineeWithRelations.bio || '',
-            imageId: '', // Not used anymore
-            imageUrl: nomineeWithRelations.imageUrl,
-            media: nomineeWithRelations.media.map((m) => ({
-                type: m.type as 'image' | 'video' | 'audio',
-                url: m.url,
-                thumbnail: m.thumbnail,
-                description: m.description,
-                hint: m.hint || '',
-            })),
-            votes: nomineeWithRelations.voteCount,
-            featured: nomineeWithRelations.featured,
+            id: n.id,
+            name: n.name,
+            categoryId: n.categoryId,
+            category: (n.category as any)?.name || '',
+            region: n.region || 'Ethiopia',
+            scope: n.scope as 'ethiopia' | 'worldwide',
+            bio: n.bio || '',
+            imageId: '',
+            imageUrl: n.imageUrl,
+            media: ((n.media as any[]) || [])
+                .sort((a, b) => a.order - b.order)
+                .map((m) => ({
+                    type: m.type as 'image' | 'video' | 'audio',
+                    url: m.url,
+                    thumbnail: m.thumbnail,
+                    description: m.description,
+                    hint: m.hint || '',
+                })),
+            votes: n.voteCount,
+            featured: n.featured,
         };
 
         return apiResponse(transformed);
@@ -63,31 +51,24 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    params: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await requireAdmin();
-        const { id } = await params.params;
+        const { id } = await params;
         const body = await request.json();
         const { name, bio, imageUrl, categoryId, scope, featured } = body;
 
-        const nominee = await prisma.nominee.update({
-            where: { id: id },
-            data: {
-                name,
-                bio,
-                imageUrl,
-                categoryId,
-                scope,
-                featured,
-            },
-            include: {
-                category: true,
-                media: true,
-            },
-        });
+        const supabase = await createClient();
+        const { data, error } = await supabase
+            .from('Nominee')
+            .update({ name, bio, imageUrl, categoryId, scope, featured })
+            .eq('id', id)
+            .select()
+            .single();
 
-        return apiResponse({ success: true, nominee });
+        if (error) throw error;
+        return apiResponse({ success: true, nominee: data });
     } catch (error) {
         return handleApiError(error);
     }
@@ -95,16 +76,19 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    params: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await requireAdmin();
-        const { id } = await params.params;
-        
-        await prisma.nominee.delete({
-            where: { id: id },
-        });
+        const { id } = await params;
+        const supabase = await createClient();
 
+        const { error } = await supabase
+            .from('Nominee')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
         return apiResponse({ success: true });
     } catch (error) {
         return handleApiError(error);

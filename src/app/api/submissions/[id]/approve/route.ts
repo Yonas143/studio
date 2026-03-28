@@ -1,62 +1,54 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import { adminAuthClient } from '@/lib/supabase/admin';
 import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
+import { requireAdmin } from '@/lib/auth-helpers';
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        await requireAdmin();
+        const { id } = await params;
 
-        // Start a transaction to ensure both operations succeed or fail together
-        const result = await prisma.$transaction(async (tx) => {
-            // 1. Get the submission
-            const submission = await tx.submission.findUnique({
-                where: { id },
-            });
+        const { data: submission, error: fetchError } = await adminAuthClient
+            .from('Submission')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-            if (!submission) {
-                throw new Error('Submission not found');
-            }
+        if (fetchError || !submission) return apiError('Submission not found', 404);
+        if (submission.status === 'approved') return apiError('Submission is already approved', 400);
 
-            if (submission.status === 'approved') {
-                throw new Error('Submission is already approved');
-            }
+        // Create nominee from submission
+        const { data: nominee, error: nomineeError } = await adminAuthClient
+            .from('Nominee')
+            .insert([{
+                name: submission.title,
+                bio: submission.description || '',
+                imageUrl: submission.fileUrl || null,
+                isActive: true,
+                voteCount: 0,
+                scope: 'ethiopia',
+            }])
+            .select()
+            .single();
 
-            // 2. Create the nominee
-            const nominee = await tx.nominee.create({
-                data: {
-                    name: submission.title,
-                    category: submission.category,
-                    description: submission.description || '',
-                    imageUrl: submission.fileUrl,
-                    videoUrl: submission.portfolioUrl, // Assuming portfolio URL might be a video
-                    isActive: true,
-                    voteCount: 0,
-                },
-            });
+        if (nomineeError) throw nomineeError;
 
-            // 3. Update submission status
-            const updatedSubmission = await tx.submission.update({
-                where: { id },
-                data: { status: 'approved' },
-            });
+        // Update submission status
+        const { error: updateError } = await adminAuthClient
+            .from('Submission')
+            .update({ status: 'approved' })
+            .eq('id', id);
 
-            return { nominee, submission: updatedSubmission };
-        });
+        if (updateError) throw updateError;
 
         return apiResponse({
             message: 'Submission approved and nominee created successfully',
-            data: result,
+            data: { nominee, submissionId: id },
         });
     } catch (error: any) {
-        if (error.message === 'Submission not found') {
-            return apiError(error.message, 404);
-        }
-        if (error.message === 'Submission is already approved') {
-            return apiError(error.message, 400);
-        }
         return handleApiError(error);
     }
 }

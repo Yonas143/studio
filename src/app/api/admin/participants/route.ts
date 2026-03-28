@@ -1,22 +1,20 @@
-
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { adminAuthClient } from '@/lib/supabase/admin';
 import { isAdmin } from '@/lib/auth-helpers';
 
 export async function GET(request: Request) {
   try {
-    const isUserAdmin = await isAdmin();
-
-    if (!isUserAdmin) {
+    if (!(await isAdmin())) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const participants = await prisma.user.findMany({
-      where: { role: 'participant' },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const { data: participants, error } = await adminAuthClient
+      .from('User')
+      .select('*')
+      .eq('role', 'participant')
+      .order('createdAt', { ascending: false });
+
+    if (error) throw error;
 
     return NextResponse.json({ success: true, data: participants });
   } catch (error) {

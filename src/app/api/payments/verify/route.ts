@@ -1,102 +1,82 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
+import { adminAuthClient } from '@/lib/supabase/admin';
 import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
 import { verifyPayment as chapaVerify } from '@/lib/chapa';
 
-/**
- * GET /api/payments/verify?tx_ref=xxx
- * Verify a Chapa payment and record the vote
- */
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const txRef = searchParams.get('tx_ref');
 
-        if (!txRef) {
-            return apiError('Transaction reference is required', 400);
-        }
+        if (!txRef) return apiError('Transaction reference is required', 400);
 
-        // Find the payment record
-        const payment = await prisma.payment.findUnique({
-            where: { txRef },
-            include: { vote: true, nominee: true },
-        });
+        const supabase = await createClient();
 
-        if (!payment) {
-            return apiError('Payment not found', 404);
-        }
+        const { data: payment, error: paymentError } = await supabase
+            .from('Payment')
+            .select('*, nominee:Nominee(name), vote:Vote(*)')
+            .eq('txRef', txRef)
+            .single();
 
-        // If already verified and vote exists, return success
+        if (paymentError || !payment) return apiError('Payment not found', 404);
+
         if (payment.status === 'success' && payment.vote) {
             return apiResponse({
                 message: 'Payment already verified',
                 status: 'success',
-                nomineeName: payment.nominee.name,
-                voteId: payment.vote.id,
+                nomineeName: (payment.nominee as any)?.name,
+                voteId: (payment.vote as any)?.id,
             });
         }
 
-        // Verify payment with Chapa
         const chapaResponse = await chapaVerify(txRef);
 
         if (chapaResponse.status !== 'success' || chapaResponse.data?.status !== 'success') {
-            // Update payment status to failed
-            await prisma.payment.update({
-                where: { txRef },
-                data: { status: 'failed' },
-            });
-
-            return apiError(
-                chapaResponse.message || 'Payment verification failed',
-                400
-            );
+            await adminAuthClient.from('Payment').update({ status: 'failed' }).eq('txRef', txRef);
+            return apiError(chapaResponse.message || 'Payment verification failed', 400);
         }
 
-        // Use a transaction to update payment and create vote atomically
-        const result = await prisma.$transaction(async (tx) => {
-            // Update payment to success
-            const updatedPayment = await tx.payment.update({
-                where: { txRef },
-                data: {
-                    status: 'success',
-                    chapaRef: chapaResponse.data?.reference,
-                    verifiedAt: new Date(),
-                    email: chapaResponse.data?.email || payment.email,
-                    firstName: chapaResponse.data?.first_name || payment.firstName,
-                    lastName: chapaResponse.data?.last_name || payment.lastName,
-                },
-            });
+        // Update payment to success
+        const { data: updatedPayment, error: updateError } = await adminAuthClient
+            .from('Payment')
+            .update({
+                status: 'success',
+                chapaRef: chapaResponse.data?.reference,
+                verifiedAt: new Date().toISOString(),
+                email: chapaResponse.data?.email || payment.email,
+                firstName: chapaResponse.data?.first_name || payment.firstName,
+                lastName: chapaResponse.data?.last_name || payment.lastName,
+            })
+            .eq('txRef', txRef)
+            .select()
+            .single();
 
-            // Create vote linked to this payment
-            const vote = await tx.vote.create({
-                data: {
-                    nomineeId: payment.nomineeId,
-                    paymentId: updatedPayment.id,
-                    ipAddress: payment.ipAddress,
-                    fingerprint: payment.fingerprint,
-                },
-            });
+        if (updateError) throw updateError;
 
-            // Increment nominee vote count
-            await tx.nominee.update({
-                where: { id: payment.nomineeId },
-                data: {
-                    voteCount: {
-                        increment: 1,
-                    },
-                },
-            });
+        // Create vote
+        const { data: vote, error: voteError } = await adminAuthClient
+            .from('Vote')
+            .insert([{
+                nomineeId: payment.nomineeId,
+                paymentId: updatedPayment.id,
+                ipAddress: payment.ipAddress,
+                fingerprint: payment.fingerprint,
+            }])
+            .select()
+            .single();
 
-            return { payment: updatedPayment, vote };
-        });
+        if (voteError) throw voteError;
+
+        // Increment vote count
+        await adminAuthClient.rpc('increment_vote_count', { nominee_id: payment.nomineeId });
 
         return apiResponse({
             message: 'Payment verified and vote recorded successfully',
             status: 'success',
-            nomineeName: payment.nominee.name,
-            voteId: result.vote.id,
+            nomineeName: (payment.nominee as any)?.name,
+            voteId: vote.id,
         });
-
     } catch (error) {
         return handleApiError(error);
     }

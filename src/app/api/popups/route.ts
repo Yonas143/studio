@@ -1,9 +1,9 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
-import { apiResponse, apiError, handleApiError, getPagination, paginatedResponse } from '@/lib/api-utils';
+import { createClient } from '@/lib/supabase/server';
+import { apiResponse, handleApiError, getPagination, paginatedResponse } from '@/lib/api-utils';
+import { requireAdmin } from '@/lib/auth-helpers';
 
-// Validation schema
 const popupSchema = z.object({
     type: z.enum(['video', 'image', 'text']),
     title: z.string().min(1, 'Title is required'),
@@ -16,32 +16,33 @@ const popupSchema = z.object({
     storageKey: z.string().min(1, 'Storage key is required'),
 });
 
-/**
- * GET /api/popups
- * Get all popups with optional filtering
- */
 export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const { skip, take, page, limit } = getPagination(searchParams);
         const isActive = searchParams.get('isActive');
 
-        const where = isActive !== null ? { isActive: isActive === 'true' } : {};
+        const supabase = await createClient();
 
-        let [popups, total] = await Promise.all([
-            prisma.popup.findMany({
-                where,
-                skip,
-                take,
-                orderBy: { createdAt: 'desc' },
-            }),
-            prisma.popup.count({ where }),
-        ]);
+        let query = supabase
+            .from('Popup')
+            .select('*', { count: 'exact' })
+            .order('createdAt', { ascending: false })
+            .range(skip, skip + take - 1);
 
-        // If checking for active popups and none exist, create the default one
-        if (isActive === 'true' && popups.length === 0) {
-            const defaultPopup = await prisma.popup.create({
-                data: {
+        if (isActive !== null) query = query.eq('isActive', isActive === 'true');
+
+        const { data: popups, count, error } = await query;
+        if (error) throw error;
+
+        let finalPopups = popups || [];
+        let total = count || 0;
+
+        // Create default popup if none active
+        if (isActive === 'true' && finalPopups.length === 0) {
+            const { data: created } = await supabase
+                .from('Popup')
+                .insert([{
                     type: 'video',
                     title: 'Welcome to Cultural Ambassador Award',
                     description: 'Discover the talent.',
@@ -49,32 +50,28 @@ export async function GET(request: NextRequest) {
                     isActive: true,
                     delaySeconds: 1,
                     storageKey: 'default-welcome-popup',
-                },
-            });
-            popups = [defaultPopup];
-            total = 1;
+                }])
+                .select()
+                .single();
+            if (created) { finalPopups = [created]; total = 1; }
         }
 
-        return apiResponse(paginatedResponse(popups, total, page, limit));
+        return apiResponse(paginatedResponse(finalPopups, total, page, limit));
     } catch (error) {
         return handleApiError(error);
     }
 }
 
-import { requireAdmin } from '@/lib/auth-helpers';
-
-/**
- * POST /api/popups
- * Create a new popup
- */
 export async function POST(request: NextRequest) {
     try {
         await requireAdmin();
         const body = await request.json();
         const validatedData = popupSchema.parse(body);
 
-        const popup = await prisma.popup.create({
-            data: {
+        const supabase = await createClient();
+        const { data, error } = await supabase
+            .from('Popup')
+            .insert([{
                 type: validatedData.type,
                 title: validatedData.title,
                 description: validatedData.description || null,
@@ -84,10 +81,12 @@ export async function POST(request: NextRequest) {
                 isActive: validatedData.isActive,
                 delaySeconds: validatedData.delaySeconds,
                 storageKey: validatedData.storageKey,
-            },
-        });
+            }])
+            .select()
+            .single();
 
-        return apiResponse(popup, 201);
+        if (error) throw error;
+        return apiResponse(data, 201);
     } catch (error) {
         return handleApiError(error);
     }

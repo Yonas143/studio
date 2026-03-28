@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
+import { adminAuthClient } from '@/lib/supabase/admin';
 import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
 import { headers } from 'next/headers';
 import { generateTxRef, initializePayment, getVotePrice } from '@/lib/chapa';
@@ -14,43 +15,30 @@ const initializeSchema = z.object({
     fingerprint: z.string().optional(),
 });
 
-/**
- * POST /api/payments/initialize
- * Initialize a Chapa payment for voting
- */
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { nomineeId, email, firstName, lastName, phone, fingerprint } = initializeSchema.parse(body);
 
-        // Get IP address
         const headersList = await headers();
         const forwardedFor = headersList.get('x-forwarded-for');
         const ip = forwardedFor ? forwardedFor.split(',')[0] : 'unknown';
 
-        // Check if nominee exists and is active
-        const nominee = await prisma.nominee.findUnique({
-            where: { id: nomineeId },
-        });
+        const supabase = await createClient();
 
-        if (!nominee) {
-            return apiError('Nominee not found', 404);
-        }
+        const { data: nominee, error: nomineeError } = await supabase
+            .from('Nominee')
+            .select('id, name, isActive')
+            .eq('id', nomineeId)
+            .single();
 
-        if (!nominee.isActive) {
-            return apiError('Voting is closed for this nominee', 400);
-        }
+        if (nomineeError || !nominee) return apiError('Nominee not found', 404);
+        if (!nominee.isActive) return apiError('Voting is closed for this nominee', 400);
 
-        // Generate unique transaction reference
         const txRef = generateTxRef();
         const votePrice = getVotePrice();
-
-        // Get base URL for callbacks
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
-        const callbackUrl = `${baseUrl}/api/payments/webhook`;
-        const returnUrl = `${baseUrl}/payment/callback?tx_ref=${txRef}`;
 
-        // Initialize payment with Chapa
         const chapaResponse = await initializePayment({
             amount: votePrice,
             email,
@@ -60,18 +48,17 @@ export async function POST(request: NextRequest) {
             txRef,
             nomineeId,
             nomineeName: nominee.name,
-            callbackUrl,
-            returnUrl,
+            callbackUrl: `${baseUrl}/api/payments/webhook`,
+            returnUrl: `${baseUrl}/payment/callback?tx_ref=${txRef}`,
         });
 
         if (chapaResponse.status !== 'success' || !chapaResponse.data?.checkout_url) {
-            console.error('Chapa initialization failed:', chapaResponse);
             return apiError(chapaResponse.message || 'Failed to initialize payment', 500);
         }
 
-        // Create pending payment record in database
-        const payment = await prisma.payment.create({
-            data: {
+        const { data: payment, error: paymentError } = await adminAuthClient
+            .from('Payment')
+            .insert([{
                 txRef,
                 nomineeId,
                 amount: votePrice,
@@ -84,15 +71,17 @@ export async function POST(request: NextRequest) {
                 fingerprint: fingerprint || null,
                 ipAddress: ip,
                 checkoutUrl: chapaResponse.data.checkout_url,
-            },
-        });
+            }])
+            .select()
+            .single();
+
+        if (paymentError) throw paymentError;
 
         return apiResponse({
             message: 'Payment initialized successfully',
             checkoutUrl: chapaResponse.data.checkout_url,
             txRef: payment.txRef,
         }, 201);
-
     } catch (error) {
         return handleApiError(error);
     }

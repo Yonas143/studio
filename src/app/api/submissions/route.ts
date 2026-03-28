@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { apiResponse, apiError, handleApiError } from '@/lib/api-utils';
 
 const submissionSchema = z.object({
@@ -19,21 +19,15 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const validatedData = submissionSchema.parse(body);
 
-        const submission = await prisma.submission.create({
-            data: {
-                title: validatedData.title,
-                description: validatedData.description,
-                category: validatedData.category,
-                fileUrl: validatedData.fileUrl,
-                fullName: validatedData.fullName,
-                email: validatedData.email,
-                phone: validatedData.phone,
-                portfolioUrl: validatedData.portfolioUrl,
-                status: 'pending',
-            },
-        });
+        const supabase = await createClient();
+        const { data, error } = await supabase
+            .from('Submission')
+            .insert([{ ...validatedData, status: 'pending' }])
+            .select()
+            .single();
 
-        return apiResponse(submission, 201);
+        if (error) throw error;
+        return apiResponse(data, 201);
     } catch (error) {
         return handleApiError(error);
     }
@@ -45,18 +39,18 @@ export async function GET(request: NextRequest) {
         const status = searchParams.get('status');
         const email = searchParams.get('email');
 
-        const where: any = {};
-        if (status) where.status = status;
-        if (email) where.email = email;
+        const supabase = await createClient();
+        let query = supabase
+            .from('Submission')
+            .select('*')
+            .order('createdAt', { ascending: false });
 
-        const submissions = await prisma.submission.findMany({
-            where,
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
+        if (status) query = query.eq('status', status);
+        if (email) query = query.eq('email', email);
 
-        return apiResponse(submissions);
+        const { data, error } = await query;
+        if (error) throw error;
+        return apiResponse(data);
     } catch (error) {
         return handleApiError(error);
     }
