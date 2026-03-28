@@ -54,46 +54,24 @@ export default function Home() {
 
   const heroVideos = [
     {
-      id: 'dance',
-      src: '/files/DANCE.mp4',
-      title: 'Traditional Dance',
-      subtitle: 'Rhythms of our ancestors bringing history to life.',
-      cta: 'View Performances'
-    },
-   
-    {
-      id: 'music',
-      src: '/files/music.mp4',
-      title: 'Traditional Music',
-      subtitle: 'Melodies that define us, echoing through generations.',
-      cta: 'Listen Now'
-    },
-    {
-      id: 'instrument',
-      src: '/files/instrument.mp4',
-      title: 'Traditional Instruments',
-      subtitle: 'Mastery of sound with Masinko, Kirar, and Begena.',
-      cta: 'Explore Instruments'
-    },
-    {
-      id: 'poem',
-      src: '/files/poem.mp4',
-      title: 'Traditional Poetry',
-      subtitle: 'Words that paint pictures of our rich cultural tapestry.',
-      cta: 'Read Poetry'
+      id: 'final',
+      src: '/files/All Talent Final  (2)hand.mp4',
+      title: 'Cultural Ambassador Award',
+      subtitle: 'Celebrating the best of Ethiopian cultural excellence.',
+      cta: 'Meet the Nominees'
     },
     {
       id: 'product-design',
-      src: '/files/creativity.mp4',
+      src: '/files/F_final creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
       subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
       cta: 'Explore Category'
     },
     {
       id: 'acting',
-      src: '/files/acting.mp4',
+      src: '/files/F_final acting.mp4',
       title: 'Cultural Discovery Acting Award',
-      subtitle: 'Extraordinary performers bringing Ethiopia\'s cultural stories to life.',
+      subtitle: "Extraordinary performers bringing Ethiopia's cultural stories to life.",
       cta: 'Explore Category'
     },
   ];
