@@ -171,6 +171,31 @@ export default function Home() {
 
         <Separator />
 
+        {/* CAA Promo Video */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-4xl text-center mb-8">
+              <h2 className="font-headline text-3xl font-bold md:text-4xl text-primary">Watch Our Story</h2>
+              <p className="mt-3 text-muted-foreground text-lg">See what the Cultural Ambassador Award is all about.</p>
+            </div>
+            <div className="mx-auto max-w-4xl">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full rounded-xl shadow-xl"
+                  src="https://www.youtube.com/embed/CJmYj63Kalc"
+                  title="CAA"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <Separator />
+
         {/* Award & Program Timeline Section */}
         {/* <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
