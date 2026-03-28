@@ -50,6 +50,7 @@ const STATIC_ARTICLES: Record<string, any> = {
   'bale-mountains': {
     id: 'bale-mountains',
     title: 'Bale Mountains National Park',
+    author: 'Ethio Holidays',
     imageUrl: JSON.stringify(BALE_IMAGES),
     content: BALE_CONTENT,
     createdAt: '2026-03-28',
@@ -57,6 +58,7 @@ const STATIC_ARTICLES: Record<string, any> = {
   'danakil-depression': {
     id: 'danakil-depression',
     title: 'Danakil Depression',
+    author: 'Ethio Holidays',
     imageUrl: JSON.stringify(DANAKIL_IMAGES),
     content: DANAKIL_CONTENT,
     createdAt: '2026-03-28',
@@ -166,11 +168,17 @@ export default function InsightDetailPage() {
       <article>
         <PageHeader className="mb-8 px-0">
           <PageHeaderHeading className="text-4xl font-bold font-headline">{insight.title}</PageHeaderHeading>
-          {insight.createdAt && (
-            <p className="text-muted-foreground text-sm mt-2">
-              Posted on {new Date(insight.createdAt).toLocaleDateString()}
-            </p>
-          )}
+          <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
+            {(insight as any).author && (
+              <span>By <span className="font-medium text-foreground">{(insight as any).author}</span></span>
+            )}
+            {insight.createdAt && (
+              <>
+                {(insight as any).author && <span>·</span>}
+                <span>Posted on {new Date(insight.createdAt).toLocaleDateString()}</span>
+              </>
+            )}
+          </div>
         </PageHeader>
         <ImageSlider images={images} />
         <div className="prose dark:prose-invert max-w-none mx-auto" dangerouslySetInnerHTML={{ __html: insight.content }} />
