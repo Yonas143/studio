@@ -8,22 +8,20 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
 import placeholderImagesData from '@/lib/placeholder-images.json';
-import { ArrowRight, Calendar, Medal, Trophy } from 'lucide-react';
+import { ArrowRight, Trophy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-// import { useCollection } from '@/firebase'; // Removed unused import
-import type { Nominee, TimelineEvent } from '@/lib/types';
+import type { Nominee } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Leaderboard } from '@/components/voting/leaderboard';
-import { AnnouncementPopup, type PopupContent } from '@/components/announcement-popup';
+import { AnnouncementPopup } from '@/components/announcement-popup';
 import { SubmissionCountdown } from '@/components/submission-countdown';
+import { AWARD_CATEGORIES } from '@/lib/categories-data';
 import { useEffect, useState } from 'react';
 
 const { placeholderImages } = placeholderImagesData;
 
 export default function Home() {
   const [featuredNominees, setFeaturedNominees] = useState<Nominee[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
   const [popups, setPopups] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,37 +29,18 @@ export default function Home() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [popupsRes, nomineesRes, timelineRes] = await Promise.all([
+        const [popupsRes, nomineesRes] = await Promise.all([
           fetch('/api/popups?isActive=true'),
           fetch('/api/nominees?featured=true'),
-          fetch('/api/nominees?featured=true'),
-          fetch('/api/timeline'),
-          fetch('/api/categories')
         ]);
 
         const popupsData = await popupsRes.json();
         if (popupsData.success) {
-          setPopups(popupsData.data.data); // data.data is weird but matches checking fetch
-        } else {
-          // Fallback if needed or just empty array
-          if (Array.isArray(popupsData)) setPopups(popupsData);
+          setPopups(popupsData.data?.data || popupsData.data || []);
         }
 
         const nomineesData = await nomineesRes.json();
-        if (Array.isArray(nomineesData)) {
-          setFeaturedNominees(nomineesData);
-        } else if (nomineesData.data) {
-          setFeaturedNominees(nomineesData.data);
-        }
-
-        const timelineData = await timelineRes.json();
-        if (Array.isArray(timelineData)) {
-          setTimelineEvents(timelineData);
-        }
-
-        const categoriesData = await categoriesRes.json();
-        const cats = Array.isArray(categoriesData) ? categoriesData : (categoriesData.data || []);
-        setCategories(cats);
+        setFeaturedNominees(Array.isArray(nomineesData) ? nomineesData : (nomineesData.data || []));
 
       } catch (error) {
         console.error('Failed to fetch home page data:', error);
@@ -332,28 +311,27 @@ export default function Home() {
                 Choose the discipline where your talent shines.
               </p>
             </div>
-            <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
-              {categories.map((category) => (
-                <Card key={category.id} className="border-2 transition-all hover:shadow-lg hover:-translate-y-1">
-                  <CardContent className="p-6">
-                    <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-black">
-                      {category.imageUrl ? (
-                        <Image
-                          src={category.imageUrl}
-                          alt={category.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-                          No Image
-                        </div>
-                      )}
+            <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {AWARD_CATEGORIES.map((category) => (
+                <Link href={`/nominees?category=${category.id}`} key={category.id} className="group block">
+                  <Card className="border-2 transition-all hover:shadow-lg hover:-translate-y-1 h-full flex flex-col">
+                    <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
+                      <Image
+                        src={category.imageUrl}
+                        alt={category.name}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
                     </div>
-                    <h3 className="font-headline text-xl font-semibold mb-2">{category.name}</h3>
-                    <p className="text-muted-foreground">{category.description}</p>
-                  </CardContent>
-                </Card>
+                    <CardContent className="p-5 flex flex-col flex-1">
+                      <h3 className="font-headline text-lg font-semibold mb-2">{category.name}</h3>
+                      <p className="text-sm text-muted-foreground flex-1 line-clamp-3">{category.description}</p>
+                      <span className="mt-3 text-sm font-medium text-primary flex items-center gap-1">
+                        View Nominees <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
