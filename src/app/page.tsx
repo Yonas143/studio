@@ -54,25 +54,16 @@ export default function Home() {
 
   const heroVideos = [
     {
-      id: 'final',
-      src: '/files/all.mp4',
-      title: 'Cultural Ambassador Award',
-      subtitle: 'Celebrating the best of Ethiopian cultural excellence.',
-      cta: 'Meet the Nominees'
-    },
-    {
       id: 'product-design',
       src: '/files/creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
       subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
-      cta: 'Explore Category'
     },
     {
       id: 'acting',
       src: '/files/acting.mp4',
       title: 'Cultural Discovery Acting Award',
       subtitle: "Extraordinary performers bringing Ethiopia's cultural stories to life.",
-      cta: 'Explore Category'
     },
   ];
 
@@ -134,23 +125,20 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/10" />
 
                   {/* Sliding Content Layer */}
-                  <div className="absolute inset-0 z-10 flex h-full flex-col items-start justify-end text-left text-white px-8 md:px-16 lg:px-24 pb-20 md:pb-28">
+                  <div className="absolute inset-0 z-10 flex h-full flex-col items-start justify-center text-left text-white px-8 md:px-16 lg:px-24">
                     <div className="max-w-2xl">
-                      <h1 className="font-headline text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl drop-shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                      <h1 className="font-headline text-3xl font-bold tracking-tight md:text-5xl lg:text-6xl drop-shadow-lg">
                         {video.title}
                       </h1>
-                      <p className="mt-4 text-lg md:text-xl drop-shadow-md text-gray-200 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+                      <p className="mt-4 text-base md:text-xl drop-shadow-md text-gray-200">
                         {video.subtitle}
                       </p>
-                      <div className="mt-8 flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+                      <div className="mt-8 flex flex-wrap gap-3">
                         <Button asChild size="lg" className="font-bold shadow-lg">
                           <Link href="/nominees">Vote Now <Trophy className="ml-2" /></Link>
                         </Button>
                         <Button asChild size="lg" variant="secondary" className="font-bold shadow-lg">
                           <Link href="/submit">Submit Your Work <ArrowRight className="ml-2" /></Link>
-                        </Button>
-                        <Button asChild size="lg" variant="outline" className="font-bold bg-black/20 text-white hover:bg-white/20 border-white/40 backdrop-blur-sm shadow-lg">
-                          <Link href="/categories">View Categories</Link>
                         </Button>
                       </div>
                     </div>
