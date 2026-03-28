@@ -104,7 +104,7 @@ export default function AboutPage() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">Award Categories</h2>
                         <p className="mt-4 text-lg text-muted-foreground">
-                            Youth creators may compete in six major disciplines:
+                            Creators may compete in six major disciplines:
                         </p>
                     </div>
                     <div className="mx-auto mt-12 grid max-w-5xl gap-6 md:grid-cols-2">
@@ -341,7 +341,7 @@ export default function AboutPage() {
                         <h2 className="font-headline text-3xl font-bold md:text-4xl">About ABN Studio</h2>
                         <p className="mt-6 text-lg text-muted-foreground">
                             ABN Studio is a leading creative hub in Ethiopia, dedicated to empowering
-                            youth, promoting cultural excellence, and fostering innovation across the arts.
+                            cultural creators, promoting cultural excellence, and fostering innovation across the arts.
                             As a sister company of Abyssinia Business Network (ABN) Magazine and
                             Africa for Africans, ABN Studio leverages a strong media and cultural
                             network to provide artists, performers, writers, and innovators with
@@ -366,7 +366,7 @@ export default function AboutPage() {
                             studio blends traditional Ethiopian heritage with modern digital technologies,
                             creating platforms that celebrate culture, encourage innovation, and amplify
                             the voices of Ethiopia’s creative youth. ABN Studio is committed to nurturing
-                            cultural leaders and ambassador
+                            cultural leaders and ambassadors,
                             , inspiring creativity, innovation, and pride in
                             Ethiopia’s rich artistic legacy.
                         </p>

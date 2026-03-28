@@ -91,7 +91,7 @@ export default function Home() {
     {
       id: 'music',
       src: '/files/music.mp4',
-      title: 'Cultural Music',
+      title: 'Traditional Music',
       subtitle: 'Melodies that define us, echoing through generations.',
       cta: 'Listen Now'
     },
@@ -105,9 +105,23 @@ export default function Home() {
     {
       id: 'poem',
       src: '/files/poem.mp4',
-      title: 'Poetic Heritage',
+      title: 'Traditional Poetry',
       subtitle: 'Words that paint pictures of our rich cultural tapestry.',
       cta: 'Read Poetry'
+    },
+    {
+      id: 'product-design',
+      src: '/files/All Talent Final  (2)hand.mp4',
+      title: 'Ethiopian Product Design & Presentation Award',
+      subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
+      cta: 'Explore Category'
+    },
+    {
+      id: 'acting',
+      src: '/files/DANCE.mp4',
+      title: 'Cultural Discovery Acting Award',
+      subtitle: 'Extraordinary performers bringing Ethiopia\'s cultural stories to life.',
+      cta: 'Explore Category'
     },
   ];
 
