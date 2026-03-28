@@ -24,7 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect, Suspense } from 'react';
 
-const { placeholderImages } = placeholderImagesData;
+import { AWARD_CATEGORIES } from '@/lib/categories-data';
 
 interface Category {
   id: string;
@@ -35,8 +35,10 @@ interface Category {
 function NomineesPageContent() {
   const [nominees, setNominees] = useState<Nominee[]>([]);
   const [nomineesLoading, setNomineesLoading] = useState(true);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>(
+    AWARD_CATEGORIES.map(c => ({ id: c.id, name: c.name, slug: c.id }))
+  );
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -65,25 +67,7 @@ function NomineesPageContent() {
     fetchNominees();
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('/api/categories');
-        const data = await response.json();
-
-        // Handle wrapped responses
-        const categoriesData = Array.isArray(data) ? data : (data.data || []);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-        setCategories([]);
-      } finally {
-        setCategoriesLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  // Categories loaded from static data
 
   const filteredNominees = useMemo(() => {
     if (!nominees) return [];
