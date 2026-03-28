@@ -55,21 +55,21 @@ export default function Home() {
   const heroVideos = [
     {
       id: 'final',
-      src: '/files/All Talent Final  (2)hand.mp4',
+      src: '/files/all.mp4',
       title: 'Cultural Ambassador Award',
       subtitle: 'Celebrating the best of Ethiopian cultural excellence.',
       cta: 'Meet the Nominees'
     },
     {
       id: 'product-design',
-      src: '/files/F_final creativity.mp4',
+      src: '/files/creativity.mp4',
       title: 'Ethiopian Product Design & Presentation Award',
       subtitle: 'Bridging heritage and modernity through innovative Ethiopian-made products.',
       cta: 'Explore Category'
     },
     {
       id: 'acting',
-      src: '/files/F_final acting.mp4',
+      src: '/files/acting.mp4',
       title: 'Cultural Discovery Acting Award',
       subtitle: "Extraordinary performers bringing Ethiopia's cultural stories to life.",
       cta: 'Explore Category'
